@@ -1,13 +1,11 @@
 import { makeObservable, observable } from "mobx";
 import { NodeData } from "node-data";
 import { z } from "zod";
-import { CodeData, CodeSet } from "./Code";
 import { DocumentNode } from "./DocumentNode";
 import { Node } from "./Node";
 
 export const ProjectJSON = z.object({
   nodes: z.record(NodeData),
-  codes: z.record(CodeData),
 });
 export type ProjectJSON = z.infer<typeof ProjectJSON>;
 
@@ -17,19 +15,12 @@ export class Project {
   }
 
   @observable document = new DocumentNode();
-  readonly codes = new CodeSet();
 
   toJSON(): ProjectJSON {
     const nodes = this.document.children.flatMap((node) => node.serializeAll());
-    const codes = [...this.codes.codes.values()].map((code) => ({
-      id: code.id,
-      target: code.target,
-      content: code.content,
-    }));
 
     return {
       nodes: Object.fromEntries(nodes.map((node) => [node.id, node])),
-      codes: Object.fromEntries(codes.map((code) => [code.id, code])),
     };
   }
 
@@ -37,18 +28,12 @@ export class Project {
     for (const child of this.document.children) {
       child.remove();
     }
-    this.codes.clear();
   }
 
   loadJSON(projectJSON: ProjectJSON) {
     this.clear();
 
     this.updateNodes(projectJSON.nodes);
-
-    for (const [, codeJSON] of Object.entries(projectJSON.codes)) {
-      const code = this.codes.create(codeJSON.id, codeJSON.target);
-      code.content = codeJSON.content;
-    }
   }
 
   updateNodes(nodes: Record<string, NodeData>) {

@@ -11,8 +11,6 @@ import { Node } from "../models/Node";
 import { ComponentNode } from "../models/ComponentNode";
 import { isTextInput } from "../utils/Focus";
 import { blobToDataURL, imageFromURL } from "../utils/Blob";
-import { CodeHierarchyEntry } from "../models/Code";
-import { posix as path } from "path-browserify";
 import { generateID } from "../utils/ID";
 import { exportToJSON as exportJSON, importJSON } from "./JSONExport";
 import { viewportState } from "./ViewportState";
@@ -333,39 +331,6 @@ class Commands {
       this.autoLayoutCommand,
       this.removeLayoutCommand,
     ];
-  }
-
-  contextMenuForFile(file: CodeHierarchyEntry): MenuItemDef[] {
-    if (file.type === "directory") {
-      return [
-        {
-          type: "command",
-          text: "New File",
-          onClick: action(() => {
-            const newPath = path.join(file.path, "new.ts");
-            projectState.project.codes.createForFile(newPath);
-          }),
-        },
-        {
-          type: "command",
-          text: "Delete",
-          onClick: action(() => {
-            // TODO: undo
-            projectState.project.codes.deleteDirectory(file.path);
-          }),
-        },
-      ];
-    } else {
-      return [
-        {
-          type: "command",
-          text: "Delete",
-          onClick: action(() => {
-            projectState.project.codes.delete(file.code.id);
-          }),
-        },
-      ];
-    }
   }
 
   handleKeyDown(event: KeyboardEvent): boolean {

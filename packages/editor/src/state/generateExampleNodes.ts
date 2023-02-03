@@ -1,4 +1,3 @@
-import dedent from "dedent";
 import { ComponentNode, Variant } from "../models/ComponentNode";
 import { DocumentNode } from "../models/DocumentNode";
 import { FrameNode } from "../models/FrameNode";
@@ -10,7 +9,6 @@ import { Selectable } from "../models/Selectable";
 import { ShapeNode } from "../models/ShapeNode";
 import { StackNode } from "../models/StackNode";
 import { TextNode } from "../models/TextNode";
-import { assertNonNull } from "../utils/Assert";
 import { Color } from "../utils/Color";
 
 export function generateExampleNodes(canvas: DocumentNode) {
@@ -276,61 +274,4 @@ export function generateExampleNodes(canvas: DocumentNode) {
 
 export function generateExampleProject(project: Project) {
   generateExampleNodes(project.document);
-
-  const buttonNode = assertNonNull(
-    project.document.children.find((child) => child.name === "Button")
-  );
-  const pageNode = assertNonNull(
-    project.document.children.find((child) => child.name === "Page")
-  );
-
-  const buttonCode = project.codes.createForComponent(buttonNode.id);
-  buttonCode.content = dedent`
-      export default () => {
-        const [checked, setChecked] = useState(false);
-        const onClick = () => {
-          setChecked(!checked);
-        };
-        return {
-          checked,
-          onClick,
-        };
-      };
-    `;
-
-  const pageCode = project.codes.createForComponent(pageNode.id);
-  pageCode.content = dedent`
-      import { getPost } from "../lib/api.ts";
-      export interface Props {
-        id: string
-      }
-      export default ({id}: Props) => {
-        const post = use(getPost(id));
-        return {
-          title: post.title,
-          body: post.body,
-        };
-      };
-    `;
-
-  const apiCode = project.codes.createForFile(`lib/api.ts`);
-  apiCode.content = dedent`
-      import { Post } from "../types.ts";
-      export async function getPost(id: string): Promise<Post> {
-        return {
-          id,
-          title: "Hello",
-          body: "World",
-        };
-      }
-    `;
-
-  const typesCode = project.codes.createForFile(`types.ts`);
-  typesCode.content = dedent`
-      export interface Post {
-        id: string;
-        title: string;
-        body: string;
-      }
-    `;
 }
