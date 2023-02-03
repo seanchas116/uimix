@@ -1,0 +1,7 @@
+{
+  "name": "node-data",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.19.1"
+  }
+}
