@@ -2,8 +2,7 @@ import { computed, makeObservable, observable } from "mobx";
 import { History } from "../models/History";
 import { Selectable } from "../models/Selectable";
 import { Project, ProjectJSON } from "../models/Project";
-import { BackendAdapter } from "./BackendAdapter";
-// import { FirebaseAdapter } from "./FirebaseAdapter";
+import { generateExampleNodes } from "./generateExampleNodes";
 
 export class ProjectState {
   constructor() {
@@ -12,20 +11,8 @@ export class ProjectState {
     });
 
     makeObservable(this);
-  }
 
-  async loadProject() {
-    const searchParams = new URLSearchParams(location.search);
-    const projectID = searchParams.get("project");
-
-    //await new FirebaseAdapter(this.project, projectID ?? undefined).init();
-    // const adapter = new BackendAdapter(this.project, projectID ?? undefined);
-    // await adapter.init();
-    this.history = new History(this.project.document, {
-      shouldIgnoreChanges: () => this.project.duringRemoteUpdate,
-    });
-    //this.history.onDidChange(() => adapter.persistLocalChanges());
-    this.loaded = true;
+    generateExampleNodes(this.project.document);
   }
 
   toProjectJSON(): ProjectJSON {

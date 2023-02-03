@@ -34,10 +34,3 @@ export function isTextInput(value: EventTarget | null | undefined): boolean {
 
   return false;
 }
-
-export function isMonacoEditor(value: EventTarget | null | undefined): boolean {
-  if (!isElement(value)) {
-    return false;
-  }
-  return (value as Element).classList.contains("monaco-mouse-cursor-text");
-}

@@ -9,7 +9,7 @@ import { autoLayout, removeLayout } from "../services/AutoLayout";
 import { createComponent } from "../services/CreateComponent";
 import { Node } from "../models/Node";
 import { ComponentNode } from "../models/ComponentNode";
-import { isMonacoEditor, isTextInput } from "../utils/Focus";
+import { isTextInput } from "../utils/Focus";
 import { blobToDataURL, imageFromURL } from "../utils/Blob";
 import { CodeHierarchyEntry } from "../models/Code";
 import { posix as path } from "path-browserify";
@@ -369,10 +369,6 @@ class Commands {
   }
 
   handleKeyDown(event: KeyboardEvent): boolean {
-    if (isMonacoEditor(document.activeElement)) {
-      return false;
-    }
-
     if (event.key === " ") {
       viewportState.panMode = true;
     }

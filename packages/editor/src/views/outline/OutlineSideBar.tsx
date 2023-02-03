@@ -7,7 +7,6 @@ import {
 } from "../../components/SideBarTabs";
 import { ScrollArea } from "../../components/ScrollArea";
 import { NodeTreeView } from "./NodeTreeView";
-import { CodeTreeView } from "./CodeTreeView";
 
 export const OutlineSideBar: React.FC = observer(() => {
   return (
@@ -26,7 +25,7 @@ export const OutlineSideBar: React.FC = observer(() => {
       </SideBarTabsContent>
       <SideBarTabsContent value="code" className="flex-1 relative">
         <ScrollArea className="absolute left-0 top-0 w-full h-full">
-          <CodeTreeView />
+          <div></div>
         </ScrollArea>
       </SideBarTabsContent>
     </SideBarTabsRoot>
