@@ -57,7 +57,6 @@ importers:
       lodash-es: ^4.17.21
       mobx: ^6.7.0
       mobx-react-lite: ^3.4.0
-      monaco-editor: ^0.34.1
       node-data: workspace:*
       paintvec: ^0.5.0
       paper: ^0.12.17
@@ -107,7 +106,6 @@ importers:
       lodash-es: 4.17.21
       mobx: 6.7.0
       mobx-react-lite: 3.4.0_jofyzmwkboewm6mjrhi25mngky
-      monaco-editor: 0.34.1
       node-data: link:../node-data
       paintvec: 0.5.0
       paper: 0.12.17
@@ -10322,10 +10320,6 @@ packages:
 
   /mobx/6.7.0:
     resolution: {integrity: sha512-1kBLBdSNG2bA522HQdbsTvwAwYf9hq9FWxmlhX7wTsJUAI54907J+ozfGW+LoYUo06vjit748g6QH1AAGLNebw==}
-    dev: false
-
-  /monaco-editor/0.34.1:
-    resolution: {integrity: sha512-FKc80TyiMaruhJKKPz5SpJPIjL+dflGvz4CpuThaPMc94AyN7SeC9HQ8hrvaxX7EyHdJcUY5i4D0gNyJj1vSZQ==}
     dev: false
 
   /move-concurrently/1.0.1:

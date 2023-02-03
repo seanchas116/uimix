@@ -7,7 +7,6 @@ import { TooltipProvider } from "../components/Tooltip";
 import { ContextMenu } from "./ContextMenu";
 import { commands } from "../state/Commands";
 import { action, reaction } from "mobx";
-import { CodeEditorArea } from "./codeeditor/CodeEditorArea";
 import { OutlineSideBar } from "./outline/OutlineSideBar";
 import { projectState } from "../state/ProjectState";
 
@@ -58,8 +57,6 @@ export const App = observer(function App() {
             <Viewport />
           </div>
           <InspectorSideBar />
-          <div className="w-px bg-macaron-separator" />
-          <CodeEditorArea />
         </div>
       </div>
       <ContextMenu />
