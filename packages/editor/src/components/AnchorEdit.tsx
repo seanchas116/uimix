@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { PositionConstraintType } from "node-data";
-import colors from "../colors.js";
+import colors from "../colors";
+import { Color } from "../utils/Color";
+
+const active02Color = Color.from(colors.active)!.withAlpha(0.2).toString();
 
 const unselectedColor = colors.uiBackground;
 
@@ -21,7 +24,7 @@ const AnchorClickable = styled.rect`
   fill: transparent;
   cursor: pointer;
   :hover {
-    fill: ${colors.activeTransparent};
+    fill: ${active02Color};
   }
 `;
 
@@ -209,7 +212,7 @@ export const AnchorEdit: React.VFC<{
           height="12"
           rx="4"
           pointerEvents="none"
-          fill={xCenterHovered ? colors.activeTransparent : "transparent"}
+          fill={xCenterHovered ? active02Color : "transparent"}
         />
         <rect
           x="26"
@@ -218,7 +221,7 @@ export const AnchorEdit: React.VFC<{
           height="24"
           rx="4"
           pointerEvents="none"
-          fill={yCenterHovered ? colors.activeTransparent : "transparent"}
+          fill={yCenterHovered ? active02Color : "transparent"}
         />
         <rect
           x="26"

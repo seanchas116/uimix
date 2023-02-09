@@ -1,9 +1,7 @@
 export default {
   active: "#0085FF",
-  activeTransparent: "#0085FF33",
   red: "#FF355C",
   component: "#7B61FF",
-  componentTransparent: "#7B61FF33",
   componentText: "#C9BEFF",
   activeText: "rgba(255,255,255,1)",
   text: "rgba(255,255,255,1)",
