@@ -23,7 +23,7 @@ export function ToggleGroup<T extends string>({
   return (
     <RadixToggleGroup.Root
       className={twMerge(
-        "bg-macaron-uiBackground w-fit rounded text-macaron-text inline-flex p-[2px]",
+        "w-fit rounded text-macaron-text inline-flex",
         className
       )}
       type="single"
@@ -41,7 +41,7 @@ export function ToggleGroup<T extends string>({
           <Tooltip text={item.tooltip} key={item.value}>
             <RadixToggleGroup.Item
               value={item.value}
-              className="aria-checked:bg-macaron-active aria-checked:text-macaron-activeText w-[30px] h-[20px] flex items-center justify-center rounded-sm"
+              className="aria-checked:bg-macaron-active aria-checked:text-macaron-activeText w-6 h-6 flex items-center justify-center rounded"
             >
               {typeof item.content === "object" &&
               item.content &&

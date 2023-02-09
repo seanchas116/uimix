@@ -81,7 +81,7 @@ export const TextPane: React.FC = observer(function TextPane() {
               }}
             />
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 items-center">
             <InspectorNumberInput
               icon={formatSizeIcon}
               get={(s) => s.style.fontSize}

@@ -110,7 +110,7 @@ export const StackPane: React.FC = observer(function StackPane() {
       {hasStack && (
         <InspectorTargetContext.Provider value={stackSelectables}>
           <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 items-center">
               <InspectorToggleGroup
                 get={(s) => s.style.stackDirection}
                 set={(s, value) => {

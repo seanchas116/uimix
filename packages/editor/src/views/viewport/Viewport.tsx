@@ -67,7 +67,7 @@ export const Viewport: React.FC = observer(function Viewport() {
   return (
     <div
       ref={ref}
-      className="flex-1 bg-macaron-uiBackground relative overflow-hidden contain-strict"
+      className="flex-1 bg-macaron-viewportBackground relative overflow-hidden contain-strict"
       onWheel={onWheel}
     >
       <div

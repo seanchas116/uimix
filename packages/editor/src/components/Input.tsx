@@ -64,12 +64,12 @@ export const Input: React.FC<{
     <Tooltip text={tooltip}>
       <div className={twMerge("h-fit relative", className)}>
         <UnstyledInput
-          className="block outline-0 w-full h-6 px-1.5 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-xs placeholder:text-macaron-disabledText"
+          className="block outline-0 w-full h-7 px-1.5 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-xs placeholder:text-macaron-disabledText"
           value={value}
           onChangeValue={onChange}
           placeholder={placeholder}
         />
-        <div className="absolute right-1.5 top-0 bottom-0 flex items-center text-macaron-disabledText text-[10px] font-bold">
+        <div className="absolute right-1.5 top-0 bottom-0 flex items-center text-macaron-disabledText text-[10px] font-medium">
           {typeof icon === "object" && icon && "body" in icon ? (
             <Icon icon={icon} width={12} />
           ) : (

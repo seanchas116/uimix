@@ -170,7 +170,7 @@ export const DimensionPane: React.FC = observer(function DimensionPane() {
           <InspectorAnchorEdit className="col-start-2 row-start-2" />
         </div>
         <div className="flex flex-col gap-2">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 items-center">
             <InspectorNumberInput
               icon="W"
               tooltip="Width"
@@ -190,7 +190,7 @@ export const DimensionPane: React.FC = observer(function DimensionPane() {
               items={horizontalSizeConstraintOptions}
             />
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 items-center">
             <InspectorNumberInput
               icon="H"
               tooltip="Height"

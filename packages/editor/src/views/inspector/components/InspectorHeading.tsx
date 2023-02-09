@@ -12,7 +12,7 @@ export function InspectorHeading({
   return (
     <div className="flex items-center justify-between h-4">
       <h2
-        className={clsx("leading-4 font-semibold", {
+        className={clsx("leading-4 font-medium", {
           "text-macaron-disabledText": dimmed,
         })}
       >
