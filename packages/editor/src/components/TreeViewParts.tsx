@@ -58,7 +58,7 @@ export function ToggleCollapsedButton({
         onChange(!value);
       }}
       className={clsx(
-        "w-4 h-4 flex items-center justify-center text-macaron-label opacity-0 [.treeview-root:hover_&]:opacity-100 transition-opacity",
+        "w-4 h-4 flex items-center justify-center opacity-0 [.treeview-root:hover_&]:opacity-50 transition-opacity",
         {
           "rotate-90": !value,
         }

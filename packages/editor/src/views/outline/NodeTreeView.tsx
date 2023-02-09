@@ -138,7 +138,7 @@ const TreeRow: React.FC<{
       className={clsx(
         "h-7 flex items-center text-macaron-text",
         selected
-          ? "bg-macaron-active"
+          ? "bg-macaron-active text-macaron-activeText"
           : selectable.ancestorSelected
           ? "bg-macaron-active/20"
           : "bg-macaron-background",
@@ -176,12 +176,10 @@ const TreeRow: React.FC<{
       ) : ( */}
       <>
         <Icon
-          className={clsx(
-            "mr-1.5 text-xs",
-            !selected && isComponent
-              ? "text-macaron-component"
-              : "text-macaron-disabledText"
-          )}
+          className={clsx("mr-1.5 text-xs opacity-30", {
+            "text-macaron-component opacity-100": isComponent && !selected,
+            "opacity-100": selected,
+          })}
           icon={icon}
         />
         <DoubleClickToEdit

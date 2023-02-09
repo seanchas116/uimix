@@ -6,7 +6,7 @@ import { Color } from "../utils/Color";
 
 const active02Color = Color.from(colors.active)!.withAlpha(0.2).toString();
 
-const unselectedColor = colors.uiBackground;
+const unselectedColor = Color.from(colors.text)?.withAlpha(0.1).toString();
 
 const AnchorEditSVG = styled.svg`
   aspect-ratio: 1;
