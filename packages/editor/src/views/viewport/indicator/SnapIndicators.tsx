@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { Transform, Vec2 } from "paintvec";
 import { PointSnapping, SameMarginSnapping } from "../../../utils/Snapping";
-import colors from "../../../colors.json";
+import colors from "../../../colors.js";
 import { XDistanceIndicator, YDistanceIndicator } from "./DistanceIndicator";
 import { scrollState } from "../../../state/ScrollState";
 import { snapper } from "../../../state/Snapper";

@@ -4,7 +4,7 @@ import { Vec2, Rect, Transform } from "paintvec";
 import { observer } from "mobx-react-lite";
 import { Selectable } from "../../../models/Selectable";
 import { projectState } from "../../../state/ProjectState";
-import colors from "../../../colors.json";
+import colors from "../../../colors.js";
 import { scrollState } from "../../../state/ScrollState";
 import { ResizeBox } from "../../../components/ResizeBox";
 import { roundRectXYWH } from "../../../types/Rect";

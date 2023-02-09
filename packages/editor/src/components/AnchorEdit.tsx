@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { PositionConstraintType } from "node-data";
-import colors from "../colors.json";
+import colors from "../colors.js";
 
 const unselectedColor = colors.uiBackground;
 

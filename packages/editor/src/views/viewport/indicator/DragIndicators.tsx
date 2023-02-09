@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { Vec2 } from "paintvec";
-import colors from "../../../colors.json";
+import colors from "../../../colors.js";
 import { scrollState } from "../../../state/ScrollState";
 import { DropDestination } from "../../../state/DropDestination";
 import { viewportState } from "../../../state/ViewportState";

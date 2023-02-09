@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import colors from "../../../colors.json";
+import colors from "../../../colors.js";
 import { scrollState } from "../../../state/ScrollState";
 import { viewportState } from "../../../state/ViewportState";
 
