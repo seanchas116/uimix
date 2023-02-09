@@ -1,19 +1,18 @@
-const plugin = require("tailwindcss/plugin");
+import plugin from "tailwindcss/plugin.js";
+import colors from "./src/colors.js";
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        macaron: {
-          ...require("./src/colors.json"),
-        },
+        macaron: colors,
       },
     },
   },
   plugins: [
-    require("@thoughtbot/tailwindcss-aria-attributes"),
+    await import("@thoughtbot/tailwindcss-aria-attributes"),
     plugin(function ({ addUtilities }) {
       addUtilities({
         ".contain-strict": {
