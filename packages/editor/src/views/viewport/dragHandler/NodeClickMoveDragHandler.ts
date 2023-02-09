@@ -77,6 +77,7 @@ export class NodeClickMoveDragHandler implements DragHandler {
       }
       this.override.select();
     }
+    projectState.undoManager.stopCapturing();
   }
 
   private readonly initPos: Vec2;

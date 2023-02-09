@@ -1,57 +1,53 @@
 import { sum } from "lodash-es";
-import { StackAlign, StackNodeData } from "node-data";
+import { StackAlign } from "node-data";
 import { Rect } from "paintvec";
-import { FrameNode } from "../models/FrameNode";
 import { Selectable } from "../models/Selectable";
-import { StackNode } from "../models/StackNode";
 import { assertNonNull } from "../utils/Assert";
 
-export function removeLayout(selectable: Selectable): Selectable {
-  if (selectable.node.type !== "stack") {
-    return selectable;
+export function removeLayout(selectable: Selectable): void {
+  if (selectable.node.type !== "frame") {
+    return;
   }
-
-  const original = selectable.node;
-  const parent = original.parent;
-  const next = original.nextSibling;
-  const data = original.serialize();
-  const width = selectable.computedRect.width;
-  const height = selectable.computedRect.height;
+  if (selectable.style.layout !== "stack") {
+    return;
+  }
 
   for (const child of selectable.children) {
     child.style.position = {
       x: {
         type: "start",
-        start: child.offsetComputedRect.left,
+        start: child.computedOffsetRect.left,
       },
       y: {
         type: "start",
-        start: child.offsetComputedRect.top,
+        start: child.computedOffsetRect.top,
       },
     };
   }
 
-  const frameNode = new FrameNode();
-  frameNode.append(original.children);
-  frameNode.deserialize({ ...data, type: "frame" });
-  const frameSelectable = Selectable.get(frameNode);
-  frameSelectable.style.width = { type: "fixed", value: width };
-  frameSelectable.style.height = { type: "fixed", value: height };
-
-  parent?.insertBefore([frameNode], next);
-  original.remove();
-
-  return frameSelectable;
-}
-
-export function autoLayout(selectable: Selectable): Selectable {
-  if (selectable.node.type !== "frame") {
-    return selectable;
+  if (selectable.style.width.type === "hugContents") {
+    selectable.style.width = {
+      type: "fixed",
+      value: selectable.computedRect.width,
+    };
+  }
+  if (selectable.style.height.type === "hugContents") {
+    selectable.style.height = {
+      type: "fixed",
+      value: selectable.computedRect.height,
+    };
   }
 
-  const original = selectable.node;
-  const parent = original.parent;
-  const next = original.nextSibling;
+  selectable.style.layout = "none";
+}
+
+export function autoLayout(selectable: Selectable): void {
+  if (selectable.node.type !== "frame") {
+    return;
+  }
+  if (selectable.style.layout === "stack") {
+    return;
+  }
 
   const width = selectable.computedRect.width;
   const height = selectable.computedRect.height;
@@ -60,25 +56,22 @@ export function autoLayout(selectable: Selectable): Selectable {
 
   const offsetBBox = flex.bbox.translate(selectable.computedRect.topLeft.neg);
 
-  const data = original.serialize();
+  selectable.style.stackDirection = flex.direction;
+  selectable.style.stackAlign = flex.align;
+  selectable.style.gap = flex.gap;
+  selectable.style.paddingLeft = Math.max(0, offsetBBox.left);
+  selectable.style.paddingTop = Math.max(0, offsetBBox.top);
+  selectable.style.paddingRight = Math.max(0, width - offsetBBox.right);
+  selectable.style.paddingBottom = Math.max(0, height - offsetBBox.bottom);
 
-  const stackNode = new StackNode();
-  stackNode.deserialize({ ...data, type: "stack" } as StackNodeData);
+  const childrenData = flex.elements.map((e) => e.node.toJSON());
 
-  const stackSelectable = Selectable.get(stackNode);
-  stackSelectable.style.stackDirection = flex.direction;
-  stackSelectable.style.stackAlign = flex.align;
-  stackSelectable.style.gap = flex.gap;
-  stackSelectable.style.paddingLeft = Math.max(0, offsetBBox.left);
-  stackSelectable.style.paddingTop = Math.max(0, offsetBBox.top);
-  stackSelectable.style.paddingRight = Math.max(0, width - offsetBBox.right);
-  stackSelectable.style.paddingBottom = Math.max(0, height - offsetBBox.bottom);
+  for (const child of flex.elements) {
+    child.node.remove();
+  }
+  selectable.append(childrenData);
 
-  stackNode.append(flex.elements.map((e) => e.node));
-  parent?.insertBefore([stackNode], next);
-  original.remove();
-
-  return stackSelectable;
+  selectable.style.layout = "stack";
 }
 
 export function detectFlex(elements: readonly Selectable[]): {

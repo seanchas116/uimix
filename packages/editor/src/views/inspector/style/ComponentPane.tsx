@@ -1,34 +1,31 @@
+import { compact } from "lodash-es";
+import React from "react";
+import clsx from "clsx";
+import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import * as RadixPopover from "@radix-ui/react-popover";
-import { projectState } from "../../../state/ProjectState";
-import { InspectorHeading } from "../components/InspectorHeading";
-import { InspectorPane } from "../components/InspectorPane";
+import { ReactSortable } from "react-sortablejs";
 import widgetsIcon from "@iconify-icons/ic/widgets";
 import addIcon from "@iconify-icons/ic/add";
 import removeIcon from "@iconify-icons/ic/remove";
 import tagIcon from "@iconify-icons/ic/sharp-numbers";
-import openInNewIcon from "@iconify-icons/ic/open-in-new";
-import phoneIcon from "@iconify-icons/ic/phone-iphone";
 import cursorIcon from "@iconify-icons/heroicons/cursor-arrow-rays";
-import { Icon, IconifyIcon } from "@iconify/react";
-import { IconButton } from "../../../components/IconButton";
-import { Property, VariantInteractionType } from "node-data";
+import { Icon } from "@iconify/react";
 import textIcon from "@seanchas116/design-icons/json/text.json";
 import switchIcon from "@seanchas116/design-icons/json/switch.json";
-import { ComponentNode, Variant } from "../../../models/ComponentNode";
+import { Property } from "node-data";
+import { projectState } from "../../../state/ProjectState";
+import { viewportState } from "../../../state/ViewportState";
+import { IconButton } from "../../../components/IconButton";
 import { DoubleClickToEdit } from "../../../components/DoubleClickToEdit";
 import { popoverStyle } from "../../../components/styles";
 import { Input } from "../../../components/Input";
-import { compact, startCase } from "lodash-es";
-import { action } from "mobx";
 import { Select } from "../../../components/Select";
-import { Selectable } from "../../../models/Selectable";
-import { ReactSortable } from "react-sortablejs";
-import React from "react";
 import { DropdownMenu } from "../../../components/Menu";
+import { InspectorHeading } from "../components/InspectorHeading";
+import { InspectorPane } from "../components/InspectorPane";
 import { DragHandle, dragHandleClass } from "../components/DragHandle";
-import clsx from "clsx";
-import { viewportState } from "../../../state/ViewportState";
+import { Node } from "../../../models/Node";
 
 function PropRow({
   property,
@@ -124,35 +121,17 @@ const VariantRow = observer(function VariantRow({
   component,
   variant,
 }: {
-  component: ComponentNode;
-  variant: Variant;
+  component: Node;
+  variant: Node;
 }) {
-  const rootNode = component.firstChild;
+  const rootNode = component.children[0];
   if (!rootNode) {
     return null;
   }
-  const selectable = Selectable.get(rootNode, variant);
+  const selectable = projectState.document.getSelectable([variant.id]);
 
-  const condition = variant.condition;
-
-  let icon: IconifyIcon | string;
-  let text: React.ReactNode;
-
-  if (condition.type === "interaction") {
-    icon = cursorIcon;
-    text = startCase(condition.value);
-  } else {
-    icon = phoneIcon;
-    text = (
-      <>
-        Mobile
-        <span className="text-macaron-disabledText">
-          <span className="mx-1.5">{"<"}</span>
-          {condition.value}
-        </span>
-      </>
-    );
-  }
+  const icon = cursorIcon;
+  const text = JSON.stringify(variant.condition);
 
   const onClick = action(() => {
     projectState.rootSelectable.deselect();
@@ -161,12 +140,13 @@ const VariantRow = observer(function VariantRow({
 
   const onDeleteButtonClick = action((e: React.MouseEvent) => {
     e.stopPropagation();
-    component.variants.remove(variant);
-    if (selectable.selected) {
-      projectState.rootSelectable.deselect();
-      selectable.parent?.select();
-    }
-    projectState.history.commit();
+    // TODO
+    // component.variants.remove(variant);
+    // if (selectable.selected) {
+    //   projectState.rootSelectable.deselect();
+    //   selectable.parent?.select();
+    // }
+    // projectState.history.commit();
   });
 
   const onMouseEnter = action(() => {
@@ -182,7 +162,7 @@ const VariantRow = observer(function VariantRow({
     <div
       aria-selected={selectable.selected}
       className={clsx(
-        "h-7 flex items-center gap-2 group aria-selected:bg-macaron-active pl-4 pr-3 relative",
+        "h-7 flex items-center gap-2 group aria-selected:bg-macaron-active px-3 relative",
         hovered && "ring-1 ring-inset ring-macaron-active"
       )}
       onClick={onClick}
@@ -190,7 +170,8 @@ const VariantRow = observer(function VariantRow({
       onMouseLeave={onMouseLeave}
     >
       <DragHandle className="absolute left-0 top-0 opacity-0 group-hover:opacity-100" />
-      <RadixPopover.Root>
+      <Icon icon={switchIcon} className="text-xs text-macaron-disabledText" />
+      {/* <RadixPopover.Root>
         <RadixPopover.Trigger>
           <IconButton
             icon={icon}
@@ -242,8 +223,8 @@ const VariantRow = observer(function VariantRow({
             )}
           </RadixPopover.Content>
         </RadixPopover.Portal>
-      </RadixPopover.Root>
-      <span className="flex-1">{text}</span>
+      </RadixPopover.Root> */}
+      <span className="flex-1 text-ellipsis whitespace-nowrap">{text}</span>
       <IconButton
         icon={removeIcon}
         className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -256,19 +237,13 @@ const VariantRow = observer(function VariantRow({
 const DefaultVariantRow = observer(function VariantRow({
   component,
 }: {
-  component: ComponentNode;
+  component: Node;
 }) {
-  const rootNode = component.firstChild;
-  if (!rootNode) {
-    return null;
-  }
-  const selectable = Selectable.get(rootNode);
+  const selectable = projectState.document.getSelectable([
+    component.children[0].id,
+  ]);
 
   const onClick = action(() => {
-    const rootNode = component.firstChild;
-    if (!rootNode) {
-      return;
-    }
     projectState.rootSelectable.deselect();
     selectable.select();
   });
@@ -286,21 +261,21 @@ const DefaultVariantRow = observer(function VariantRow({
     <div
       aria-selected={selectable.selected}
       className={clsx(
-        "h-7 flex items-center gap-2 group aria-selected:bg-macaron-active pl-4 pr-3 relative",
+        "h-7 flex items-center gap-2 group aria-selected:bg-macaron-active px-3 relative",
         hovered && "ring-1 ring-inset ring-macaron-active"
       )}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <div className="w-4 h-4" />
+      <Icon icon={switchIcon} className="text-xs text-macaron-disabledText" />
       <span className="flex-1">Default</span>
     </div>
   );
 });
 
 export const ComponentPane: React.FC = observer(function ComponentPane() {
-  let _component: ComponentNode | undefined;
+  let _component: Node | undefined;
   for (const selectable of projectState.selectedSelectables) {
     if (selectable.node.type === "component") {
       _component = selectable.node;
@@ -319,34 +294,7 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
 
   return (
     <>
-      <InspectorPane>
-        <InspectorHeading
-          text={
-            <div className="flex items-center">
-              <Icon
-                className={"mr-1.5 text-xs text-macaron-component"}
-                icon={widgetsIcon}
-              />
-              {component.name}
-            </div>
-          }
-        />
-      </InspectorPane>
-      <InspectorPane>
-        <InspectorHeading
-          text="Web Page"
-          dimmed
-          buttons={
-            <IconButton
-              icon={addIcon}
-              onClick={() => {
-                // TODO
-              }}
-            />
-          }
-        />
-      </InspectorPane>
-      <InspectorPane>
+      {/* <InspectorPane>
         <InspectorHeading
           text="Properties"
           buttons={
@@ -395,10 +343,18 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
             ))}
           </ReactSortable>
         </div>
-      </InspectorPane>
+      </InspectorPane> */}
       <InspectorPane>
         <InspectorHeading
-          text="Variants & Breakpoints"
+          text={
+            <div className="flex items-center">
+              <Icon
+                className={"mr-1.5 text-xs text-macaron-component"}
+                icon={widgetsIcon}
+              />
+              {component.name}
+            </div>
+          }
           buttons={
             <DropdownMenu
               trigger={(props) => <IconButton icon={addIcon} {...props} />}
@@ -407,26 +363,31 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
                   type: "command",
                   text: "Add Variant",
                   onClick: action(() => {
-                    const variant = Variant.create();
-                    variant.condition = {
-                      type: "interaction",
-                      value: "hover",
-                    };
-                    component.variants.push(variant);
-                    projectState.history.commit();
+                    component.append([
+                      {
+                        type: "variant",
+                        condition: {
+                          type: "hover",
+                        },
+                      },
+                    ]);
+                    projectState.undoManager.stopCapturing();
                   }),
                 },
                 {
                   type: "command",
                   text: "Add Breakpoint",
                   onClick: action(() => {
-                    const variant = Variant.create();
-                    variant.condition = {
-                      type: "maxWidth",
-                      value: 720,
-                    };
-                    component.variants.push(variant);
-                    projectState.history.commit();
+                    component.append([
+                      {
+                        type: "variant",
+                        condition: {
+                          type: "maxWidth",
+                          value: 767,
+                        },
+                      },
+                    ]);
+                    projectState.undoManager.stopCapturing();
                   }),
                 },
               ]}
@@ -437,23 +398,30 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
           <DefaultVariantRow component={component} />
           <ReactSortable
             handle={`.${dragHandleClass}`}
-            list={component.variants.map((variant) => ({
-              id: variant?.id,
-            }))}
+            list={component.children
+              .filter((v) => v.type === "variant")
+              .map((variant) => ({
+                id: variant?.id,
+              }))}
             setList={action((list: { id: string }[]) => {
               const variantForID = new Map(
-                component.variants.map((variant) => [variant.id, variant])
+                component.children.map((variant) => [variant.id, variant])
               );
               const newVariants = compact(
                 list.map((item) => variantForID.get(item.id))
-              );
-              component.variants.replace(newVariants);
-              projectState.history.commit();
+              ).filter((v) => v.type === "variant");
+              const newVariantJSONs = newVariants.map((v) => v.toJSON());
+              component.delete(1, component.children.length - 1);
+              component.insert(1, newVariantJSONs);
+
+              projectState.undoManager.stopCapturing();
             })}
           >
-            {component.variants.map((v) => (
-              <VariantRow key={v.id} component={component} variant={v} />
-            ))}
+            {component.children
+              .filter((v) => v.type === "variant")
+              .map((v) => (
+                <VariantRow key={v.id} component={component} variant={v} />
+              ))}
           </ReactSortable>
         </div>
       </InspectorPane>
@@ -482,19 +450,6 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
             ))}
         </div>
       </InspectorPane> */}
-      <InspectorPane>
-        <InspectorHeading
-          text="Scripts"
-          buttons={
-            <IconButton
-              icon={openInNewIcon}
-              onClick={action(() => {
-                // TODO
-              })}
-            />
-          }
-        />
-      </InspectorPane>
     </>
   );
 });

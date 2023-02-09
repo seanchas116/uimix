@@ -1,5 +1,6 @@
 import { Rect, Vec2 } from "paintvec";
-import { Selectable } from "../../../models/Selectable";
+import { moveSelectables, Selectable } from "../../../models/Selectable";
+import { resizeWithBoundingBox } from "../../../services/Resize";
 import { projectState } from "../../../state/ProjectState";
 import { scrollState } from "../../../state/ScrollState";
 import { snapper } from "../../../state/Snapper";
@@ -27,7 +28,7 @@ export class NodeAbsoluteMoveDragHandler implements DragHandler {
 
     for (const [instance, bbox] of this.targets) {
       const newRect = bbox.translate(snappedOffset);
-      instance.resizeWithBoundingBox(newRect, {
+      resizeWithBoundingBox(instance, newRect, {
         x: true,
         y: true,
       });
@@ -43,38 +44,37 @@ export class NodeAbsoluteMoveDragHandler implements DragHandler {
       this.initWholeBBox.translate(offset)
     );
 
-    const parent = overridesAtPos.find((dst) => {
-      // cannot move inside itself
-      if (
-        [...this.targets.keys()].some((target) =>
-          target.node.includes(dst.node)
-        )
-      ) {
-        return false;
-      }
+    const parent =
+      overridesAtPos.find((dst) => {
+        // cannot move inside itself
+        if ([...this.targets.keys()].some((target) => target.includes(dst))) {
+          return false;
+        }
 
-      // cannot move inside a frame that does not fully contain the dragged layers
-      const dstRect = dst.computedRect;
-      if (
-        !(
-          dstRect.includes(snappedRect.topLeft) &&
-          dstRect.includes(snappedRect.bottomRight)
-        )
-      ) {
-        return false;
-      }
+        // cannot move inside a frame that does not fully contain the dragged layers
+        const dstRect = dst.computedRect;
+        if (
+          !(
+            dstRect.includes(snappedRect.topLeft) &&
+            dstRect.includes(snappedRect.bottomRight)
+          )
+        ) {
+          return false;
+        }
 
-      return true;
-    });
+        return true;
+      }) ?? projectState.document.rootSelectable;
 
     for (const instance of this.targets.keys()) {
-      if (instance.parent !== parent) {
-        parent?.node.append([instance.node]);
+      if (
+        instance.parent?.node.type !== "component" &&
+        instance.parent !== parent
+      ) {
+        // TODO: adjust position based on new offset parent
+        moveSelectables(parent, undefined, [instance]);
       }
-
-      // TODO: adjust position based on new offset parent
     }
-    projectState.history.commit("Move Layers");
+    projectState.undoManager.stopCapturing();
   }
 
   private readonly targets = new Map<Selectable, Rect>();

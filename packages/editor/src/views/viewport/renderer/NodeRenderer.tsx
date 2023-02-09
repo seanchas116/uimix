@@ -3,7 +3,6 @@ import { StackDirection } from "node-data";
 import React, { createRef, useEffect } from "react";
 import { Selectable } from "../../../models/Selectable";
 import { buildNodeCSS } from "./buildNodeCSS";
-import { InstanceRenderer } from "./InstanceRenderer";
 import { ComputedRectProvider } from "./ComputedRectProvider";
 
 export const selectableForDOM = new WeakMap<HTMLElement, Selectable>();
@@ -36,11 +35,9 @@ export const NodeRenderer: React.FC<{
   parentStackDirection?: StackDirection;
 }> = observer(({ selectable, parentStackDirection }) => {
   const style = selectable.style;
-  const cssStyle = buildNodeCSS(
-    selectable.node.type,
-    selectable.style,
-    parentStackDirection
-  );
+  const type = selectable.node.type;
+
+  const cssStyle = buildNodeCSS(type, style, parentStackDirection);
 
   const ref = createRef<HTMLDivElement | HTMLImageElement>();
 
@@ -60,69 +57,71 @@ export const NodeRenderer: React.FC<{
     computedRectUpdater.flush();
   });
 
-  const childParentStackDirection =
-    selectable.node.type === "stack" ? style.stackDirection : undefined;
+  const stackDirection =
+    type === "frame" && style.layout === "stack"
+      ? style.stackDirection
+      : undefined;
 
-  if (selectable.node.type === "instance") {
-    return (
-      <InstanceRenderer
-        instanceSelectable={selectable}
-        domRef={ref}
-        parentStackDirection={childParentStackDirection}
-      />
-    );
-  }
+  // if (selectable.node.type === "instance") {
+  //   return (
+  //     <InstanceRenderer
+  //       instanceSelectable={selectable}
+  //       domRef={ref}
+  //       parentStackDirection={stackDirection}
+  //     />
+  //   );
+  // }
 
-  if (selectable.node.type === "shape") {
-    const pathData = selectable.node.path.toSVGPathData();
-    return (
-      <div style={cssStyle} ref={ref}>
-        <svg
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-          viewBox={[
-            selectable.node.viewBox.left,
-            selectable.node.viewBox.top,
-            selectable.node.viewBox.width,
-            selectable.node.viewBox.height,
-          ].join(" ")}
-          preserveAspectRatio="none"
-        >
-          <path fillRule="evenodd" d={pathData} />
-        </svg>
-      </div>
-    );
-  }
+  // if (selectable.node.type === "shape") {
+  //   const pathData = selectable.node.path.toSVGPathData();
+  //   return (
+  //     <div style={cssStyle} ref={ref}>
+  //       <svg
+  //         style={{
+  //           width: "100%",
+  //           height: "100%",
+  //         }}
+  //         viewBox={[
+  //           selectable.node.viewBox.left,
+  //           selectable.node.viewBox.top,
+  //           selectable.node.viewBox.width,
+  //           selectable.node.viewBox.height,
+  //         ].join(" ")}
+  //         preserveAspectRatio="none"
+  //       >
+  //         <path fillRule="evenodd" d={pathData} />
+  //       </svg>
+  //     </div>
+  //   );
+  // }
 
-  if (selectable.node.type === "image") {
-    return (
-      <img
-        style={{
-          // reset Tailwind styles
-          maxWidth: "unset",
-          height: "unset",
-          objectFit: "cover",
-          ...cssStyle,
-        }}
-        src={selectable.node.source.dataURL}
-        width={selectable.node.source.width}
-        height={selectable.node.source.height}
-        ref={ref as React.RefObject<HTMLImageElement>}
-      />
-    );
-  }
+  // if (selectable.node.type === "image") {
+  //   return (
+  //     <img
+  //       style={{
+  //         // reset Tailwind styles
+  //         maxWidth: "unset",
+  //         height: "unset",
+  //         objectFit: "cover",
+  //         ...cssStyle,
+  //       }}
+  //       src={selectable.node.source.dataURL}
+  //       width={selectable.node.source.width}
+  //       height={selectable.node.source.height}
+  //       ref={ref as React.RefObject<HTMLImageElement>}
+  //     />
+  //   );
+  // }
 
   return (
     <div style={cssStyle} ref={ref}>
-      {selectable.node.type === "text"
-        ? String(selectable.node.content) // support prop ref
+      {type === "text"
+        ? String(style.textContent) // support prop ref
         : selectable.children.map((child) => (
             <NodeRenderer
-              key={child.key}
+              key={child.id}
               selectable={child}
-              parentStackDirection={childParentStackDirection}
+              parentStackDirection={stackDirection}
             />
           ))}
     </div>

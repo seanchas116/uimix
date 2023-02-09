@@ -10,12 +10,10 @@ import rectIcon from "@seanchas116/design-icons/json/rect.json";
 import hStackIcon from "@seanchas116/design-icons/json/h-stack.json";
 import vStackIcon from "@seanchas116/design-icons/json/v-stack.json";
 import textIcon from "@seanchas116/design-icons/json/text.json";
-import switchIcon from "@seanchas116/design-icons/json/switch.json";
-import { Selectable } from "../../models/Selectable";
+import { moveSelectables, Selectable } from "../../models/Selectable";
 import { projectState } from "../../state/ProjectState";
 import { DoubleClickToEdit } from "../../components/DoubleClickToEdit";
 import { commands } from "../../state/Commands";
-import { moveSelectablesInTree } from "../../services/MoveSelectablesInTree";
 import {
   DropBetweenIndicator,
   DropOverIndicator,
@@ -33,7 +31,7 @@ function selectableToTreeViewItem(
   parent?: NodeTreeViewItem
 ): NodeTreeViewItem {
   const item: NodeTreeViewItem = {
-    key: selectable.key,
+    key: selectable.id,
     parent,
     selectable,
     children: [],
@@ -79,7 +77,7 @@ const TreeRow: React.FC<{
         rows[i].item.selectable.select();
       }
     } else {
-      selectable.root.deselect();
+      projectState.document.rootSelectable.deselect();
       selectable.select();
     }
   });
@@ -99,14 +97,18 @@ const TreeRow: React.FC<{
   const icon = (() => {
     switch (selectable.node.type) {
       default:
-      case "frame":
-        return rectIcon;
-      case "stack":
-        if (selectable.style.stackDirection === "x") {
-          return hStackIcon;
-        } else {
-          return vStackIcon;
+      case "frame": {
+        const layout = selectable.style.layout;
+        if (layout === "stack") {
+          const dir = selectable.style.stackDirection;
+          if (dir === "x") {
+            return hStackIcon;
+          } else {
+            return vStackIcon;
+          }
         }
+        return rectIcon;
+      }
       case "text":
         return textIcon;
       case "component":
@@ -120,7 +122,7 @@ const TreeRow: React.FC<{
     e.preventDefault();
 
     if (!selectable.selected) {
-      selectable.root.deselect();
+      projectState.document.rootSelectable.deselect();
       selectable.select();
     }
 
@@ -151,7 +153,7 @@ const TreeRow: React.FC<{
         value={selectable.collapsed}
         onChange={onCollapsedChange}
       />
-      {selectable.isVariant ? (
+      {/* {selectable.isVariant ? (
         <>
           <Icon
             className={clsx(
@@ -171,27 +173,27 @@ const TreeRow: React.FC<{
             {selectable.variant?.displayName ?? "Default"}
           </span>
         </>
-      ) : (
-        <>
-          <Icon
-            className={clsx(
-              "mr-1.5 text-xs",
-              !selected && isComponent
-                ? "text-macaron-component"
-                : "text-macaron-disabledText"
-            )}
-            icon={icon}
-          />
-          <DoubleClickToEdit
-            className={clsx("flex-1 h-full", { "font-semibold": isComponent })}
-            value={selectable.node.name}
-            onChange={action((name: string) => {
-              selectable.node.name = name;
-              projectState.history.commit();
-            })}
-          />
-        </>
-      )}
+      ) : ( */}
+      <>
+        <Icon
+          className={clsx(
+            "mr-1.5 text-xs",
+            !selected && isComponent
+              ? "text-macaron-component"
+              : "text-macaron-disabledText"
+          )}
+          icon={icon}
+        />
+        <DoubleClickToEdit
+          className={clsx("flex-1 h-full", { "font-semibold": isComponent })}
+          value={selectable.originalNode.name}
+          onChange={action((name: string) => {
+            selectable.originalNode.name = name;
+            projectState.undoManager.stopCapturing();
+          })}
+        />
+      </>
+      {/* )} */}
     </div>
   );
 });
@@ -224,12 +226,12 @@ export const NodeTreeView: React.FC = observer(() => {
       dropBetweenIndicator={DropBetweenIndicator}
       dropOverIndicator={DropOverIndicator}
       handleDragStart={({ item }) => {
-        if (item.selectable.isVariant) {
-          return false;
-        }
+        // if (item.selectable.isVariant) {
+        //   return false;
+        // }
 
         if (!item.selectable.selected) {
-          item.selectable.root.deselect();
+          projectState.document.rootSelectable.deselect();
           item.selectable.select();
         }
         return true;
@@ -237,19 +239,19 @@ export const NodeTreeView: React.FC = observer(() => {
       canDrop={({ item, draggedItem }) => {
         return (
           !!draggedItem &&
-          item.selectable.node.canHaveChildren &&
+          item.selectable.canInsertChild &&
           item.selectable.node.type !== "component"
         );
       }}
       handleDrop={({ item, draggedItem, before }) => {
         runInAction(() => {
           if (draggedItem) {
-            moveSelectablesInTree(
+            moveSelectables(
               item.selectable,
               before?.selectable,
               projectState.selectedSelectables
             );
-            projectState.history.commit();
+            projectState.undoManager.stopCapturing();
           }
         });
       }}

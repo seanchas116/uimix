@@ -1,5 +1,5 @@
 import { StackDirection } from "node-data";
-import { groupLikeNodeTypes, Node } from "../../../models/Node";
+import { Node } from "../../../models/Node";
 import { IStyle } from "../../../models/Style";
 
 export function buildNodeCSS(
@@ -7,7 +7,7 @@ export function buildNodeCSS(
   style: IStyle,
   parentStackDirection?: StackDirection
 ): React.CSSProperties {
-  if (groupLikeNodeTypes.includes(nodeType)) {
+  if (nodeType === "component") {
     return {};
   }
 
@@ -56,7 +56,7 @@ export function buildNodeCSS(
     }
   }
 
-  if (nodeType === "stack") {
+  if (nodeType === "frame") {
     cssStyle.display = "flex";
     cssStyle.flexDirection = style.stackDirection === "x" ? "row" : "column";
     cssStyle.alignItems = (() => {
@@ -86,26 +86,20 @@ export function buildNodeCSS(
     cssStyle.paddingRight = style.paddingRight + "px";
     cssStyle.paddingTop = style.paddingTop + "px";
     cssStyle.paddingBottom = style.paddingBottom + "px";
-  }
 
-  if (nodeType === "stack" || nodeType === "frame") {
-    cssStyle.background = style.fill?.toHex();
+    cssStyle.background = style.fill ?? "transparent";
     cssStyle.borderStyle = "solid";
-    cssStyle.borderColor = style.border?.toHex() ?? "transparent";
+    cssStyle.borderColor = style.border ?? "transparent";
     cssStyle.borderTopWidth = style.borderTopWidth + "px";
     cssStyle.borderRightWidth = style.borderRightWidth + "px";
     cssStyle.borderBottomWidth = style.borderBottomWidth + "px";
     cssStyle.borderLeftWidth = style.borderLeftWidth + "px";
   }
 
-  if (nodeType === "shape") {
-    cssStyle.fill = style.fill?.toHex();
-  }
-
   if (nodeType === "text") {
     cssStyle.display = "flex";
     cssStyle.flexDirection = "column";
-    cssStyle.color = style.fill?.toHex();
+    cssStyle.color = style.fill ?? "black";
     cssStyle.fontFamily = style.fontFamily;
     cssStyle.fontSize = style.fontSize + "px";
     cssStyle.fontWeight = style.fontWeight;

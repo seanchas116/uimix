@@ -42,7 +42,7 @@ const StackAlignmentEdit = observer(function StackAlignmentEdit({
           selectable.style.stackAlign = align ?? "start";
           selectable.style.stackJustify = justify ?? "start";
         }
-        projectState.history.commit();
+        projectState.undoManager.stopCapturing();
       })}
     />
   );
@@ -66,10 +66,10 @@ const stackDirectionOptions: ToggleGroupItem<StackDirection>[] = [
 
 export const StackPane: React.FC = observer(function StackPane() {
   const frameStackSelectables = projectState.selectedSelectables.filter(
-    (s) => s.node.type === "stack" || s.node.type === "frame"
+    (s) => s.node.type === "frame"
   );
   const stackSelectables = frameStackSelectables.filter(
-    (s) => s.node.type === "stack"
+    (s) => s.style.layout === "stack"
   );
 
   const hasStack = stackSelectables.length > 0;

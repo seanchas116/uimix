@@ -1,43 +1,26 @@
-import { computed, makeObservable, observable } from "mobx";
-import { History } from "../models/History";
+import { computed, makeObservable } from "mobx";
+import * as Y from "yjs";
+import { Document } from "../models/Document";
 import { Selectable } from "../models/Selectable";
-import { Project, ProjectJSON } from "../models/Project";
-import { generateExampleNodes } from "./generateExampleNodes";
+import { generateExampleNodes } from "./generateExampleNodes2";
 
 export class ProjectState {
   constructor() {
-    this.history = new History(this.document, {
-      shouldIgnoreChanges: () => this.project.duringRemoteUpdate,
-    });
-
+    const ydoc = new Y.Doc();
+    const documentData = ydoc.getMap("document");
+    this.document = new Document(documentData);
+    this.undoManager = new Y.UndoManager(documentData);
+    generateExampleNodes(this.document);
     makeObservable(this);
-
-    generateExampleNodes(this.project.document);
   }
 
-  toProjectJSON(): ProjectJSON {
-    return this.project.toJSON();
-  }
+  // TODO: undo/redo
 
-  loadProjectJSON(projectJSON: ProjectJSON) {
-    this.project.loadJSON(projectJSON);
-    this.history.clear();
-  }
+  readonly document: Document;
+  readonly undoManager: Y.UndoManager;
 
-  @observable fileName = "Untitled"; // TODO
-
-  readonly project = new Project();
-
-  @observable loaded = false;
-
-  get document() {
-    return this.project.document;
-  }
-
-  @observable.ref history: History;
-
-  get rootSelectable(): Selectable {
-    return Selectable.get(this.document);
+  @computed get rootSelectable(): Selectable {
+    return this.document.getSelectable([this.document.root.id]);
   }
 
   @computed get selectedSelectables(): Selectable[] {

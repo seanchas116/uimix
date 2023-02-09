@@ -1,5 +1,5 @@
 import { runInAction } from "mobx";
-import { ProjectJSON } from "../models/Project";
+import { DocumentJSON } from "../models/Document";
 import { projectState } from "./ProjectState";
 
 const filePickerOptions = {
@@ -15,7 +15,7 @@ const filePickerOptions = {
 
 export async function exportToJSON() {
   const fileHandle = await showSaveFilePicker(filePickerOptions);
-  const projectJSON = projectState.toProjectJSON();
+  const projectJSON = projectState.document.toJSON();
   const writable = await fileHandle.createWritable();
   await writable.write(JSON.stringify(projectJSON));
   await writable.close();
@@ -24,9 +24,10 @@ export async function exportToJSON() {
 export async function importJSON() {
   const [fileHandle] = await showOpenFilePicker(filePickerOptions);
   const data = await (await fileHandle.getFile()).text();
-  const projectJSON = ProjectJSON.parse(JSON.parse(data));
+  // TODO: validate
+  const projectJSON = JSON.parse(data) as DocumentJSON;
 
   runInAction(() => {
-    projectState.loadProjectJSON(projectJSON);
+    projectState.document.loadJSON(projectJSON);
   });
 }

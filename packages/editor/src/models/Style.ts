@@ -1,27 +1,22 @@
 import { isEqual } from "lodash-es";
-import { makeObservable, observable } from "mobx";
 import {
-  AllStyleData,
-  CommonStyleMixin,
-  FrameStyleData,
   PositionConstraint,
   SizeConstraint,
   StackAlign,
   StackDirection,
   StackJustify,
-  StackStyleData,
   TextHorizontalAlign,
-  TextStyleData,
   TextVerticalAlign,
 } from "node-data";
-import { Color } from "../utils/Color";
-import { ObservableChangeWatcher } from "../utils/ObservableChangeWatcher";
+import { ObservableYMap } from "../utils/ObservableYMap";
+import * as Y from "yjs";
 
 export interface IStyle {
   position: {
     readonly x: PositionConstraint;
     readonly y: PositionConstraint;
   };
+  absolute: boolean;
   width: SizeConstraint;
   height: SizeConstraint;
 
@@ -30,15 +25,16 @@ export interface IStyle {
   bottomRightRadius: number;
   bottomLeftRadius: number;
 
-  fill: Color | null;
-  border: Color | null;
+  fill: string | null;
+  border: string | null;
   borderTopWidth: number;
   borderRightWidth: number;
   borderBottomWidth: number;
   borderLeftWidth: number;
 
-  // stack (auto layout)
+  // layout
 
+  layout: "none" | "stack"; // TODO: grid
   stackDirection: StackDirection;
   stackAlign: StackAlign;
   stackJustify: StackJustify;
@@ -50,6 +46,7 @@ export interface IStyle {
 
   // text
 
+  textContent: string;
   fontFamily: string;
   fontWeight: number;
   fontSize: number;
@@ -57,6 +54,10 @@ export interface IStyle {
   letterSpacing: number;
   textHorizontalAlign: TextHorizontalAlign;
   textVerticalAlign: TextVerticalAlign;
+
+  // instance
+
+  mainComponentID: string | null;
 }
 
 export const defaultStyle: IStyle = {
@@ -70,6 +71,7 @@ export const defaultStyle: IStyle = {
       start: 0,
     },
   },
+  absolute: false,
   width: {
     type: "fixed",
     value: 0,
@@ -93,6 +95,7 @@ export const defaultStyle: IStyle = {
 
   // stack (auto layout)
 
+  layout: "none",
   stackDirection: "x",
   stackAlign: "start",
   stackJustify: "start",
@@ -104,6 +107,7 @@ export const defaultStyle: IStyle = {
 
   // text
 
+  textContent: "",
   fontFamily: "Inter",
   fontWeight: 400,
   fontSize: 16,
@@ -111,211 +115,73 @@ export const defaultStyle: IStyle = {
   letterSpacing: 0,
   textHorizontalAlign: "start",
   textVerticalAlign: "start",
+
+  // instance
+  mainComponentID: null,
 };
 
 export class PartialStyle implements Partial<IStyle> {
-  constructor({
-    onWillChange,
-    onDidChange,
-  }: {
-    onWillChange: () => void;
-    onDidChange: () => void;
-  }) {
-    makeObservable(this);
-    new ObservableChangeWatcher(this, onWillChange, onDidChange);
+  constructor(data: Y.Map<any>) {
+    this.data = ObservableYMap.get(data);
   }
+  data: ObservableYMap<any>;
 
-  @observable.ref position:
-    | { x: PositionConstraint; y: PositionConstraint }
-    | undefined = undefined;
-  @observable.ref width: SizeConstraint | undefined = undefined;
-  @observable.ref height: SizeConstraint | undefined = undefined;
-
-  @observable topLeftRadius: number | undefined = undefined;
-  @observable topRightRadius: number | undefined = undefined;
-  @observable bottomRightRadius: number | undefined = undefined;
-  @observable bottomLeftRadius: number | undefined = undefined;
-
-  @observable fill: Color | null | undefined = undefined;
-  @observable border: Color | null | undefined = undefined;
-  @observable borderTopWidth: number | undefined = undefined;
-  @observable borderRightWidth: number | undefined = undefined;
-  @observable borderBottomWidth: number | undefined = undefined;
-  @observable borderLeftWidth: number | undefined = undefined;
-
-  // stack (auto layout)
-
-  @observable stackDirection: StackDirection | undefined = undefined;
-  @observable stackAlign: StackAlign | undefined = undefined;
-  @observable stackJustify: StackJustify | undefined = undefined;
-  @observable gap: number | undefined = undefined;
-  @observable paddingTop: number | undefined = undefined;
-  @observable paddingRight: number | undefined = undefined;
-  @observable paddingBottom: number | undefined = undefined;
-  @observable paddingLeft: number | undefined = undefined;
-
-  // text
-
-  @observable fontFamily: string | undefined = undefined;
-  @observable fontWeight: number | undefined = undefined;
-  @observable fontSize: number | undefined = undefined;
-  @observable lineHeight: number | undefined = undefined;
-  @observable letterSpacing: number | undefined = undefined;
-  @observable textHorizontalAlign: TextHorizontalAlign | undefined = undefined;
-  @observable textVerticalAlign: TextVerticalAlign | undefined = undefined;
-}
-
-export function createCascadedStyle(
-  style: PartialStyle,
-  parent: IStyle
-): IStyle {
-  const cascaded = {};
-
-  for (const key of Object.keys(defaultStyle) as (keyof IStyle)[]) {
-    Object.defineProperty(cascaded, key, {
-      get: () => {
-        if (style[key] !== undefined) {
-          return style[key];
-        }
-        return parent[key];
-      },
-      set: (value) => {
-        if (isEqual(value, parent[key])) {
-          style[key] = undefined;
-        } else {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          style[key] = value;
-        }
-      },
-    });
+  toJSON() {
+    return this.data.toJSON();
   }
-
-  return cascaded as IStyle;
+  loadJSON(json: Partial<IStyle>) {
+    this.data.clear();
+    for (const [key, value] of Object.entries(json)) {
+      this.data.set(key, value);
+    }
+  }
 }
 
-export function serializeCommonStyle(style: IStyle): CommonStyleMixin;
-export function serializeCommonStyle(
-  style: Partial<IStyle>
-): Partial<CommonStyleMixin>;
-export function serializeCommonStyle(
-  style: Partial<IStyle>
-): Partial<CommonStyleMixin> {
-  return {
-    x: style.position?.x,
-    y: style.position?.y,
-    width: style.width,
-    height: style.height,
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface PartialStyle extends Partial<IStyle> {}
 
-    fill: style.fill ? style.fill.toHex() : style.fill,
-    border: style.border ? style.border.toHex() : style.border,
-    borderTopWidth: style.borderTopWidth,
-    borderRightWidth: style.borderRightWidth,
-    borderBottomWidth: style.borderBottomWidth,
-    borderLeftWidth: style.borderLeftWidth,
-  };
+for (const key of Object.keys(defaultStyle)) {
+  Object.defineProperty(PartialStyle.prototype, key, {
+    get: function (this: PartialStyle) {
+      return this.data.get(key);
+    },
+    set(this: PartialStyle, value) {
+      if (value === undefined) {
+        this.data.delete(key);
+      } else {
+        this.data.set(key, value);
+      }
+    },
+  });
 }
 
-export function serializeFrameStyle(style: IStyle): FrameStyleData;
-export function serializeFrameStyle(
-  style: Partial<IStyle>
-): Partial<FrameStyleData>;
-export function serializeFrameStyle(
-  style: Partial<IStyle>
-): Partial<FrameStyleData> {
-  return {
-    ...serializeCommonStyle(style),
-    topLeftRadius: style.topLeftRadius,
-    topRightRadius: style.topRightRadius,
-    bottomRightRadius: style.bottomRightRadius,
-    bottomLeftRadius: style.bottomLeftRadius,
-  };
+export class CascadedStyle implements IStyle {
+  constructor(style: PartialStyle, parent: IStyle) {
+    this.style = style;
+    this.parent = parent;
+  }
+  style: PartialStyle;
+  parent: IStyle;
 }
 
-export function serializeStackStyle(style: IStyle): StackStyleData;
-export function serializeStackStyle(
-  style: Partial<IStyle>
-): Partial<StackStyleData>;
-export function serializeStackStyle(
-  style: Partial<IStyle>
-): Partial<StackStyleData> {
-  return {
-    ...serializeFrameStyle(style),
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface CascadedStyle extends IStyle {}
 
-    stackDirection: style.stackDirection,
-    stackAlign: style.stackAlign,
-    stackJustify: style.stackJustify,
-    gap: style.gap,
-    paddingTop: style.paddingTop,
-    paddingRight: style.paddingRight,
-    paddingBottom: style.paddingBottom,
-    paddingLeft: style.paddingLeft,
-  };
-}
-
-export function serializeTextStyle(style: IStyle): TextStyleData;
-export function serializeTextStyle(
-  style: Partial<IStyle>
-): Partial<TextStyleData>;
-export function serializeTextStyle(
-  style: Partial<IStyle>
-): Partial<TextStyleData> {
-  return {
-    ...serializeCommonStyle(style),
-
-    fontFamily: style.fontFamily,
-    fontWeight: style.fontWeight,
-    fontSize: style.fontSize,
-    lineHeight: style.lineHeight,
-    letterSpacing: style.letterSpacing,
-    textHorizontalAlign: style.textHorizontalAlign,
-    textVerticalAlign: style.textVerticalAlign,
-  };
-}
-
-export function serializeAllStyle(
-  style: Partial<IStyle>
-): Partial<AllStyleData> {
-  return {
-    ...serializeFrameStyle(style),
-    ...serializeStackStyle(style),
-    ...serializeTextStyle(style),
-  };
-}
-
-export function deserializeStyle(
-  style: PartialStyle,
-  data: Partial<AllStyleData>
-) {
-  style.position = data.x && data.y && { x: data.x, y: data.y };
-  style.width = data.width;
-  style.height = data.height;
-
-  style.fill = data.fill != null ? Color.from(data.fill) : data.fill;
-  style.border = data.border != null ? Color.from(data.border) : data.border;
-  style.borderTopWidth = data.borderTopWidth;
-  style.borderRightWidth = data.borderRightWidth;
-  style.borderBottomWidth = data.borderBottomWidth;
-  style.borderLeftWidth = data.borderLeftWidth;
-
-  style.topLeftRadius = data.topLeftRadius;
-  style.topRightRadius = data.topRightRadius;
-  style.bottomRightRadius = data.bottomRightRadius;
-  style.bottomLeftRadius = data.bottomLeftRadius;
-
-  style.stackDirection = data.stackDirection;
-  style.stackAlign = data.stackAlign;
-  style.stackJustify = data.stackJustify;
-  style.gap = data.gap;
-  style.paddingTop = data.paddingTop;
-  style.paddingRight = data.paddingRight;
-  style.paddingBottom = data.paddingBottom;
-  style.paddingLeft = data.paddingLeft;
-
-  style.fontFamily = data.fontFamily;
-  style.fontWeight = data.fontWeight;
-  style.fontSize = data.fontSize;
-  style.lineHeight = data.lineHeight;
-  style.letterSpacing = data.letterSpacing;
-  style.textHorizontalAlign = data.textHorizontalAlign;
-  style.textVerticalAlign = data.textVerticalAlign;
+for (const key of Object.keys(defaultStyle) as (keyof IStyle)[]) {
+  Object.defineProperty(CascadedStyle.prototype, key, {
+    get(this: CascadedStyle) {
+      if (this.style[key] !== undefined) {
+        return this.style[key];
+      }
+      return this.parent[key];
+    },
+    set(this: CascadedStyle, value) {
+      if (isEqual(value, this.parent[key])) {
+        this.style[key] = undefined;
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        this.style[key] = value;
+      }
+    },
+  });
 }

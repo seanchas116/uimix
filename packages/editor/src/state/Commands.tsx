@@ -1,104 +1,95 @@
+import { action, computed, runInAction } from "mobx";
+import { isTextInput } from "../utils/Focus";
+import { blobToDataURL, imageFromURL } from "../utils/Blob";
+import { Shortcut } from "../utils/Shortcut";
+import { Selectable } from "../models/Selectable";
+import { exportToJSON as exportJSON, importJSON } from "./JSONExport";
+import { viewportState } from "./ViewportState";
 import { projectState } from "./ProjectState";
 import { handleShortcut, MenuCommandDef, MenuItemDef } from "./MenuItemDef";
-import { action, computed } from "mobx";
-import { Selectable } from "../models/Selectable";
-import { Shortcut } from "../utils/Shortcut";
-import { InstanceNodeData, NodeHierarchyData } from "node-data";
 import { Clipboard } from "./Clipboard";
 import { autoLayout, removeLayout } from "../services/AutoLayout";
 import { createComponent } from "../services/CreateComponent";
-import { Node } from "../models/Node";
-import { ComponentNode } from "../models/ComponentNode";
-import { isTextInput } from "../utils/Focus";
-import { blobToDataURL, imageFromURL } from "../utils/Blob";
-import { generateID } from "../utils/ID";
-import { exportToJSON as exportJSON, importJSON } from "./JSONExport";
-import { viewportState } from "./ViewportState";
+import { toDocumentJSON } from "../models/Document";
 
 class Commands {
   @computed get canUndo(): boolean {
-    return projectState.history.canUndo;
+    // TODO
+    return true;
   }
   @computed get canRedo(): boolean {
-    return projectState.history.canRedo;
+    // TODO
+    return true;
   }
 
   undo(): void {
-    projectState.history.undo();
+    projectState.undoManager.undo();
   }
   redo(): void {
-    projectState.history.redo();
+    projectState.undoManager.redo();
   }
 
   async cut() {
-    // TODO
+    throw new Error("Not implemented");
   }
 
   async copy() {
-    const serializeHierarchy = (node: Node): NodeHierarchyData => {
-      let component: ComponentNode | undefined;
-      if (node.type === "component") {
-        component = node;
-      } else if (node.parent?.type === "component") {
-        // variant root
-        component = node.parent;
-      }
-
-      if (component) {
-        const instanceData: InstanceNodeData = {
-          type: "instance",
-          id: generateID(),
-          name: component.name,
-          index: 0,
-          componentID: component.id,
-          style: {},
-          styleForVariant: {},
-        };
-        return {
-          node: instanceData,
-          children: [],
-        };
-      }
-
-      return {
-        node: node.serialize(),
-        children: node.children.map(serializeHierarchy),
-      };
-    };
-
-    const encoded = projectState.selectedSelectables.map((s) =>
-      serializeHierarchy(s.node)
-    );
-    await Clipboard.writeNodes(encoded);
+    // TODO: copy from instance contents
+    const json = toDocumentJSON(projectState.selectedSelectables);
+    await Clipboard.writeNodes(json);
   }
 
   async paste() {
-    const datas = await Clipboard.readNodes();
+    const data = await Clipboard.readNodes();
 
-    const deserializeHierarchy = (data: NodeHierarchyData) => {
-      const node = projectState.document.createNode(data.node.type, undefined);
-      node.deserialize(data.node);
-      const children = data.children.map(deserializeHierarchy);
-      node.append(children);
-      return node;
-    };
-    const nodes = datas.map(deserializeHierarchy);
+    runInAction(() => {
+      const getInsertionTarget = () => {
+        const defaultTarget = {
+          parent: projectState.document.rootSelectable,
+          index: projectState.document.rootSelectable.children.length,
+        };
 
-    // insert
-    projectState.document.append(nodes);
+        const selectedSelectables = projectState.selectedSelectables;
+        let lastSelectable: Selectable | undefined =
+          selectedSelectables[selectedSelectables.length - 1];
+        while (lastSelectable && lastSelectable.idPath.length > 1) {
+          lastSelectable = lastSelectable.parent;
+        }
+        if (!lastSelectable) {
+          return defaultTarget;
+        }
 
-    projectState.rootSelectable.deselect();
-    for (const node of nodes) {
-      Selectable.get(node).select();
-    }
-    projectState.history.commit();
+        const parent = lastSelectable?.parent;
+        if (!parent) {
+          return defaultTarget;
+        }
+
+        const index = parent.children.indexOf(lastSelectable) + 1;
+        return { parent, index };
+      };
+
+      const insertionTarget = getInsertionTarget();
+      projectState.document.rootSelectable.deselect();
+      const selectables = insertionTarget.parent.insert(
+        insertionTarget.index,
+        data.nodes
+      );
+      for (const [id, styleJSON] of Object.entries(data.styles)) {
+        const selectable = projectState.document.getSelectable(id.split(":"));
+        if (selectable) {
+          selectable.selfStyle.loadJSON(styleJSON);
+        }
+      }
+      for (const selectable of selectables) {
+        selectable.select();
+      }
+    });
   }
 
   delete() {
     for (const selected of projectState.selectedSelectables) {
       selected.node.remove();
     }
-    projectState.history.commit();
   }
 
   insertFrame() {
@@ -139,28 +130,23 @@ class Commands {
 
   autoLayout() {
     for (const selectable of projectState.selectedSelectables) {
-      autoLayout(selectable).select();
+      autoLayout(selectable);
     }
-    projectState.history.commit();
+    projectState.undoManager.stopCapturing();
   }
 
   removeLayout() {
     for (const selectable of projectState.selectedSelectables) {
-      removeLayout(selectable).select();
+      removeLayout(selectable);
     }
-    projectState.history.commit();
+    projectState.undoManager.stopCapturing();
   }
 
   createComponent() {
-    for (const selected of projectState.selectedSelectables) {
-      const node = selected.node;
-      if (node.ownerComponent) {
-        continue;
-      }
-
-      createComponent(node);
+    for (const selectable of projectState.selectedSelectables) {
+      createComponent(selectable);
     }
-    projectState.history.commit();
+    projectState.undoManager.stopCapturing();
   }
 
   readonly exportJSONCommand: MenuCommandDef = {

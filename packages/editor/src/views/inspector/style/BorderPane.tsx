@@ -18,6 +18,7 @@ import edgeBottomIcon from "@seanchas116/design-icons/json/edge-bottom.json";
 import edgeLeftIcon from "@seanchas116/design-icons/json/edge-left.json";
 import { SeparableInput } from "../../../components/SeparableInput";
 import { useContext } from "react";
+import { abstractNodeTypes } from "../../../models/Node";
 
 function BorderWidthEdit() {
   const selectables = useContext(InspectorTargetContext);
@@ -72,7 +73,7 @@ function BorderWidthEdit() {
           }
         }
 
-        projectState.history.commit();
+        projectState.undoManager.stopCapturing();
 
         return true;
       }}
@@ -82,7 +83,7 @@ function BorderWidthEdit() {
 
 export const BorderPane: React.FC = observer(function BorderPane() {
   const selectables = projectState.selectedSelectables.filter(
-    (s) => !s.isGroupLike
+    (s) => !abstractNodeTypes.includes(s.node.type)
   );
   const border = sameOrMixed(selectables.map((s) => s.style.border));
   const hasBorder = border && border !== Mixed;
@@ -90,7 +91,7 @@ export const BorderPane: React.FC = observer(function BorderPane() {
   const onChangeBorder = action((border: Color | undefined) => {
     for (const selectable of selectables) {
       const adding = border && !selectable.style.border;
-      selectable.style.border = border ?? null;
+      selectable.style.border = border?.toHex() ?? null;
       if (adding) {
         selectable.style.borderTopWidth = 1;
         selectable.style.borderRightWidth = 1;
@@ -106,7 +107,7 @@ export const BorderPane: React.FC = observer(function BorderPane() {
     }
   });
   const onChangeEndBorder = action(() => {
-    projectState.history.commit();
+    projectState.undoManager.stopCapturing();
   });
 
   if (!selectables.length) {
@@ -142,7 +143,7 @@ export const BorderPane: React.FC = observer(function BorderPane() {
         <InspectorTargetContext.Provider value={selectables}>
           <div className="flex flex-col gap-2">
             <ColorInput
-              value={border ?? undefined}
+              value={Color.from(border) ?? Color.black}
               onChange={onChangeBorder}
               onChangeEnd={onChangeEndBorder}
             />

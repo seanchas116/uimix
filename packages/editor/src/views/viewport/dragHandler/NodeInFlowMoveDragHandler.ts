@@ -1,6 +1,5 @@
 import { Rect, Vec2 } from "paintvec";
-import { moveNodes } from "../../../models/Node";
-import { Selectable } from "../../../models/Selectable";
+import { moveSelectables, Selectable } from "../../../models/Selectable";
 import { projectState } from "../../../state/ProjectState";
 import { DropDestination } from "../../../state/DropDestination";
 import { scrollState } from "../../../state/ScrollState";
@@ -46,12 +45,8 @@ export class NodeInFlowMoveDragHandler implements DragHandler {
       return;
     }
 
-    moveNodes(
-      dst.parent.node,
-      dst.ref?.node,
-      [...this.targets.keys()].map((o) => o.node)
-    );
-    projectState.history.commit("Move Layer");
+    moveSelectables(dst.parent, dst.ref, [...this.targets.keys()]);
+    projectState.undoManager.stopCapturing();
   }
 
   private readonly initPos: Vec2;
@@ -64,11 +59,11 @@ export function findDropDestination(
 ): DropDestination | undefined {
   const parent = pickResult.all.find((dst) => {
     // cannot move inside itself
-    if (subjects.some((target) => target.node.includes(dst.node))) {
+    if (subjects.some((target) => target.includes(dst))) {
       return false;
     }
 
-    if (!dst.node.canHaveChildren) {
+    if (!dst.canInsertChild) {
       return false;
     }
 

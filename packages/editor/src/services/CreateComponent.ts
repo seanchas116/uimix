@@ -1,18 +1,22 @@
-import { ComponentNode } from "../models/ComponentNode";
-import { Node } from "../models/Node";
+import { Selectable } from "../models/Selectable";
+import { projectState } from "../state/ProjectState";
 
-export function createComponent(node: Node) {
-  if (node.ownerComponent) {
+export function createComponent(selectable: Selectable) {
+  if (selectable.idPath.length > 1) {
+    return;
+  }
+  if (selectable.ancestors.some((a) => a.node.type === "component")) {
     return;
   }
 
-  const parent = node.parent;
-  const next = node.nextSibling;
+  const [component] = projectState.document.root.append([
+    {
+      type: "component",
+      name: selectable.node.name,
+    },
+  ]);
 
-  const component = new ComponentNode();
-  component.name = node.name;
-
-  component.append([node]);
-
-  parent?.insertBefore([component], next);
+  const json = selectable.node.toJSON();
+  selectable.node.remove();
+  component.append([json]);
 }

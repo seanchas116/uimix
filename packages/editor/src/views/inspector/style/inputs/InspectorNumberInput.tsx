@@ -1,12 +1,12 @@
 import { observer } from "mobx-react-lite";
 import { Input } from "../../../../components/Input";
-import { projectState } from "../../../../state/ProjectState";
 import { sameOrMixed } from "../../../../utils/Mixed";
 import { action } from "mobx";
 import { IconifyIcon } from "@iconify/react";
 import { useContext } from "react";
 import { InspectorTargetContext } from "../../components/InspectorTargetContext";
 import { Selectable } from "../../../../models/Selectable";
+import { projectState } from "../../../../state/ProjectState";
 
 export const InspectorNumberInput = observer(function InspectorNumberInput({
   className,
@@ -44,7 +44,7 @@ export const InspectorNumberInput = observer(function InspectorNumberInput({
         for (const selectable of selectables) {
           set(selectable, value);
         }
-        projectState.history.commit();
+        projectState.undoManager.stopCapturing();
       })}
     />
   );

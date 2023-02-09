@@ -63,4 +63,9 @@ export class ObservableYArray<V> {
     this._atom.reportObserved();
     return this.y[Symbol.iterator]();
   }
+
+  toJSON(): V[] {
+    this._atom.reportObserved();
+    return this.y.toJSON();
+  }
 }

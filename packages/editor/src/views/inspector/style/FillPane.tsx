@@ -10,21 +10,22 @@ import { InspectorHeading } from "../components/InspectorHeading";
 import { InspectorPane } from "../components/InspectorPane";
 import { action } from "mobx";
 import { InspectorTargetContext } from "../components/InspectorTargetContext";
+import { abstractNodeTypes } from "../../../models/Node";
 
 export const FillPane: React.FC = observer(function FillPane() {
   const selectables = projectState.selectedSelectables.filter(
-    (s) => !s.isGroupLike
+    (s) => !abstractNodeTypes.includes(s.node.type)
   );
   const fill = sameOrMixed(selectables.map((s) => s.style.fill));
   const hasFill = fill && fill !== Mixed;
 
   const onChangeFill = action((fill: Color | undefined) => {
     for (const selectable of selectables) {
-      selectable.style.fill = fill ?? null;
+      selectable.style.fill = fill?.toHex() ?? null;
     }
   });
   const onChangeEndFill = action(() => {
-    projectState.history.commit();
+    projectState.undoManager.stopCapturing();
   });
 
   if (!selectables.length) {
@@ -60,7 +61,7 @@ export const FillPane: React.FC = observer(function FillPane() {
         <InspectorTargetContext.Provider value={selectables}>
           <div>
             <ColorInput
-              value={fill ?? undefined}
+              value={Color.from(fill) ?? Color.black}
               onChange={onChangeFill}
               onChangeEnd={onChangeEndFill}
             />

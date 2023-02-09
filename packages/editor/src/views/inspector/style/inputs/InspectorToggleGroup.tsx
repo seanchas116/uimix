@@ -3,11 +3,11 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "../../../../components/ToggleGroup";
-import { projectState } from "../../../../state/ProjectState";
 import { Mixed, sameOrMixed } from "../../../../utils/Mixed";
 import { InspectorTargetContext } from "../../components/InspectorTargetContext";
 import { useContext } from "react";
 import { Selectable } from "../../../../models/Selectable";
+import { projectState } from "../../../../state/ProjectState";
 
 export const InspectorToggleGroup = observer(function InspectorToggleGroup<
   T extends string
@@ -34,7 +34,7 @@ export const InspectorToggleGroup = observer(function InspectorToggleGroup<
         for (const selectable of selectables) {
           set(selectable, value);
         }
-        projectState.history.commit();
+        projectState.undoManager.stopCapturing();
       }}
     />
   );

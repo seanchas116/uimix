@@ -6,9 +6,8 @@ import { InspectorSideBar } from "./inspector/InspectorSideBar";
 import { TooltipProvider } from "../components/Tooltip";
 import { ContextMenu } from "./ContextMenu";
 import { commands } from "../state/Commands";
-import { action, reaction } from "mobx";
+import { action } from "mobx";
 import { OutlineSideBar } from "./outline/OutlineSideBar";
-import { projectState } from "../state/ProjectState";
 
 function useKeyHandling() {
   useEffect(() => {
@@ -31,21 +30,21 @@ function useKeyHandling() {
   }, []);
 }
 
-function useWindowTitle() {
-  useEffect(() => {
-    return reaction(
-      () => projectState.fileName,
-      (fileName) => {
-        document.title = `${fileName} - Site & Component Editor`;
-      },
-      { fireImmediately: true }
-    );
-  }, []);
-}
+// function useWindowTitle() {
+//   useEffect(() => {
+//     return reaction(
+//       () => projectState.fileName,
+//       (fileName) => {
+//         document.title = `${fileName} - Site & Component Editor`;
+//       },
+//       { fireImmediately: true }
+//     );
+//   }, []);
+// }
 
 export const App = observer(function App() {
   useKeyHandling();
-  useWindowTitle();
+  //useWindowTitle();
 
   return (
     <TooltipProvider>

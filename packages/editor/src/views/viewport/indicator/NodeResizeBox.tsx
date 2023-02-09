@@ -11,6 +11,7 @@ import { roundRectXYWH } from "../../../types/Rect";
 import { snapper } from "../../../state/Snapper";
 import { assertNonNull } from "../../../utils/Assert";
 import { viewportState } from "../../../state/ViewportState";
+import { resizeWithBoundingBox } from "../../../services/Resize";
 
 class NodeResizeBoxState {
   constructor() {
@@ -65,7 +66,7 @@ class NodeResizeBoxState {
     for (const [instance, originalBBox] of this.initBoundingBoxes) {
       const newBBox = roundRectXYWH(originalBBox.transform(transform));
 
-      instance.resizeWithBoundingBox(newBBox, {
+      resizeWithBoundingBox(instance, newBBox, {
         x: true,
         y: true,
         width: this.widthChanged,
@@ -81,7 +82,7 @@ class NodeResizeBoxState {
       return;
     }
 
-    projectState.history.commit();
+    projectState.undoManager.stopCapturing();
   }
 }
 

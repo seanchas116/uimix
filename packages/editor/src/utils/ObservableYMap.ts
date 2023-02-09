@@ -32,9 +32,21 @@ export class ObservableYMap<V> {
     this.y.set(key, value);
   }
 
+  delete(key: string): void {
+    this.y.delete(key);
+  }
+
   get(key: string): V | undefined {
     this._atom.reportObserved();
     return this.y.get(key);
+  }
+
+  getOrCreate(key: string, create: () => V): V {
+    this._atom.reportObserved();
+    if (!this.y.has(key)) {
+      this.y.set(key, create());
+    }
+    return this.y.get(key)!;
   }
 
   has(key: string): boolean {
@@ -59,5 +71,10 @@ export class ObservableYMap<V> {
   [Symbol.iterator](): IterableIterator<[string, V]> {
     this._atom.reportObserved();
     return this.y[Symbol.iterator]();
+  }
+
+  toJSON(): Record<string, V> {
+    this._atom.reportObserved();
+    return this.y.toJSON();
   }
 }

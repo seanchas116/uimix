@@ -1,9 +1,10 @@
+import { useContext } from "react";
 import { observer } from "mobx-react-lite";
+import { SizeConstraintType } from "node-data";
 import hugContentsIcon from "@seanchas116/design-icons/json/hug-contents.json";
 import fixedSizeIcon from "@seanchas116/design-icons/json/fixed-size.json";
 import fillAreaIcon from "@seanchas116/design-icons/json/fill-area.json";
 import { AnchorEdit } from "../../../components/AnchorEdit";
-import { SizeConstraintType } from "node-data";
 import { InspectorNumberInput } from "./inputs/InspectorNumberInput";
 import { InspectorToggleGroup } from "./inputs/InspectorToggleGroup";
 import { ToggleGroupItem } from "../../../components/ToggleGroup";
@@ -11,8 +12,8 @@ import { InspectorPane } from "../components/InspectorPane";
 import { projectState } from "../../../state/ProjectState";
 import { InspectorTargetContext } from "../components/InspectorTargetContext";
 import { Selectable } from "../../../models/Selectable";
-import { useContext } from "react";
 import { sameOrMixed } from "../../../utils/Mixed";
+import { abstractNodeTypes } from "../../../models/Node";
 
 const verticalSizeConstraintOptions: ToggleGroupItem<SizeConstraintType>[] = [
   {
@@ -76,7 +77,7 @@ const InspectorAnchorEdit = observer(function InspectorAnchorEdit({
 
 export const DimensionPane: React.FC = observer(function DimensionPane() {
   const selectables = projectState.selectedSelectables.filter(
-    (s) => !s.isGroupLike
+    (s) => !abstractNodeTypes.includes(s.node.type)
   );
   if (!selectables.length) {
     return null;
@@ -95,7 +96,7 @@ export const DimensionPane: React.FC = observer(function DimensionPane() {
                 ? s.style.position.y.start
                 : undefined
             }
-            placeholder={(s) => s.computedTop}
+            placeholder={(s) => s.computedOffsetTop}
             set={(s, value) => {
               s.style.position = {
                 ...s.style.position,
@@ -110,7 +111,7 @@ export const DimensionPane: React.FC = observer(function DimensionPane() {
             icon="R"
             tooltip="Right"
             className="col-start-3 row-start-2"
-            placeholder={(s) => s.computedRight}
+            placeholder={(s) => s.computedOffsetRight}
             get={(s) =>
               s.style.position.x.type === "end"
                 ? s.style.position.x.end
@@ -135,7 +136,7 @@ export const DimensionPane: React.FC = observer(function DimensionPane() {
                 ? s.style.position.y.end
                 : undefined
             }
-            placeholder={(s) => s.computedBottom}
+            placeholder={(s) => s.computedOffsetBottom}
             set={(s, value) => {
               s.style.position = {
                 ...s.style.position,
@@ -150,7 +151,7 @@ export const DimensionPane: React.FC = observer(function DimensionPane() {
             icon="L"
             tooltip="Left"
             className="col-start-1 row-start-2"
-            placeholder={(s) => s.computedLeft}
+            placeholder={(s) => s.computedOffsetLeft}
             get={(s) =>
               s.style.position.x.type === "start"
                 ? s.style.position.x.start

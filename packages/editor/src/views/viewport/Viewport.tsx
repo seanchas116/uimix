@@ -49,12 +49,12 @@ export const Viewport: React.FC = observer(function Viewport() {
       );
       scrollState.zoomAround(pos, scrollState.scale * factor);
 
-      if (!projectState.document?.firstChild) {
+      if (!projectState.document.root.childCount) {
         // No layers in page
         scrollState.translation = new Vec2(0);
       }
     } else {
-      if (!projectState.document?.firstChild) {
+      if (!projectState.document.root.childCount) {
         // No layers in page
         return;
       }
@@ -81,7 +81,7 @@ export const Viewport: React.FC = observer(function Viewport() {
         }}
       >
         {canvasSelectable.children.map((child) => (
-          <NodeRenderer key={child.key} selectable={child} />
+          <NodeRenderer key={child.id} selectable={child} />
         ))}
       </div>
       <DragHandlerOverlay />
