@@ -22,7 +22,6 @@ import { Select } from "../../../components/Select";
 import { DropdownMenu } from "../../../components/Menu";
 import { InspectorHeading } from "../components/InspectorHeading";
 import { InspectorPane } from "../components/InspectorPane";
-import { DragHandle, dragHandleClass } from "../components/DragHandle";
 import { Node, VariantCondition } from "../../../models/Node";
 
 export function getIconAndTextForCondition(
@@ -88,7 +87,6 @@ function PropRow({
 
   return (
     <div className="h-7 pl-4 pr-3 flex items-center gap-2 group relative">
-      <DragHandle className="absolute left-0 top-0 opacity-0 group-hover:opacity-100" />
       <RadixPopover.Root>
         <RadixPopover.Trigger>
           <IconButton
@@ -213,7 +211,6 @@ const VariantRow = observer(function VariantRow({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <DragHandle className="absolute left-0 top-0 opacity-0 group-hover:opacity-100" />
       <RadixPopover.Root>
         <RadixPopover.Trigger>
           <IconButton
@@ -448,7 +445,6 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
         <div className="-my-1 -mx-3">
           <DefaultVariantRow component={component} />
           <ReactSortable
-            handle={`.${dragHandleClass}`}
             list={component.children
               .filter((v) => v.type === "variant")
               .map((variant) => ({
