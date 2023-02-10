@@ -150,7 +150,7 @@ const TreeRow: React.FC<{
           selected
             ? "bg-macaron-active text-macaron-activeText"
             : selectable.ancestorSelected
-            ? "bg-macaron-active/20"
+            ? "bg-macaron-active/10"
             : "bg-macaron-background",
           hovered && "ring-1 ring-inset ring-macaron-active"
         )}
