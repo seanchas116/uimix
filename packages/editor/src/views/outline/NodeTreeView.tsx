@@ -166,7 +166,11 @@ const TreeRow: React.FC<{
         />
         {selectable.parent?.node.type === "component" ? (
           (() => {
-            let icon: IconifyIcon | string | undefined;
+            let icon: IconifyIcon | string | undefined = {
+              body: '<circle fill="currentColor" cx="12" cy="12" r="4"/>',
+              width: 24,
+              height: 24,
+            };
             let text: ReactNode = "Default";
             const originalNode = selectable.originalNode;
             if (originalNode.type === "variant") {

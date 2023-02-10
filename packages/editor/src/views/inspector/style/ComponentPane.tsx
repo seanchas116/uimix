@@ -24,6 +24,7 @@ import { InspectorHeading } from "../components/InspectorHeading";
 import { InspectorPane } from "../components/InspectorPane";
 import { DragHandle, dragHandleClass } from "../components/DragHandle";
 import { Node } from "../../../models/Node";
+import { Selectable } from "../../../models/Selectable";
 
 function PropRow({
   property,
@@ -271,23 +272,22 @@ const DefaultVariantRow = observer(function VariantRow({
   );
 });
 
-export const ComponentPane: React.FC = observer(function ComponentPane() {
-  let _component: Node | undefined;
+function getCurrentComponent(): Node | undefined {
   for (const selectable of projectState.selectedSelectables) {
     if (selectable.node.type === "component") {
-      _component = selectable.node;
-      break;
+      return selectable.node;
     }
     if (selectable.node.parent?.type === "component") {
-      _component = selectable.node.parent;
-      break;
+      return selectable.node.parent;
     }
   }
+}
 
-  if (!_component) {
+export const ComponentPane: React.FC = observer(function ComponentPane() {
+  const component = getCurrentComponent();
+  if (!component) {
     return null;
   }
-  const component = _component;
 
   return (
     <>
