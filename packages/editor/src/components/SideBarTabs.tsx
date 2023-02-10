@@ -9,6 +9,6 @@ export const SideBarTabsList: typeof RadixTabs.List = tw(
 
 export const SideBarTabsTrigger: typeof RadixTabs.Trigger = tw(
   RadixTabs.Trigger
-)`font-semibold text-macaron-disabledText border-macaron-active leading-8 h-8 px-2 aria-selected:text-macaron-text aria-selected:border-b-2 hover:text-macaron-label`;
+)`font-medium text-macaron-disabledText border-macaron-active leading-8 h-8 px-2 aria-selected:text-macaron-text aria-selected:border-b-2 hover:text-macaron-label`;
 
 export const SideBarTabsContent = RadixTabs.Content;
