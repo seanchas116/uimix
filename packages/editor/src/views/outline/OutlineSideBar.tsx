@@ -18,12 +18,15 @@ export const OutlineSideBar: React.FC = observer(() => {
         <SideBarTabsTrigger value="layers">Layers</SideBarTabsTrigger>
         <SideBarTabsTrigger value="code">Code</SideBarTabsTrigger>
       </SideBarTabsList>
-      <SideBarTabsContent value="layers" className="flex-1 relative">
+      <SideBarTabsContent
+        value="layers"
+        className="flex-1 relative outline-none"
+      >
         <ScrollArea className="absolute left-0 top-0 w-full h-full">
           <NodeTreeView />
         </ScrollArea>
       </SideBarTabsContent>
-      <SideBarTabsContent value="code" className="flex-1 relative">
+      <SideBarTabsContent value="code" className="flex-1 relative outline-none">
         <ScrollArea className="absolute left-0 top-0 w-full h-full">
           <div></div>
         </ScrollArea>

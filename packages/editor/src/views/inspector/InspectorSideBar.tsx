@@ -19,7 +19,10 @@ export const InspectorSideBar: React.FC = observer(() => {
         <SideBarTabsTrigger value="design">Design</SideBarTabsTrigger>
         <SideBarTabsTrigger value="interaction">Interaction</SideBarTabsTrigger>
       </SideBarTabsList>
-      <SideBarTabsContent value="design" className="flex-1 relative">
+      <SideBarTabsContent
+        value="design"
+        className="flex-1 relative outline-none"
+      >
         <ScrollArea className="absolute left-0 top-0 w-full h-full">
           <StyleInspector />
         </ScrollArea>
