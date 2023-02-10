@@ -64,7 +64,10 @@ export const TextPane: React.FC = observer(function TextPane() {
 
   return (
     <InspectorPane>
-      <InspectorHeading text="Text" />
+      <InspectorHeading
+        icon="material-symbols:font-download-outline-rounded"
+        text="Text"
+      />
       <InspectorTargetContext.Provider value={textSelectables}>
         <div className="flex flex-col gap-2">
           <InspectorInput

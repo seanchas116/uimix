@@ -346,15 +346,9 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
       </InspectorPane> */}
       <InspectorPane>
         <InspectorHeading
-          text={
-            <div className="flex items-center">
-              <Icon
-                className={"mr-1.5 text-xs text-macaron-component"}
-                icon={widgetsIcon}
-              />
-              {component.name}
-            </div>
-          }
+          icon={widgetsIcon}
+          iconClassName="text-macaron-component"
+          text={component.name}
           buttons={
             <DropdownMenu
               trigger={(props) => <IconButton icon={addIcon} {...props} />}

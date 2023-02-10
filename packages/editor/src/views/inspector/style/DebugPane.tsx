@@ -15,7 +15,10 @@ export const DebugPane: React.FC = observer(function DebugPane() {
 
   return (
     <InspectorPane>
-      <InspectorHeading text="Debug" />
+      <InspectorHeading
+        icon="material-symbols:info-outline-rounded"
+        text="Debug"
+      />
       <dl className="select-text">
         <dt className="text-macaron-label">Node ID</dt>
         <dd>{id === Mixed ? "Mixed" : id}</dd>

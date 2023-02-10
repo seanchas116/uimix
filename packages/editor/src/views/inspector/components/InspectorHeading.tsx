@@ -1,13 +1,16 @@
 import { Icon, IconifyIconProps } from "@iconify/react";
 import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function InspectorHeading({
   icon,
+  iconClassName,
   text,
   dimmed,
   buttons,
 }: {
   icon: IconifyIconProps["icon"];
+  iconClassName?: string;
   text: React.ReactNode;
   dimmed?: boolean;
   buttons?: React.ReactNode;
@@ -19,7 +22,10 @@ export function InspectorHeading({
           "text-macaron-disabledText": dimmed,
         })}
       >
-        <Icon icon={icon} className="text-base opacity-60" />
+        <Icon
+          icon={icon}
+          className={twMerge("text-base opacity-60", iconClassName)}
+        />
         {text}
       </h2>
       <div className="flex">{buttons}</div>
