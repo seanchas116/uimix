@@ -90,10 +90,7 @@ export const DimensionsPane: React.FC = observer(function DimensionPane() {
       <InspectorHeading
         text={
           <span className="flex gap-1">
-            <MaterialSymbol
-              className="font-light text-base"
-              symbol="straighten"
-            />
+            <MaterialSymbol className="text-base" symbol="straighten" />
             Dimensions
           </span>
         }

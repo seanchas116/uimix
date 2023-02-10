@@ -23,7 +23,7 @@ export function ToggleGroup<T extends string>({
   return (
     <RadixToggleGroup.Root
       className={twMerge(
-        "w-fit rounded text-macaron-text inline-flex",
+        "w-fit rounded text-macaron-label inline-flex",
         className
       )}
       type="single"

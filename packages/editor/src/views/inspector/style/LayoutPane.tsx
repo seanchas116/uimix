@@ -90,10 +90,7 @@ export const LayoutPane: React.FC = observer(function StackPane() {
       <InspectorHeading
         text={
           <span className="flex gap-1">
-            <MaterialSymbol
-              className="font-light text-base"
-              symbol="table_rows"
-            />
+            <MaterialSymbol className="text-base" symbol="table_rows" />
             Layout
           </span>
         }
