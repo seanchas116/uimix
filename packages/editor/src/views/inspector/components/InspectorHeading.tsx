@@ -19,7 +19,7 @@ export function InspectorHeading({
           "text-macaron-disabledText": dimmed,
         })}
       >
-        <Icon icon={icon} className="text-base" />
+        <Icon icon={icon} className="text-base opacity-60" />
         {text}
       </h2>
       <div className="flex">{buttons}</div>
