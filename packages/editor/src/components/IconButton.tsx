@@ -15,7 +15,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         {...props}
         ref={ref}
         className={twMerge(
-          "-m-0.5 w-5 h-5 rounded flex items-center justify-center text-macaron-icon hover:bg-macaron-uiBackground aria-pressed:bg-macaron-active aria-pressed:text-macaron-activeText",
+          "-m-0.5 w-5 h-5 rounded flex items-center justify-center text-macaron-icon hover:bg-macaron-text/10 aria-pressed:bg-macaron-active aria-pressed:text-macaron-activeText",
           className
         )}
       >

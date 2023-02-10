@@ -1,5 +1,5 @@
 import { compact } from "lodash-es";
-import React from "react";
+import React, { ReactNode } from "react";
 import clsx from "clsx";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -8,7 +8,7 @@ import { ReactSortable } from "react-sortablejs";
 import addIcon from "@iconify-icons/ic/add";
 import removeIcon from "@iconify-icons/ic/remove";
 import tagIcon from "@iconify-icons/ic/sharp-numbers";
-import { Icon } from "@iconify/react";
+import { Icon, IconifyIcon } from "@iconify/react";
 import textIcon from "@seanchas116/design-icons/json/text.json";
 import switchIcon from "@seanchas116/design-icons/json/switch.json";
 import { Property } from "node-data";
@@ -129,7 +129,30 @@ const VariantRow = observer(function VariantRow({
   }
   const selectable = projectState.document.getSelectable([variant.id]);
 
-  const text = JSON.stringify(variant.condition);
+  let icon: IconifyIcon | string = "";
+  let text: ReactNode = "Default";
+  const originalNode = selectable.originalNode;
+  if (originalNode.type === "variant") {
+    switch (originalNode.condition?.type) {
+      case "hover":
+        icon = "material-symbols:arrow-selector-tool-outline";
+        text = "Hover";
+        break;
+      case "active":
+        icon = "material-symbols:left-click-outline";
+        text = "Active";
+        break;
+      case "maxWidth":
+        icon = "material-symbols:phone-iphone-outline";
+        text = (
+          <>
+            Mobile{" "}
+            <span className="opacity-50">{originalNode.condition.value}</span>
+          </>
+        );
+        break;
+    }
+  }
 
   const onClick = action(() => {
     projectState.rootSelectable.deselect();
@@ -160,7 +183,7 @@ const VariantRow = observer(function VariantRow({
     <div
       aria-selected={selectable.selected}
       className={clsx(
-        "h-7 flex items-center gap-2 group aria-selected:bg-macaron-active px-3 relative",
+        "h-7 flex items-center gap-2 group aria-selected:bg-macaron-active aria-selected:text-macaron-activeText px-3 relative",
         hovered && "ring-1 ring-inset ring-macaron-active"
       )}
       onClick={onClick}
@@ -168,7 +191,10 @@ const VariantRow = observer(function VariantRow({
       onMouseLeave={onMouseLeave}
     >
       <DragHandle className="absolute left-0 top-0 opacity-0 group-hover:opacity-100" />
-      <Icon icon={switchIcon} className="text-xs text-macaron-disabledText" />
+      <Icon
+        icon={icon}
+        className="text-xs text-macaron-disabledText group-aria-selected:text-macaron-activeText"
+      />
       {/* <RadixPopover.Root>
         <RadixPopover.Trigger>
           <IconButton
@@ -225,7 +251,7 @@ const VariantRow = observer(function VariantRow({
       <span className="flex-1 text-ellipsis whitespace-nowrap">{text}</span>
       <IconButton
         icon={removeIcon}
-        className="opacity-0 group-hover:opacity-100 transition-opacity"
+        className="opacity-0 group-hover:opacity-100 transition-opacity group-aria-selected:text-macaron-activeText"
         onClick={onDeleteButtonClick}
       />
     </div>
@@ -253,20 +279,29 @@ const DefaultVariantRow = observer(function VariantRow({
     viewportState.hoveredSelectable = undefined;
   });
 
+  const icon: IconifyIcon = {
+    body: '<circle fill="currentColor" cx="12" cy="12" r="4"/>',
+    width: 24,
+    height: 24,
+  };
+
   const hovered = viewportState.hoveredSelectable === selectable;
 
   return (
     <div
       aria-selected={selectable.selected}
       className={clsx(
-        "h-7 flex items-center gap-2 group aria-selected:bg-macaron-active px-3 relative",
+        "h-7 flex items-center gap-2 group aria-selected:bg-macaron-active aria-selected:text-macaron-activeText px-3 relative",
         hovered && "ring-1 ring-inset ring-macaron-active"
       )}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <Icon icon={switchIcon} className="text-xs text-macaron-disabledText" />
+      <Icon
+        icon={icon}
+        className="text-xs text-macaron-disabledText group-aria-selected:text-macaron-activeText"
+      />
       <span className="flex-1">Default</span>
     </div>
   );
