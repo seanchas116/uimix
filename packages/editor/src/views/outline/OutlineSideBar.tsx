@@ -18,13 +18,16 @@ export const OutlineSideBar: React.FC = observer(() => {
       <SideBarTabsList>
         <SideBarTabsTrigger value="layers">
           <span className="flex gap-1.5 items-center">
-            <Icon icon="material-symbols:layers-outline" className="text-xs" />
+            <Icon
+              icon="material-symbols:layers-outline"
+              className="text-base"
+            />
             Layers
           </span>
         </SideBarTabsTrigger>
         <SideBarTabsTrigger value="code">
           <span className="flex gap-1.5 items-center">
-            <Icon icon="material-symbols:topic-outline" className="text-xs" />
+            <Icon icon="material-symbols:topic-outline" className="text-base" />
             Files
           </span>
         </SideBarTabsTrigger>

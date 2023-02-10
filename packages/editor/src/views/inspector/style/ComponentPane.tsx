@@ -310,7 +310,7 @@ const DefaultVariantRow = observer(function VariantRow({
     >
       <Icon
         icon={icon}
-        className="text-xs text-macaron-disabledText group-aria-selected:text-macaron-activeText"
+        className="text-base text-macaron-disabledText group-aria-selected:text-macaron-activeText"
       />
       <span className="flex-1">Default</span>
     </div>

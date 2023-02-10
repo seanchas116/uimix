@@ -9,7 +9,7 @@ export default {
   text: colors.neutral[800],
   icon: colors.neutral[800],
   label: colors.neutral[600],
-  disabledText: colors.neutral[400],
+  disabledText: colors.neutral[300],
   uiBackground: colors.neutral[100],
   separator: colors.neutral[100],
   viewportBackground: colors.neutral[50],

@@ -202,11 +202,11 @@ const TreeRow: React.FC<{
                 {icon ? (
                   <Icon
                     className={twMerge(
-                      "mr-1.5 text-xs opacity-60",
+                      "mr-1.5 text-xs text-macaron-disabledText",
                       isComponent &&
                         !selected &&
                         "text-macaron-component opacity-100",
-                      selected && "opacity-100"
+                      selected && "opacity-100 text-macaron-activeText"
                     )}
                     icon={icon}
                   />
