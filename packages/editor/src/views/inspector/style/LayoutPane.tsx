@@ -87,7 +87,7 @@ export const LayoutPane: React.FC = observer(function StackPane() {
   return (
     <InspectorPane>
       <InspectorHeading
-        icon="material-symbols:table-rows-outline-rounded"
+        icon="material-symbols:table-rows-outline"
         text="Layout"
         dimmed={!hasStack}
         buttons={
