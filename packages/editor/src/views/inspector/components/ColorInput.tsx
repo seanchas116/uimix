@@ -35,7 +35,7 @@ export function ColorPopoverButton({
       <RadixPopover.Portal>
         <RadixPopover.Content
           align="start"
-          className="bg-macaron-background z-10 border border-macaron-uiBackground rounded-lg shadow-lg overflow-hidden"
+          className="bg-macaron-background z-10 border border-macaron-uiBackground rounded-lg shadow-xl overflow-hidden"
         >
           <ColorPicker
             color={value}

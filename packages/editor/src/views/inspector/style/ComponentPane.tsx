@@ -227,7 +227,7 @@ const VariantRow = observer(function VariantRow({
             align="start"
             alignOffset={-12}
             sideOffset={8}
-            className={`w-[200px] ${popoverStyle} rounded-lg shadow-lg p-2 flex flex-col gap-2`}
+            className={`w-[200px] ${popoverStyle} rounded-lg shadow-xl p-2 flex flex-col gap-2`}
           >
             <div className="grid grid-cols-[1fr_1fr] gap-2 items-center">
               <label className="text-macaron-label">Interaction</label>
