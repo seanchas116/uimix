@@ -3,7 +3,7 @@ import { ComponentPane } from "./ComponentPane";
 import { DebugPane } from "./DebugPane";
 import { DimensionPane } from "./DimensionPane";
 import { FillPane } from "./FillPane";
-import { StackPane } from "./StackPane";
+import { LayoutPane } from "./LayoutPane";
 import { TextPane } from "./TextPane";
 
 export function StyleInspector(): JSX.Element {
@@ -11,7 +11,7 @@ export function StyleInspector(): JSX.Element {
     <div className="flex flex-col">
       <ComponentPane />
       <DimensionPane />
-      <StackPane />
+      <LayoutPane />
       <FillPane />
       <BorderPane />
       <TextPane />

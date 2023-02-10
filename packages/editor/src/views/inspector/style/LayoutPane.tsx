@@ -65,11 +65,11 @@ const stackDirectionOptions: ToggleGroupItem<StackDirection>[] = [
   },
 ];
 
-export const StackPane: React.FC = observer(function StackPane() {
-  const frameStackSelectables = projectState.selectedSelectables.filter(
+export const LayoutPane: React.FC = observer(function StackPane() {
+  const frameSelectables = projectState.selectedSelectables.filter(
     (s) => s.node.type === "frame"
   );
-  const stackSelectables = frameStackSelectables.filter(
+  const stackSelectables = frameSelectables.filter(
     (s) => s.style.layout === "stack"
   );
 
@@ -81,7 +81,7 @@ export const StackPane: React.FC = observer(function StackPane() {
     direction = "x";
   }
 
-  if (frameStackSelectables.length === 0) {
+  if (frameSelectables.length === 0) {
     return null;
   }
 
