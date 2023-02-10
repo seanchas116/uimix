@@ -206,7 +206,7 @@ const VariantRow = observer(function VariantRow({
     <div
       aria-selected={selectable.selected}
       className={clsx(
-        "h-7 flex items-center gap-2 group aria-selected:bg-macaron-active aria-selected:text-macaron-activeText px-3 relative",
+        "h-7 flex items-center gap-1.5 group aria-selected:bg-macaron-active aria-selected:text-macaron-activeText px-3 relative",
         hovered && "ring-1 ring-inset ring-macaron-active"
       )}
       onClick={onClick}
@@ -316,7 +316,7 @@ const DefaultVariantRow = observer(function VariantRow({
     <div
       aria-selected={selectable.selected}
       className={clsx(
-        "h-7 flex items-center gap-2 group aria-selected:bg-macaron-active aria-selected:text-macaron-activeText px-3 relative",
+        "h-7 flex items-center gap-1.5 group aria-selected:bg-macaron-active aria-selected:text-macaron-activeText px-3 relative",
         hovered && "ring-1 ring-inset ring-macaron-active"
       )}
       onClick={onClick}
