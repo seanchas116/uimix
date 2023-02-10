@@ -5,7 +5,6 @@ import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import * as RadixPopover from "@radix-ui/react-popover";
 import { ReactSortable } from "react-sortablejs";
-import widgetsIcon from "@iconify-icons/ic/widgets";
 import addIcon from "@iconify-icons/ic/add";
 import removeIcon from "@iconify-icons/ic/remove";
 import tagIcon from "@iconify-icons/ic/sharp-numbers";
@@ -346,7 +345,7 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
       </InspectorPane> */}
       <InspectorPane>
         <InspectorHeading
-          icon={widgetsIcon}
+          icon="material-symbols:widgets-rounded"
           iconClassName="text-macaron-component opacity-100"
           text={component.name}
           buttons={

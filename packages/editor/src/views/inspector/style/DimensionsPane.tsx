@@ -87,7 +87,7 @@ export const DimensionsPane: React.FC = observer(function DimensionPane() {
   return (
     <InspectorPane>
       <InspectorHeading
-        icon="material-symbols:straighten-outline"
+        icon="material-symbols:straighten-outline-rounded"
         text="Dimensions"
       />
       <InspectorTargetContext.Provider value={selectables}>

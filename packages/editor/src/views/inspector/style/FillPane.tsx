@@ -35,7 +35,7 @@ export const FillPane: React.FC = observer(function FillPane() {
   return (
     <InspectorPane>
       <InspectorHeading
-        icon="material-symbols:format-paint-outline"
+        icon="material-symbols:format-paint-outline-rounded"
         text="Fill"
         dimmed={!hasFill}
         buttons={
