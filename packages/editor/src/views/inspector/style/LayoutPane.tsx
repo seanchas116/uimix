@@ -19,7 +19,6 @@ import { InspectorPane } from "../components/InspectorPane";
 import { action } from "mobx";
 import { InspectorTargetContext } from "../components/InspectorTargetContext";
 import { commands } from "../../../state/Commands";
-import { MaterialSymbol } from "../../../components/MaterialSymbol";
 
 const StackAlignmentEdit = observer(function StackAlignmentEdit({
   direction,

@@ -11,8 +11,6 @@ import { InspectorPane } from "../components/InspectorPane";
 import { action } from "mobx";
 import { InspectorTargetContext } from "../components/InspectorTargetContext";
 import { abstractNodeTypes } from "../../../models/Node";
-import { MaterialSymbol } from "../../../components/MaterialSymbol";
-import { Icon } from "@iconify/react";
 
 export const FillPane: React.FC = observer(function FillPane() {
   const selectables = projectState.selectedSelectables.filter(

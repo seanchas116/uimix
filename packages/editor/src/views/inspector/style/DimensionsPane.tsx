@@ -14,7 +14,6 @@ import { InspectorTargetContext } from "../components/InspectorTargetContext";
 import { Selectable } from "../../../models/Selectable";
 import { sameOrMixed } from "../../../utils/Mixed";
 import { abstractNodeTypes } from "../../../models/Node";
-import { MaterialSymbol } from "../../../components/MaterialSymbol";
 import { InspectorHeading } from "../components/InspectorHeading";
 
 const verticalSizeConstraintOptions: ToggleGroupItem<SizeConstraintType>[] = [
