@@ -1,7 +1,7 @@
-import { Icon } from "@iconify/react";
+import { Icon, IconifyIcon } from "@iconify/react";
 import { action, runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { ReactNode } from "react";
 import { TreeView, TreeViewItem, TreeViewItemRow } from "react-draggable-tree";
 import clsx from "clsx";
 import widgetsIcon from "@iconify-icons/ic/widgets";
@@ -153,45 +153,72 @@ const TreeRow: React.FC<{
         value={selectable.collapsed}
         onChange={onCollapsedChange}
       />
-      {/* {selectable.isVariant ? (
+      {selectable.parent?.node.type === "component" ? (
+        (() => {
+          let icon: IconifyIcon | string | undefined;
+          let text: ReactNode = "Default";
+          const originalNode = selectable.originalNode;
+          if (originalNode.type === "variant") {
+            switch (originalNode.condition?.type) {
+              case "hover":
+                icon = "material-symbols:arrow-selector-tool-outline";
+                text = "Hover";
+                break;
+              case "active":
+                icon = "material-symbols:left-click-outline";
+                text = "Active";
+                break;
+              case "maxWidth":
+                icon = "material-symbols:phone-iphone-outline";
+                text = (
+                  <>
+                    Mobile{" "}
+                    <span className="opacity-50">
+                      {originalNode.condition.value}
+                    </span>
+                  </>
+                );
+                break;
+            }
+          }
+
+          return (
+            <>
+              {icon ? (
+                <Icon
+                  className={clsx("mr-1.5 text-xs opacity-60", {
+                    "text-macaron-component opacity-100":
+                      isComponent && !selected,
+                    "opacity-100": selected,
+                  })}
+                  icon={icon}
+                />
+              ) : (
+                <div className="mr-1.5 w-3 h-3" />
+              )}
+              <span>{text}</span>
+            </>
+          );
+        })()
+      ) : (
         <>
           <Icon
-            className={clsx(
-              "mr-1.5 text-xs",
-              selected
-                ? "text-macaron-disabledText"
-                : "text-macaron-componentText/40"
-            )}
-            icon={switchIcon}
+            className={clsx("mr-1.5 text-xs opacity-30", {
+              "text-macaron-component opacity-100": isComponent && !selected,
+              "opacity-100": selected,
+            })}
+            icon={icon}
           />
-          <span
-            className={clsx(
-              "flex-1 h-full flex items-center",
-              selected ? "text-macaron-text" : "text-macaron-componentText"
-            )}
-          >
-            {selectable.variant?.displayName ?? "Default"}
-          </span>
+          <DoubleClickToEdit
+            className={clsx("flex-1 h-full", { "font-semibold": isComponent })}
+            value={selectable.originalNode.name}
+            onChange={action((name: string) => {
+              selectable.originalNode.name = name;
+              projectState.undoManager.stopCapturing();
+            })}
+          />
         </>
-      ) : ( */}
-      <>
-        <Icon
-          className={clsx("mr-1.5 text-xs opacity-30", {
-            "text-macaron-component opacity-100": isComponent && !selected,
-            "opacity-100": selected,
-          })}
-          icon={icon}
-        />
-        <DoubleClickToEdit
-          className={clsx("flex-1 h-full", { "font-semibold": isComponent })}
-          value={selectable.originalNode.name}
-          onChange={action((name: string) => {
-            selectable.originalNode.name = name;
-            projectState.undoManager.stopCapturing();
-          })}
-        />
-      </>
-      {/* )} */}
+      )}
     </div>
   );
 });
