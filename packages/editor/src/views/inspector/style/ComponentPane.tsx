@@ -1,4 +1,4 @@
-import { compact } from "lodash-es";
+import { compact, startCase } from "lodash-es";
 import React, { ReactNode } from "react";
 import clsx from "clsx";
 import { action } from "mobx";
@@ -24,7 +24,6 @@ import { InspectorHeading } from "../components/InspectorHeading";
 import { InspectorPane } from "../components/InspectorPane";
 import { DragHandle, dragHandleClass } from "../components/DragHandle";
 import { Node } from "../../../models/Node";
-import { Selectable } from "../../../models/Selectable";
 
 function PropRow({
   property,
@@ -218,7 +217,7 @@ const VariantRow = observer(function VariantRow({
                 options={(["hover", "active", "maxWidth"] as const).map(
                   (value) => ({
                     value,
-                    text: value,
+                    text: startCase(value),
                   })
                 )}
                 onChange={action(
