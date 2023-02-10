@@ -77,7 +77,7 @@ const InspectorAnchorEdit = observer(function InspectorAnchorEdit({
   );
 });
 
-export const DimensionPane: React.FC = observer(function DimensionPane() {
+export const DimensionsPane: React.FC = observer(function DimensionPane() {
   const selectables = projectState.selectedSelectables.filter(
     (s) => !abstractNodeTypes.includes(s.node.type)
   );
