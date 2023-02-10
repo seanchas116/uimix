@@ -347,7 +347,7 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
       <InspectorPane>
         <InspectorHeading
           icon={widgetsIcon}
-          iconClassName="text-macaron-component"
+          iconClassName="text-macaron-component opacity-100"
           text={component.name}
           buttons={
             <DropdownMenu

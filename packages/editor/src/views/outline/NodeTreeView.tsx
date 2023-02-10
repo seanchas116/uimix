@@ -21,6 +21,7 @@ import {
 } from "../../components/TreeViewParts";
 import { showContextMenu } from "../ContextMenu";
 import { viewportState } from "../../state/ViewportState";
+import { twMerge } from "tailwind-merge";
 
 interface NodeTreeViewItem extends TreeViewItem {
   selectable: Selectable;
@@ -143,7 +144,7 @@ const TreeRow: React.FC<{
       className={clsx("w-full h-8 px-1")}
     >
       <div
-        className={clsx(
+        className={twMerge(
           "w-full h-8 flex items-center text-macaron-text",
           !topSelected && "rounded-t",
           !bottomSelected && "rounded-b",
@@ -196,11 +197,13 @@ const TreeRow: React.FC<{
               <>
                 {icon ? (
                   <Icon
-                    className={clsx("mr-1.5 text-xs opacity-60", {
-                      "text-macaron-component opacity-100":
-                        isComponent && !selected,
-                      "opacity-100": selected,
-                    })}
+                    className={twMerge(
+                      "mr-1.5 text-xs opacity-60",
+                      isComponent &&
+                        !selected &&
+                        "text-macaron-component opacity-100",
+                      selected && "opacity-100"
+                    )}
                     icon={icon}
                   />
                 ) : (
@@ -213,10 +216,13 @@ const TreeRow: React.FC<{
         ) : (
           <>
             <Icon
-              className={clsx("mr-1.5 text-xs opacity-30", {
-                "text-macaron-component opacity-100": isComponent && !selected,
-                "opacity-100": selected,
-              })}
+              className={twMerge(
+                "mr-1.5 text-xs opacity-30",
+                isComponent &&
+                  !selected &&
+                  "text-macaron-component opacity-100",
+                selected && "opacity-100"
+              )}
               icon={icon}
             />
             <DoubleClickToEdit
