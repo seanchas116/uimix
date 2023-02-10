@@ -53,6 +53,7 @@ importers:
       eslint-plugin-import: ^2.26.0
       html-tags: ^3.2.0
       lodash-es: ^4.17.21
+      material-symbols: ^0.4.4
       mobx: ^6.7.0
       mobx-react-lite: ^3.4.0
       node-data: workspace:*
@@ -100,6 +101,7 @@ importers:
       css-color-names: 1.0.1
       dedent: 0.7.0
       lodash-es: 4.17.21
+      material-symbols: 0.4.4
       mobx: 6.7.0
       mobx-react-lite: 3.4.0_jofyzmwkboewm6mjrhi25mngky
       node-data: link:../node-data
@@ -9411,6 +9413,10 @@ packages:
   /material-colors/1.2.6:
     resolution: {integrity: sha512-6qE4B9deFBIa9YSpOc9O0Sgc43zTeVYbgDT5veRKSlB2+ZuHNoVVxA1L/ckMUayV9Ay9y7Z/SZCLcGteW9i7bg==}
     dev: true
+
+  /material-symbols/0.4.4:
+    resolution: {integrity: sha512-J7mhx7kGYCUA8lJTgwsd2aATY19YxOhDLAiRnHNeYpuGOziU/l/jTdzmfF3Drw+UQr90FQnMFVNtjJcnSpqFGw==}
+    dev: false
 
   /md5.js/1.3.5:
     resolution: {integrity: sha512-xitP+WxNPcTTOgnTJcrhM0xvdPepipPSf3I8EIpGKeFLjt3PlJLIDG3u8EX53ZIubkb+5U2+3rELYpEhHhzdkg==}

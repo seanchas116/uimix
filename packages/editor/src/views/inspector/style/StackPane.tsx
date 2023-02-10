@@ -19,6 +19,7 @@ import { InspectorPane } from "../components/InspectorPane";
 import { action } from "mobx";
 import { InspectorTargetContext } from "../components/InspectorTargetContext";
 import { commands } from "../../../state/Commands";
+import { MaterialSymbol } from "../../../components/MaterialSymbol";
 
 const StackAlignmentEdit = observer(function StackAlignmentEdit({
   direction,
@@ -87,7 +88,15 @@ export const StackPane: React.FC = observer(function StackPane() {
   return (
     <InspectorPane>
       <InspectorHeading
-        text="Stack"
+        text={
+          <span className="flex gap-1">
+            <MaterialSymbol
+              className="font-light text-base"
+              symbol="table_rows"
+            />
+            Layout
+          </span>
+        }
         dimmed={!hasStack}
         buttons={
           hasStack ? (
