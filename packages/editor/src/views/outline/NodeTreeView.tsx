@@ -22,6 +22,7 @@ import {
 import { showContextMenu } from "../ContextMenu";
 import { viewportState } from "../../state/ViewportState";
 import { twMerge } from "tailwind-merge";
+import { getIconAndTextForCondition } from "../inspector/style/ComponentPane";
 
 interface NodeTreeViewItem extends TreeViewItem {
   selectable: Selectable;
@@ -166,53 +167,24 @@ const TreeRow: React.FC<{
         />
         {selectable.parent?.node.type === "component" ? (
           (() => {
-            let icon: IconifyIcon | string = {
-              body: '<circle fill="currentColor" cx="12" cy="12" r="4"/>',
-              width: 24,
-              height: 24,
-            };
-            let text: ReactNode = "Default";
-            const originalNode = selectable.originalNode;
-            if (originalNode.type === "variant") {
-              switch (originalNode.condition?.type) {
-                case "hover":
-                  icon = "material-symbols:arrow-selector-tool-outline";
-                  text = "Hover";
-                  break;
-                case "active":
-                  icon = "material-symbols:left-click-outline";
-                  text = "Active";
-                  break;
-                case "maxWidth":
-                  icon = "material-symbols:phone-iphone-outline";
-                  text = (
-                    <>
-                      Mobile
-                      <span className="opacity-50 pl-2">
-                        {originalNode.condition.value}
-                      </span>
-                    </>
-                  );
-                  break;
-              }
-            }
+            const { icon, text } = getIconAndTextForCondition(
+              selectable.originalNode.type === "variant"
+                ? selectable.originalNode.condition ?? { type: "default" }
+                : { type: "default" }
+            );
 
             return (
               <>
-                {icon ? (
-                  <Icon
-                    className={twMerge(
-                      "mr-1.5 text-xs text-macaron-disabledText",
-                      isComponent &&
-                        !selected &&
-                        "text-macaron-component opacity-100",
-                      selected && "opacity-100 text-macaron-activeText"
-                    )}
-                    icon={icon}
-                  />
-                ) : (
-                  <div className="mr-1.5 w-3 h-3" />
-                )}
+                <Icon
+                  className={twMerge(
+                    "mr-1.5 text-xs text-macaron-disabledText",
+                    isComponent &&
+                      !selected &&
+                      "text-macaron-component opacity-100",
+                    selected && "opacity-100 text-macaron-activeText"
+                  )}
+                  icon={icon}
+                />
                 <span>{text}</span>
               </>
             );

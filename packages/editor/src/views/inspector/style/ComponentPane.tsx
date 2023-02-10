@@ -23,7 +23,51 @@ import { DropdownMenu } from "../../../components/Menu";
 import { InspectorHeading } from "../components/InspectorHeading";
 import { InspectorPane } from "../components/InspectorPane";
 import { DragHandle, dragHandleClass } from "../components/DragHandle";
-import { Node } from "../../../models/Node";
+import { Node, VariantCondition } from "../../../models/Node";
+
+export function getIconAndTextForCondition(
+  condition:
+    | VariantCondition
+    | {
+        type: "default";
+      }
+): {
+  icon: IconifyIcon | string;
+  text: ReactNode;
+} {
+  switch (condition.type) {
+    case "default": {
+      return {
+        icon: {
+          body: '<circle fill="currentColor" cx="12" cy="12" r="4"/>',
+          width: 24,
+          height: 24,
+        },
+        text: "Default",
+      };
+    }
+    case "hover":
+      return {
+        icon: "material-symbols:arrow-selector-tool-outline",
+        text: "Hover",
+      };
+    case "active":
+      return {
+        icon: "material-symbols:left-click-outline",
+        text: "Active",
+      };
+    case "maxWidth":
+      return {
+        icon: "material-symbols:phone-iphone-outline",
+        text: (
+          <>
+            Mobile
+            <span className="opacity-50 pl-2">{condition.value}</span>
+          </>
+        ),
+      };
+  }
+}
 
 function PropRow({
   property,
@@ -128,35 +172,10 @@ const VariantRow = observer(function VariantRow({
   }
   const selectable = projectState.document.getSelectable([variant.id]);
 
-  let icon: IconifyIcon | string = "";
-  let text: ReactNode = "Default";
-  const originalNode = selectable.originalNode;
-
-  const condition: Node["condition"] = originalNode.condition;
-
-  if (originalNode.type === "variant") {
-    switch (originalNode.condition?.type) {
-      case "hover":
-        icon = "material-symbols:arrow-selector-tool-outline";
-        text = "Hover";
-        break;
-      case "active":
-        icon = "material-symbols:left-click-outline";
-        text = "Active";
-        break;
-      case "maxWidth":
-        icon = "material-symbols:phone-iphone-outline";
-        text = (
-          <>
-            Mobile
-            <span className="opacity-50 pl-2">
-              {originalNode.condition.value}
-            </span>
-          </>
-        );
-        break;
-    }
-  }
+  const condition = selectable.originalNode.condition;
+  const { icon, text } = getIconAndTextForCondition(
+    condition ?? { type: "default" }
+  );
 
   const onClick = action(() => {
     projectState.rootSelectable.deselect();
@@ -289,11 +308,7 @@ const DefaultVariantRow = observer(function VariantRow({
     viewportState.hoveredSelectable = undefined;
   });
 
-  const icon: IconifyIcon = {
-    body: '<circle fill="currentColor" cx="12" cy="12" r="4"/>',
-    width: 24,
-    height: 24,
-  };
+  const { icon, text } = getIconAndTextForCondition({ type: "default" });
 
   const hovered = viewportState.hoveredSelectable === selectable;
 
@@ -312,7 +327,7 @@ const DefaultVariantRow = observer(function VariantRow({
         icon={icon}
         className="text-base text-macaron-disabledText group-aria-selected:text-macaron-activeText"
       />
-      <span className="flex-1">Default</span>
+      <span className="flex-1">{text}</span>
     </div>
   );
 });
