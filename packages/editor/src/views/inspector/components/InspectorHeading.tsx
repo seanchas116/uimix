@@ -18,13 +18,13 @@ export function InspectorHeading({
   return (
     <div className="flex items-center justify-between h-4">
       <h2
-        className={clsx("leading-4 font-medium flex gap-1.5", {
+        className={clsx("leading-4 font-medium flex gap-1.5 items-center", {
           "text-macaron-disabledText": dimmed,
         })}
       >
         <Icon
           icon={icon}
-          className={twMerge("text-base opacity-60", iconClassName)}
+          className={twMerge("text-xs opacity-60", iconClassName)}
         />
         {text}
       </h2>
