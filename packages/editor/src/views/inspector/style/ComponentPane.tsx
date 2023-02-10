@@ -8,7 +8,6 @@ import { ReactSortable } from "react-sortablejs";
 import addIcon from "@iconify-icons/ic/add";
 import removeIcon from "@iconify-icons/ic/remove";
 import tagIcon from "@iconify-icons/ic/sharp-numbers";
-import cursorIcon from "@iconify-icons/heroicons/cursor-arrow-rays";
 import { Icon } from "@iconify/react";
 import textIcon from "@seanchas116/design-icons/json/text.json";
 import switchIcon from "@seanchas116/design-icons/json/switch.json";
@@ -129,7 +128,6 @@ const VariantRow = observer(function VariantRow({
   }
   const selectable = projectState.document.getSelectable([variant.id]);
 
-  const icon = cursorIcon;
   const text = JSON.stringify(variant.condition);
 
   const onClick = action(() => {

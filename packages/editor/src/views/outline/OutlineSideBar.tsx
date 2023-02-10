@@ -7,6 +7,7 @@ import {
 } from "../../components/SideBarTabs";
 import { ScrollArea } from "../../components/ScrollArea";
 import { NodeTreeView } from "./NodeTreeView";
+import { Icon } from "@iconify/react";
 
 export const OutlineSideBar: React.FC = observer(() => {
   return (
@@ -15,8 +16,18 @@ export const OutlineSideBar: React.FC = observer(() => {
       className="w-[256px] flex flex-col contain-strict"
     >
       <SideBarTabsList>
-        <SideBarTabsTrigger value="layers">Layers</SideBarTabsTrigger>
-        <SideBarTabsTrigger value="code">Code</SideBarTabsTrigger>
+        <SideBarTabsTrigger value="layers">
+          <span className="flex gap-1.5 items-center">
+            <Icon icon="material-symbols:layers-outline" className="text-xs" />
+            Layers
+          </span>
+        </SideBarTabsTrigger>
+        <SideBarTabsTrigger value="code">
+          <span className="flex gap-1.5 items-center">
+            <Icon icon="material-symbols:topic-outline" className="text-xs" />
+            Files
+          </span>
+        </SideBarTabsTrigger>
       </SideBarTabsList>
       <SideBarTabsContent
         value="layers"
