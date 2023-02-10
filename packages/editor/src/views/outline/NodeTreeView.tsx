@@ -187,8 +187,8 @@ const TreeRow: React.FC<{
                   icon = "material-symbols:phone-iphone-outline";
                   text = (
                     <>
-                      Mobile{" "}
-                      <span className="opacity-50">
+                      Mobile
+                      <span className="opacity-50 pl-2">
                         {originalNode.condition.value}
                       </span>
                     </>

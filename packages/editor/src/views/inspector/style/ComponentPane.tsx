@@ -132,6 +132,9 @@ const VariantRow = observer(function VariantRow({
   let icon: IconifyIcon | string = "";
   let text: ReactNode = "Default";
   const originalNode = selectable.originalNode;
+
+  const condition: Node["condition"] = originalNode.condition;
+
   if (originalNode.type === "variant") {
     switch (originalNode.condition?.type) {
       case "hover":
@@ -146,8 +149,10 @@ const VariantRow = observer(function VariantRow({
         icon = "material-symbols:phone-iphone-outline";
         text = (
           <>
-            Mobile{" "}
-            <span className="opacity-50">{originalNode.condition.value}</span>
+            Mobile
+            <span className="opacity-50 pl-2">
+              {originalNode.condition.value}
+            </span>
           </>
         );
         break;
@@ -191,15 +196,11 @@ const VariantRow = observer(function VariantRow({
       onMouseLeave={onMouseLeave}
     >
       <DragHandle className="absolute left-0 top-0 opacity-0 group-hover:opacity-100" />
-      <Icon
-        icon={icon}
-        className="text-xs text-macaron-disabledText group-aria-selected:text-macaron-activeText"
-      />
-      {/* <RadixPopover.Root>
+      <RadixPopover.Root>
         <RadixPopover.Trigger>
           <IconButton
             icon={icon}
-            className="text-macaron-disabledText text-base"
+            className="text-xs text-macaron-disabledText group-aria-selected:text-macaron-activeText"
           />
         </RadixPopover.Trigger>
         <RadixPopover.Portal>
@@ -210,44 +211,54 @@ const VariantRow = observer(function VariantRow({
             sideOffset={8}
             className={`w-[200px] ${popoverStyle} rounded-lg shadow-lg p-2 flex flex-col gap-2`}
           >
-            {condition.type === "maxWidth" ? (
-              <div className="grid grid-cols-[1fr_1fr] gap-2 items-center">
-                <label className="text-macaron-label">Max Width</label>
-                <Input
-                  value={String(condition.value)}
-                  onChange={action((value) => {
-                    variant.condition = {
-                      type: "maxWidth",
-                      value: Number(value),
-                    };
-                    projectState.history.commit();
-                  })}
-                ></Input>
-              </div>
-            ) : (
-              <div className="grid grid-cols-[1fr_1fr] gap-2 items-center">
-                <label className="text-macaron-label">Interaction</label>
-                <Select
-                  value={condition.value}
-                  options={Object.values(VariantInteractionType.Values).map(
-                    (value) => ({
-                      value,
-                      text: startCase(value),
-                    })
-                  )}
-                  onChange={action((value: VariantInteractionType) => {
-                    variant.condition = {
-                      type: "interaction",
-                      value,
-                    };
-                    projectState.history.commit();
-                  })}
-                />
-              </div>
-            )}
+            <div className="grid grid-cols-[1fr_1fr] gap-2 items-center">
+              <label className="text-macaron-label">Interaction</label>
+              <Select
+                value={condition?.type}
+                options={(["hover", "active", "maxWidth"] as const).map(
+                  (value) => ({
+                    value,
+                    text: value,
+                  })
+                )}
+                onChange={action(
+                  (value: "hover" | "active" | "maxWidth" | undefined) => {
+                    if (!value) {
+                      return;
+                    }
+                    if (value === "maxWidth") {
+                      variant.condition = {
+                        type: value,
+                        value: 768,
+                      };
+                    } else {
+                      variant.condition = {
+                        type: value,
+                      };
+                    }
+                    projectState.undoManager.stopCapturing();
+                  }
+                )}
+              />
+              {condition?.type === "maxWidth" && (
+                <>
+                  <label className="text-macaron-label">Max Width</label>
+                  <Input
+                    value={String(condition.value)}
+                    onChange={action((value) => {
+                      variant.condition = {
+                        type: "maxWidth",
+                        value: Number(value),
+                      };
+                      projectState.undoManager.stopCapturing();
+                    })}
+                  ></Input>
+                </>
+              )}
+            </div>
           </RadixPopover.Content>
         </RadixPopover.Portal>
-      </RadixPopover.Root> */}
+      </RadixPopover.Root>
       <span className="flex-1 text-ellipsis whitespace-nowrap">{text}</span>
       <IconButton
         icon={removeIcon}

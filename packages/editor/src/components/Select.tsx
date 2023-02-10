@@ -50,13 +50,10 @@ export function Select<T extends string>({
             {options.map((option) => (
               <RadixSelect.Item
                 value={option.value}
-                className="pl-4 relative h-6 flex items-center outline-0 [&[data-highlighted]]:bg-macaron-active"
+                className="pl-4 relative h-6 flex items-center outline-0 text-macaron-text [&[data-highlighted]]:bg-macaron-active [&[data-highlighted]]:text-macaron-activeText"
               >
                 <RadixSelect.ItemIndicator className="absolute left-1.5">
-                  <Icon
-                    icon={checkIcon}
-                    className="text-xs text-macaron-label"
-                  />
+                  <Icon icon={checkIcon} className="text-xs opacity-60" />
                 </RadixSelect.ItemIndicator>
                 <RadixSelect.ItemText>
                   <div className="px-1.5 flex items-center gap-1">
