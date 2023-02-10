@@ -88,12 +88,8 @@ export const LayoutPane: React.FC = observer(function StackPane() {
   return (
     <InspectorPane>
       <InspectorHeading
-        text={
-          <span className="flex gap-1">
-            <MaterialSymbol className="text-base" symbol="table_rows" />
-            Layout
-          </span>
-        }
+        icon="material-symbols:table-rows-outline"
+        text="Layout"
         dimmed={!hasStack}
         buttons={
           hasStack ? (

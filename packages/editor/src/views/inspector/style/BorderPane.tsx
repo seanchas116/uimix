@@ -117,6 +117,7 @@ export const BorderPane: React.FC = observer(function BorderPane() {
   return (
     <InspectorPane>
       <InspectorHeading
+        icon="material-symbols:border-color-outline"
         text="Border"
         dimmed={!hasBorder}
         buttons={

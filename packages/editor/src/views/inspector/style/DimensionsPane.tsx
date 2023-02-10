@@ -88,12 +88,8 @@ export const DimensionsPane: React.FC = observer(function DimensionPane() {
   return (
     <InspectorPane>
       <InspectorHeading
-        text={
-          <span className="flex gap-1">
-            <MaterialSymbol className="text-base" symbol="straighten" />
-            Dimensions
-          </span>
-        }
+        icon="material-symbols:straighten-outline"
+        text="Dimensions"
       />
       <InspectorTargetContext.Provider value={selectables}>
         <div className="grid grid-cols-3 gap-2 items-center">
