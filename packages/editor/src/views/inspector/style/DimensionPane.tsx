@@ -14,6 +14,8 @@ import { InspectorTargetContext } from "../components/InspectorTargetContext";
 import { Selectable } from "../../../models/Selectable";
 import { sameOrMixed } from "../../../utils/Mixed";
 import { abstractNodeTypes } from "../../../models/Node";
+import { MaterialSymbol } from "../../../components/MaterialSymbol";
+import { InspectorHeading } from "../components/InspectorHeading";
 
 const verticalSizeConstraintOptions: ToggleGroupItem<SizeConstraintType>[] = [
   {
@@ -85,6 +87,17 @@ export const DimensionPane: React.FC = observer(function DimensionPane() {
 
   return (
     <InspectorPane>
+      <InspectorHeading
+        text={
+          <span className="flex gap-1">
+            <MaterialSymbol
+              className="font-light text-base"
+              symbol="straighten"
+            />
+            Dimensions
+          </span>
+        }
+      />
       <InspectorTargetContext.Provider value={selectables}>
         <div className="grid grid-cols-3 gap-2 items-center">
           <InspectorNumberInput
