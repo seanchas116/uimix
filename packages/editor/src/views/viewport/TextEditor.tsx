@@ -1,10 +1,12 @@
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Selectable } from "../../models/Selectable";
 import { scrollState } from "../../state/ScrollState";
 import { viewportState } from "../../state/ViewportState";
 import { buildNodeCSS } from "./renderer/buildNodeCSS";
+import { createEditor } from "slate";
+import { Slate, Editable, withReact } from "slate-react";
 
 export const TextEditorBody: React.FC<{
   selectable: Selectable;
@@ -14,17 +16,9 @@ export const TextEditorBody: React.FC<{
   const cssStyle = buildNodeCSS("text", style);
   const computedRect = selectable.computedRect;
 
-  const editableRef = React.createRef<HTMLDivElement>();
-
-  useEffect(() => {
-    const editable = editableRef.current;
-    if (!editable) {
-      return;
-    }
-    editable.textContent = style.textContent ?? "";
-  }, []);
-
   const fitWidth = style.width.type === "hugContents";
+
+  const editor = useMemo(() => withReact(createEditor()), []);
 
   return (
     <div
@@ -35,7 +29,6 @@ export const TextEditorBody: React.FC<{
       }}
     >
       <div
-        ref={editableRef}
         style={{
           ...cssStyle,
           position: "absolute",
@@ -44,11 +37,26 @@ export const TextEditorBody: React.FC<{
           width: fitWidth ? "max-content" : computedRect.width + "px",
           height: computedRect.height + "px",
         }}
-        contentEditable
-        onInput={action((e) => {
-          style.textContent = e.currentTarget.textContent ?? "";
-        })}
-      />
+      >
+        <Slate
+          editor={editor}
+          onChange={action((value) => {
+            style.textContent = value[0].children[0].text;
+          })}
+          value={[
+            {
+              type: "paragraph",
+              children: [
+                {
+                  text: style.textContent,
+                },
+              ],
+            },
+          ]}
+        >
+          <Editable />
+        </Slate>
+      </div>
     </div>
   );
 });
