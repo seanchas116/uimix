@@ -1,7 +1,7 @@
-import { Icon, IconifyIcon } from "@iconify/react";
+import { Icon } from "@iconify/react";
 import { action, runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { ReactNode } from "react";
+import React from "react";
 import { TreeView, TreeViewItem, TreeViewItemRow } from "react-draggable-tree";
 import clsx from "clsx";
 import widgetsIcon from "@iconify-icons/ic/widgets";
