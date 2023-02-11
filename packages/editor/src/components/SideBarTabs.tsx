@@ -5,7 +5,7 @@ export const SideBarTabsRoot = RadixTabs.Root;
 
 export const SideBarTabsList: typeof RadixTabs.List = tw(
   RadixTabs.List
-)`px-2 box-content h-10 border-b border-macaron-separator flex items-center`;
+)`px-2 box-content h-10 border-b border-macaron-uiBackground flex items-center`;
 
 export const SideBarTabsTrigger: typeof RadixTabs.Trigger = tw(
   RadixTabs.Trigger
