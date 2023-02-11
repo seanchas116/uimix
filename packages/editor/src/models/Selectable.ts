@@ -58,7 +58,7 @@ export class Selectable {
       return this.document.getSelectable([parentNode.id]);
     }
 
-    if (parentNode.type === "component") {
+    if (parentNode.isComponentRoot) {
       // looks like a component root
       return this.document.getSelectable(this.idPath.slice(0, -1));
     } else {

@@ -163,4 +163,12 @@ export class Node {
 
     return map;
   }
+
+  get isComponentRoot(): boolean {
+    return this.parent?.type === "component" && this.type !== "variant";
+  }
+
+  get isVariant(): boolean {
+    return this.parent?.type === "component" && this.type === "variant";
+  }
 }

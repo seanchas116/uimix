@@ -156,9 +156,11 @@ describe(Document.name, () => {
 
     expect(instanceSelectable.mainComponent?.rootNode === rootNode).toBe(true);
     expect(instanceSelectable.style.gap).toBe(12);
+    expect(instanceSelectable.parent === doc.rootSelectable).toBe(true);
 
     expect(instanceTextSelectable.originalNode === textNode).toBe(true);
     expect(instanceTextSelectable.style.fontSize).toBe(24);
+    expect(instanceTextSelectable.parent === instanceSelectable).toBe(true);
 
     instanceSelectable.style.gap = 16;
     expect(instanceSelectable.style.gap).toBe(16);
