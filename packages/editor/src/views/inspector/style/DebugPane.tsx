@@ -12,6 +12,7 @@ export const DebugPane: React.FC = observer(function DebugPane() {
   }
 
   const id = sameOrMixed(selectables.map((s) => s.node.id));
+  const selectableID = sameOrMixed(selectables.map((s) => s.id));
 
   return (
     <InspectorPane>
@@ -21,7 +22,17 @@ export const DebugPane: React.FC = observer(function DebugPane() {
       />
       <dl className="select-text">
         <dt className="text-macaron-label">Node ID</dt>
-        <dd>{id === Mixed ? "Mixed" : id}</dd>
+        <dd>
+          <pre className="whitespace-pre-wrap break-all">
+            {id === Mixed ? "Mixed" : id}
+          </pre>
+        </dd>
+        <dt className="text-macaron-label">Selectable ID</dt>
+        <dd>
+          <pre className="whitespace-pre-wrap break-all">
+            {selectableID === Mixed ? "Mixed" : selectableID}
+          </pre>
+        </dd>
       </dl>
     </InspectorPane>
   );
