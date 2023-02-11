@@ -102,7 +102,14 @@ const TreeRow: React.FC<{
 
   const isComponent = selectable.node.type === "component";
 
+  const isInstance = selectable.originalNode.type === "instance";
+  const isInsideInstance = selectable.idPath.length >= 2;
+
   const icon = (() => {
+    if (isInstance) {
+      return outlineWidgetsIcon;
+    }
+
     switch (selectable.node.type) {
       default:
       case "frame": {
@@ -195,7 +202,7 @@ const TreeRow: React.FC<{
             <Icon
               className={twMerge(
                 "mr-1.5 text-xs opacity-30",
-                isComponent &&
+                (isComponent || isInstance) &&
                   !selected &&
                   "text-macaron-component opacity-100",
                 selected && "opacity-100"
@@ -203,9 +210,11 @@ const TreeRow: React.FC<{
               icon={icon}
             />
             <DoubleClickToEdit
-              className={clsx("flex-1 h-full", {
-                "font-semibold": isComponent,
-              })}
+              className={twMerge(
+                "flex-1 h-full",
+                isComponent && "font-semibold",
+                isInsideInstance && "italic opacity-60"
+              )}
               value={selectable.originalNode.name}
               onChange={action((name: string) => {
                 selectable.originalNode.name = name;
