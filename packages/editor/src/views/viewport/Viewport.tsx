@@ -9,6 +9,7 @@ import { viewportRootMarker } from "./renderer/ComputedRectProvider";
 import { PanOverlay } from "./PanOverlay";
 import { DragHandlerOverlay } from "./dragHandler/DragHandlerOverlay";
 import { Indicators } from "./indicator/Indicators";
+import { TextEditor } from "./TextEditor";
 
 export const Viewport: React.FC = observer(function Viewport() {
   const ref = createRef<HTMLDivElement>();
@@ -86,6 +87,7 @@ export const Viewport: React.FC = observer(function Viewport() {
       </div>
       <DragHandlerOverlay />
       <Indicators />
+      <TextEditor />
       <PanOverlay />
     </div>
   );

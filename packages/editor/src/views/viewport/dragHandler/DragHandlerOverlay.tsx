@@ -15,10 +15,8 @@ import { observer } from "mobx-react-lite";
 import { showContextMenu } from "../../ContextMenu";
 import { viewportState } from "../../../state/ViewportState";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function isFocusable(selectable: Selectable) {
-  // TODO: focusable for text and shape nodes
-  return false;
+  return selectable.originalNode.type === "text";
 }
 
 export const DragHandlerOverlay: React.FC = observer(
