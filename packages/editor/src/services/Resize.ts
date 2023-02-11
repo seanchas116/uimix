@@ -9,10 +9,9 @@ export function resizeWithBoundingBox(
     y?: boolean;
     width?: boolean;
     height?: boolean;
-  }
+  },
+  offsetTopLeft = selectable.parent?.computedRect.topLeft ?? new Vec2(0)
 ) {
-  const offsetTopLeft = selectable.parent?.computedRect.topLeft ?? new Vec2(0);
-
   if (targets.x) {
     selectable.style.position = {
       ...selectable.style.position,

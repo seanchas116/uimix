@@ -43,6 +43,7 @@ export class NodeAbsoluteMoveDragHandler implements DragHandler {
     const snappedRect = snapper.snapMoveRect(
       this.initWholeBBox.translate(offset)
     );
+    const snappedOffset = snappedRect.topLeft.sub(this.initWholeBBox.topLeft);
 
     const parent =
       overridesAtPos.find((dst) => {
@@ -65,13 +66,20 @@ export class NodeAbsoluteMoveDragHandler implements DragHandler {
         return true;
       }) ?? projectState.document.rootSelectable;
 
-    for (const instance of this.targets.keys()) {
+    for (const [instance, bbox] of this.targets) {
       if (
         instance.parent?.node.type !== "component" &&
         instance.parent !== parent
       ) {
-        // TODO: adjust position based on new offset parent
         moveSelectables(parent, undefined, [instance]);
+
+        const newRect = bbox.translate(snappedOffset);
+        resizeWithBoundingBox(
+          instance,
+          newRect,
+          { x: true, y: true },
+          parent.computedRect.topLeft
+        );
       }
     }
     projectState.undoManager.stopCapturing();
