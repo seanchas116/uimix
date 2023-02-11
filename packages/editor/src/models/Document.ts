@@ -58,7 +58,7 @@ export class Document {
   }
 
   onRemoveNode(node: Node) {
-    this.nodesForID.delete(node.id);
+    this.nodesForID.deleteValue(node.id, node);
     for (const child of node.children) {
       this.onRemoveNode(child);
     }
