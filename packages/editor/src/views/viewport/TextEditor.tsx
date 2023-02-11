@@ -9,7 +9,9 @@ import { buildNodeCSS } from "./renderer/buildNodeCSS";
 export const TextEditorBody: React.FC<{
   selectable: Selectable;
 }> = observer(({ selectable }) => {
-  const cssStyle = buildNodeCSS("text", selectable.style);
+  const style = selectable.style;
+
+  const cssStyle = buildNodeCSS("text", style);
   const computedRect = selectable.computedRect;
 
   const editableRef = React.createRef<HTMLDivElement>();
@@ -19,10 +21,10 @@ export const TextEditorBody: React.FC<{
     if (!editable) {
       return;
     }
-    editable.textContent = selectable.style.textContent ?? "";
+    editable.textContent = style.textContent ?? "";
   }, []);
 
-  const fitWidth = selectable.style.width.type === "hugContents";
+  const fitWidth = style.width.type === "hugContents";
 
   return (
     <div
@@ -44,7 +46,7 @@ export const TextEditorBody: React.FC<{
         }}
         contentEditable
         onInput={action((e) => {
-          selectable.style.textContent = e.currentTarget.textContent ?? "";
+          style.textContent = e.currentTarget.textContent ?? "";
         })}
       />
     </div>
@@ -56,5 +58,5 @@ export const TextEditor: React.FC = observer(() => {
   if (!focused) {
     return null;
   }
-  return <TextEditorBody selectable={focused} />;
+  return <TextEditorBody selectable={focused} key={focused.id} />;
 });
