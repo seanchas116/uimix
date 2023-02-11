@@ -1,11 +1,11 @@
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Selectable } from "../../models/Selectable";
 import { scrollState } from "../../state/ScrollState";
 import { viewportState } from "../../state/ViewportState";
 import { buildNodeCSS } from "./renderer/buildNodeCSS";
-import { createEditor } from "slate";
+import { createEditor, Transforms, Descendant } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 
 export const TextEditorBody: React.FC<{
@@ -19,6 +19,28 @@ export const TextEditorBody: React.FC<{
   const fitWidth = style.width.type === "hugContents";
 
   const editor = useMemo(() => withReact(createEditor()), []);
+
+  const onKeyDownEditable = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === "Enter") {
+        Transforms.insertText(editor, "\n");
+        event.preventDefault();
+      }
+    },
+    [editor]
+  );
+
+  const initialValue: Descendant[] = [
+    {
+      // @ts-ignore
+      type: "paragraph",
+      children: [
+        {
+          text: style.textContent,
+        },
+      ],
+    },
+  ];
 
   return (
     <div
@@ -41,20 +63,12 @@ export const TextEditorBody: React.FC<{
         <Slate
           editor={editor}
           onChange={action((value) => {
+            // @ts-ignore
             style.textContent = value[0].children[0].text;
           })}
-          value={[
-            {
-              type: "paragraph",
-              children: [
-                {
-                  text: style.textContent,
-                },
-              ],
-            },
-          ]}
+          value={initialValue}
         >
-          <Editable />
+          <Editable onKeyDown={onKeyDownEditable} />
         </Slate>
       </div>
     </div>
