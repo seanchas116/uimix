@@ -298,6 +298,11 @@ export function moveSelectables(
   dstNextSibling: Selectable | undefined,
   selectables: Selectable[]
 ) {
+  selectables = selectables.filter((s) => !s.includes(dstParent));
+  if (selectables.length === 0) {
+    return;
+  }
+
   if (
     dstParent.idPath.length > 1 ||
     selectables.some((selectable) => selectable.idPath.length > 1)
@@ -309,11 +314,11 @@ export function moveSelectables(
   const dstParentChildren = dstParent.children;
   let index = 0;
   for (const child of dstParentChildren) {
-    if (selectables.includes(child)) {
-      continue;
-    }
     if (dstNextSibling === child) {
       break;
+    }
+    if (selectables.includes(child)) {
+      continue;
     }
     ++index;
   }
