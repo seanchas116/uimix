@@ -24,7 +24,7 @@ export function InspectorHeading({
       >
         <Icon
           icon={icon}
-          className={twMerge("text-base opacity-80", iconClassName)}
+          className={twMerge("text-base opacity-50", iconClassName)}
         />
         {text}
       </h2>
