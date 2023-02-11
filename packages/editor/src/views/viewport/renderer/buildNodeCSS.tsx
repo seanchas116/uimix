@@ -97,6 +97,7 @@ export function buildNodeCSS(
   }
 
   if (nodeType === "text") {
+    cssStyle.whiteSpace = "break-spaces";
     cssStyle.display = "flex";
     cssStyle.flexDirection = "column";
     cssStyle.color = style.fill ?? "black";
