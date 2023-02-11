@@ -1,4 +1,6 @@
+import { action } from "mobx";
 import { observer } from "mobx-react-lite";
+import React, { useEffect } from "react";
 import { Selectable } from "../../models/Selectable";
 import { scrollState } from "../../state/ScrollState";
 import { viewportState } from "../../state/ViewportState";
@@ -10,6 +12,16 @@ export const TextEditorBody: React.FC<{
   const cssStyle = buildNodeCSS("text", selectable.style);
   const computedRect = selectable.computedRect;
 
+  const editableRef = React.createRef<HTMLDivElement>();
+
+  useEffect(() => {
+    const editable = editableRef.current;
+    if (!editable) {
+      return;
+    }
+    editable.textContent = selectable.style.textContent ?? "";
+  }, []);
+
   return (
     <div
       style={{
@@ -19,6 +31,7 @@ export const TextEditorBody: React.FC<{
       }}
     >
       <div
+        ref={editableRef}
         style={{
           ...cssStyle,
           position: "absolute",
@@ -28,9 +41,10 @@ export const TextEditorBody: React.FC<{
           height: computedRect.height + "px",
         }}
         contentEditable
-      >
-        {selectable.style.textContent}
-      </div>
+        onInput={action((e) => {
+          selectable.style.textContent = e.currentTarget.textContent ?? "";
+        })}
+      />
     </div>
   );
 });
