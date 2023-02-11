@@ -92,6 +92,9 @@ export const NodeResizeBox: React.FC = observer(function NodeResizeBox() {
   if (viewportState.dragPreviewRects.length) {
     return null;
   }
+  if (viewportState.focusedSelectable) {
+    return null;
+  }
 
   const boundingBox = state.viewportBoundingBox;
   if (!boundingBox) {

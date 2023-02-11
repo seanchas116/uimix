@@ -4,8 +4,8 @@ import colors from "../../../colors.js";
 import { scrollState } from "../../../state/ScrollState";
 import { viewportState } from "../../../state/ViewportState";
 
-export const HoverIndicator: React.FC = observer(function HoverIndicator() {
-  const rect = viewportState.hoveredSelectable?.computedRect?.transform(
+export const FocusIndicator: React.FC = observer(function HoverIndicator() {
+  const rect = viewportState.focusedSelectable?.computedRect?.transform(
     scrollState.documentToViewport
   );
 
