@@ -157,6 +157,55 @@ function PropRow({
   );
 }
 
+const ConditionEditor: React.FC<{
+  value: VariantCondition;
+  onChangeValue: (value: VariantCondition) => void;
+}> = ({ value: condition, onChangeValue: onChangeCondition }) => {
+  return (
+    <div className="grid grid-cols-[1fr_1fr] gap-2 items-center">
+      <label className="text-macaron-label">Type</label>
+      <Select
+        value={condition.type}
+        options={(["hover", "active", "maxWidth"] as const).map((value) => ({
+          value,
+          text: startCase(value),
+        }))}
+        onChange={action(
+          (value: "hover" | "active" | "maxWidth" | undefined) => {
+            if (!value) {
+              return;
+            }
+            if (value === "maxWidth") {
+              onChangeCondition({
+                type: value,
+                value: 768,
+              });
+            } else {
+              onChangeCondition({
+                type: value,
+              });
+            }
+          }
+        )}
+      />
+      {condition.type === "maxWidth" && (
+        <>
+          <label className="text-macaron-label">Max Width</label>
+          <Input
+            value={String(condition.value)}
+            onChange={action((value) => {
+              onChangeCondition({
+                type: "maxWidth",
+                value: Number(value),
+              });
+            })}
+          ></Input>
+        </>
+      )}
+    </div>
+  );
+};
+
 const VariantRow = observer(function VariantRow({
   component,
   variant,
@@ -170,8 +219,7 @@ const VariantRow = observer(function VariantRow({
   }
   const selectable = projectState.document.getSelectable([variant.id]);
 
-  const isDefault = variant.type !== "variant";
-  const condition = !isDefault ? variant.condition : undefined;
+  const condition = variant.type === "variant" ? variant.condition : undefined;
   const { icon, text } = getIconAndTextForCondition(
     condition ?? { type: "default" }
   );
@@ -215,12 +263,7 @@ const VariantRow = observer(function VariantRow({
           hovered && "ring-1 ring-inset ring-macaron-active"
         )}
       >
-        {isDefault ? (
-          <Icon
-            icon={icon}
-            className="text-base text-macaron-disabledText group-aria-selected:text-macaron-activeText"
-          />
-        ) : (
+        {condition ? (
           <RadixPopover.Root>
             <RadixPopover.Trigger>
               <IconButton
@@ -236,57 +279,24 @@ const VariantRow = observer(function VariantRow({
                 sideOffset={8}
                 className={`w-[200px] ${popoverStyle} rounded-lg shadow-xl p-2 flex flex-col gap-2`}
               >
-                <div className="grid grid-cols-[1fr_1fr] gap-2 items-center">
-                  <label className="text-macaron-label">Type</label>
-                  <Select
-                    value={condition?.type}
-                    options={(["hover", "active", "maxWidth"] as const).map(
-                      (value) => ({
-                        value,
-                        text: startCase(value),
-                      })
-                    )}
-                    onChange={action(
-                      (value: "hover" | "active" | "maxWidth" | undefined) => {
-                        if (!value) {
-                          return;
-                        }
-                        if (value === "maxWidth") {
-                          variant.condition = {
-                            type: value,
-                            value: 768,
-                          };
-                        } else {
-                          variant.condition = {
-                            type: value,
-                          };
-                        }
-                        projectState.undoManager.stopCapturing();
-                      }
-                    )}
-                  />
-                  {condition?.type === "maxWidth" && (
-                    <>
-                      <label className="text-macaron-label">Max Width</label>
-                      <Input
-                        value={String(condition.value)}
-                        onChange={action((value) => {
-                          variant.condition = {
-                            type: "maxWidth",
-                            value: Number(value),
-                          };
-                          projectState.undoManager.stopCapturing();
-                        })}
-                      ></Input>
-                    </>
-                  )}
-                </div>
+                <ConditionEditor
+                  value={condition}
+                  onChangeValue={action((value) => {
+                    variant.condition = value;
+                    projectState.undoManager.stopCapturing();
+                  })}
+                />
               </RadixPopover.Content>
             </RadixPopover.Portal>
           </RadixPopover.Root>
+        ) : (
+          <Icon
+            icon={icon}
+            className="text-base text-macaron-disabledText group-aria-selected:text-macaron-activeText"
+          />
         )}
         <span className="flex-1 text-ellipsis whitespace-nowrap">{text}</span>
-        {!isDefault && (
+        {condition && (
           <IconButton
             icon={removeIcon}
             className="opacity-0 group-hover:opacity-100 transition-opacity group-aria-selected:text-macaron-activeText"
