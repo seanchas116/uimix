@@ -48,6 +48,8 @@
     "react-draggable-tree": "^0.7.0",
     "react-merge-refs": "^2.0.1",
     "react-sortablejs": "^6.1.4",
+    "slate": "^0.90.0",
+    "slate-react": "^0.90.0",
     "sortablejs": "^1.15.0",
     "svg-pathdata": "^6.0.3",
     "tailwind-merge": "^1.9.1",
