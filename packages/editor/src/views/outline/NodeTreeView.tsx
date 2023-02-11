@@ -93,6 +93,7 @@ const TreeRow: React.FC<{
 
   const selected = selectable.selected;
   const hovered = viewportState.hoveredSelectable === selectable;
+  const ancestorSelected = selectable.ancestorSelected;
 
   const topSelected =
     rows[index - 1]?.item.selectable.ancestorSelected ?? false;
@@ -151,7 +152,7 @@ const TreeRow: React.FC<{
           !bottomSelected && "rounded-b",
           selected
             ? "bg-macaron-active text-macaron-activeText"
-            : selectable.ancestorSelected
+            : ancestorSelected
             ? "bg-macaron-active/10"
             : "bg-macaron-background",
           hovered && "ring-1 ring-inset ring-macaron-active"
