@@ -52,17 +52,30 @@ export class Node {
       const oldChildren = new Map<Y.Map<any>, Node>();
       for (const instance of this.children) {
         oldChildren.set(instance.data.y, instance);
-        document.nodesForID.deleteValue(instance.id, instance);
       }
-
+      const removedChildren = new Set<Node>(this.children);
       const newChildren: Node[] = [];
+      const addedChildren: Node[] = [];
 
       for (const [i, nodeData] of [...this.childrenData].entries()) {
-        const node =
-          oldChildren.get(nodeData) ?? new Node(document, this, nodeData);
+        let node = oldChildren.get(nodeData);
+        if (node) {
+          removedChildren.delete(node);
+        } else {
+          node = new Node(document, this, nodeData);
+          addedChildren.push(node);
+        }
         node.index = i;
         newChildren.push(node);
-        document.nodesForID.set(node.id, node);
+        oldChildren.delete(nodeData);
+      }
+
+      for (const removed of removedChildren) {
+        document.onRemoveNode(removed);
+      }
+
+      for (const added of addedChildren) {
+        document.onAddNode(added);
       }
 
       this.children = newChildren;

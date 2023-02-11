@@ -49,6 +49,21 @@ export class Document {
   }
 
   readonly nodesForID = new ObservableMultiMap<string, Node>();
+
+  onAddNode(node: Node) {
+    this.nodesForID.set(node.id, node);
+    for (const child of node.children) {
+      this.onAddNode(child);
+    }
+  }
+
+  onRemoveNode(node: Node) {
+    this.nodesForID.delete(node.id);
+    for (const child of node.children) {
+      this.onRemoveNode(child);
+    }
+  }
+
   private readonly selectablesData: Y.Map<Y.Map<any>>;
   private readonly selectablesCache = new WeakMap<Y.Map<any>, Selectable>();
 
