@@ -1,5 +1,6 @@
 import { Document } from "../models/Document";
 import { Color } from "../utils/Color";
+import colors from "tailwindcss/colors.js";
 
 export function generateExampleNodes(document: Document) {
   for (let i = 0; i < 10; ++i) {
@@ -14,7 +15,7 @@ export function generateExampleNodes(document: Document) {
     };
     style.width = { type: "fixed", value: 50 };
     style.height = { type: "fixed", value: 50 };
-    style.fill = Color.from("red").toHex();
+    style.fill = Color.from(colors.red[500])!.toHex();
   }
 
   {
@@ -28,7 +29,7 @@ export function generateExampleNodes(document: Document) {
     };
     stackStyle.width = { type: "hugContents" };
     stackStyle.height = { type: "hugContents" };
-    stackStyle.fill = Color.from("lightgray").toHex();
+    stackStyle.fill = Color.from(colors.gray[200])!.toHex();
     stackStyle.layout = "stack";
     stackStyle.gap = 10;
     stackStyle.paddingTop = 10;
@@ -41,21 +42,21 @@ export function generateExampleNodes(document: Document) {
 
     stackItem0Style.width = { type: "fixed", value: 50 };
     stackItem0Style.height = { type: "fixed", value: 50 };
-    stackItem0Style.fill = Color.from("red").toHex();
+    stackItem0Style.fill = Color.from(colors.red[500])!.toHex();
 
     const [stackItem1] = stack.append([{ type: "frame", name: "Item 1" }]);
     const stackItem1Style = document.getSelectable([stackItem1.id]).style;
 
     stackItem1Style.width = { type: "fixed", value: 40 };
     stackItem1Style.height = { type: "fixed", value: 80 };
-    stackItem1Style.fill = Color.from("green").toHex();
+    stackItem1Style.fill = Color.from(colors.green[500])!.toHex();
 
     const [stackItem2] = stack.append([{ type: "frame", name: "Item 2" }]);
     const stackItem2Style = document.getSelectable([stackItem2.id]).style;
 
     stackItem2Style.width = { type: "fixed", value: 80 };
     stackItem2Style.height = { type: "fixed", value: 40 };
-    stackItem2Style.fill = Color.from("blue").toHex();
+    stackItem2Style.fill = Color.from(colors.blue[500])!.toHex();
 
     const [text] = stack.prepend([{ type: "text", name: "Text" }]);
     const textStyle = document.getSelectable([text.id]).style;
@@ -111,7 +112,7 @@ export function generateExampleNodes(document: Document) {
     };
     rootNodeStyle.width = { type: "hugContents" };
     rootNodeStyle.height = { type: "hugContents" };
-    rootNodeStyle.fill = Color.from("lightgray").toHex();
+    rootNodeStyle.fill = Color.from(colors.gray[200])!.toHex();
     rootNodeStyle.layout = "stack";
     rootNodeStyle.paddingLeft = 8;
     rootNodeStyle.paddingRight = 8;
@@ -121,20 +122,20 @@ export function generateExampleNodes(document: Document) {
     const textNodeStyle = document.getSelectable([textNode.id]).style;
     textNodeStyle.width = { type: "hugContents" };
     textNodeStyle.height = { type: "hugContents" };
-    textNodeStyle.fill = Color.from("black").toHex();
+    textNodeStyle.fill = Color.from(colors.gray[900])!.toHex();
 
     const hoverRootNodeStyle = document.getSelectable([hoverVariant.id]).style;
     hoverRootNodeStyle.position = {
       x: { type: "start", start: 150 },
       y: { type: "start", start: 400 },
     };
-    hoverRootNodeStyle.fill = Color.from("black").toHex();
+    hoverRootNodeStyle.fill = Color.from(colors.blue[500])!.toHex();
 
     const hoverTextNodeStyle = document.getSelectable([
       hoverVariant.id,
       textNode.id,
     ]).style;
-    hoverTextNodeStyle.fill = Color.from("white").toHex();
+    hoverTextNodeStyle.fill = Color.from(colors.white)!.toHex();
 
     const [instanceNode] = document.root.append([
       { type: "instance", name: "Instance" },
