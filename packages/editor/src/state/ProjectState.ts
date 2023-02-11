@@ -2,7 +2,7 @@ import { computed, makeObservable } from "mobx";
 import * as Y from "yjs";
 import { Document } from "../models/Document";
 import { Selectable } from "../models/Selectable";
-import { generateExampleNodes } from "./generateExampleNodes2";
+import { generateExampleNodes } from "./generateExampleNodes";
 
 export class ProjectState {
   constructor() {
