@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { StackDirection } from "node-data";
 import React, { createRef, useEffect } from "react";
 import { Selectable } from "../../../models/Selectable";
+import { viewportState } from "../../../state/ViewportState";
 import { buildNodeCSS } from "./buildNodeCSS";
 import { ComputedRectProvider } from "./ComputedRectProvider";
 
@@ -37,7 +38,14 @@ export const NodeRenderer: React.FC<{
   const style = selectable.style;
   const type = selectable.node.type;
 
-  const cssStyle = buildNodeCSS(type, style, parentStackDirection);
+  const cssStyle = {
+    ...buildNodeCSS(type, style, parentStackDirection),
+    ...(selectable === viewportState.focusedSelectable
+      ? {
+          opacity: 0,
+        }
+      : undefined),
+  };
 
   const ref = createRef<HTMLDivElement | HTMLImageElement>();
 
