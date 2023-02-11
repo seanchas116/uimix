@@ -29,7 +29,7 @@ export function generateExampleNodes(document: Document) {
     };
     stackStyle.width = { type: "hugContents" };
     stackStyle.height = { type: "hugContents" };
-    stackStyle.fill = Color.from(colors.gray[200])!.toHex();
+    stackStyle.fill = Color.white.toHex();
     stackStyle.layout = "stack";
     stackStyle.gap = 10;
     stackStyle.paddingTop = 10;
