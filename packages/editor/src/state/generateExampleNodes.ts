@@ -81,7 +81,7 @@ export function generateExampleNodes(document: Document) {
 
     const [rootNode] = componentNode.append([{ type: "frame" }]);
 
-    const [textNode] = rootNode.append([{ type: "text" }]);
+    const [textNode] = rootNode.append([{ type: "text", name: "Text" }]);
     const textNodeProps = document.getSelectable([textNode.id]).style;
     textNodeProps.textContent = "Button";
 
