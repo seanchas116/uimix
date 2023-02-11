@@ -22,6 +22,8 @@ export const TextEditorBody: React.FC<{
     editable.textContent = selectable.style.textContent ?? "";
   }, []);
 
+  const fitWidth = selectable.style.width.type === "hugContents";
+
   return (
     <div
       style={{
@@ -37,7 +39,7 @@ export const TextEditorBody: React.FC<{
           position: "absolute",
           left: computedRect.left + "px",
           top: computedRect.top + "px",
-          width: computedRect.width + "px",
+          width: fitWidth ? "max-content" : computedRect.width + "px",
           height: computedRect.height + "px",
         }}
         contentEditable
