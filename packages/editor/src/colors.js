@@ -11,7 +11,7 @@ export default {
   label: colors.neutral[600],
   disabledText: colors.neutral[300],
   uiBackground: colors.neutral[100],
-  separator: "#f0f0f0",
-  viewportBackground: "#f8f8f8",
+  separator: colors.neutral[100],
+  viewportBackground: colors.neutral[50],
   background: colors.white,
 };
