@@ -47,12 +47,12 @@ export function getIconAndTextForCondition(
     }
     case "hover":
       return {
-        icon: "material-symbols:arrow-selector-tool-outline",
+        icon: "material-symbols:arrow-selector-tool-outline-rounded",
         text: "Hover",
       };
     case "active":
       return {
-        icon: "material-symbols:left-click-outline",
+        icon: "material-symbols:left-click-rounded",
         text: "Active",
       };
     case "maxWidth":
