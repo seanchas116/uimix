@@ -6,6 +6,7 @@ import * as Y from "yjs";
 import { getOrCreate } from "../state/Collection";
 import { computed, makeObservable, observable } from "mobx";
 import { Rect } from "paintvec";
+import { resizeWithBoundingBox } from "../services/Resize";
 
 // a node or a inner node of an instance
 export class Selectable {
@@ -333,5 +334,20 @@ export function moveSelectables(
   const newSelectables = dstParent.insert(index, jsons);
   for (let i = 0; i < newSelectables.length; ++i) {
     newSelectables[i].selfStyle.loadJSON(styles[i]);
+  }
+
+  for (const selectable of newSelectables) {
+    const absolute =
+      dstParent.style.layout === "none" || selectable.style.absolute;
+
+    if (absolute) {
+      const bbox = selectable.computedRect;
+      resizeWithBoundingBox(
+        selectable,
+        bbox,
+        { x: true, y: true },
+        dstParent.computedRect.topLeft
+      );
+    }
   }
 }

@@ -72,14 +72,6 @@ export class NodeAbsoluteMoveDragHandler implements DragHandler {
         instance.parent !== parent
       ) {
         moveSelectables(parent, undefined, [instance]);
-
-        const newRect = bbox.translate(snappedOffset);
-        resizeWithBoundingBox(
-          instance,
-          newRect,
-          { x: true, y: true },
-          parent.computedRect.topLeft
-        );
       }
     }
     projectState.undoManager.stopCapturing();
