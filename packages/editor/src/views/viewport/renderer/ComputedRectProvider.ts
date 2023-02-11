@@ -1,5 +1,6 @@
 import { createAtom } from "mobx";
 import { Rect } from "paintvec";
+import { scrollState } from "../../../state/ScrollState";
 
 export const viewportRootMarker = "data-viewport-root";
 
@@ -9,11 +10,16 @@ function getComputedRect(element: Element): Rect {
     return new Rect();
   }
 
+  const width =
+    (element as HTMLElement).getBoundingClientRect().width / scrollState.scale;
+  const height =
+    (element as HTMLElement).getBoundingClientRect().height / scrollState.scale;
+
   const localRect = Rect.from({
     left: (element as HTMLElement).offsetLeft,
     top: (element as HTMLElement).offsetTop,
-    width: (element as HTMLElement).offsetWidth,
-    height: (element as HTMLElement).offsetHeight,
+    width,
+    height,
   });
 
   if (offsetParent.hasAttribute(viewportRootMarker)) {
