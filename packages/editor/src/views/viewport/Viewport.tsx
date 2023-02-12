@@ -11,6 +11,7 @@ import { DragHandlerOverlay } from "./dragHandler/DragHandlerOverlay";
 import { Indicators } from "./indicator/Indicators";
 import { TextEditor } from "./TextEditor";
 import { FrameLabels } from "./FrameLabels";
+import { VariantLabels } from "./VariantLabels";
 
 export const Viewport: React.FC = observer(function Viewport() {
   const ref = createRef<HTMLDivElement>();
@@ -72,7 +73,6 @@ export const Viewport: React.FC = observer(function Viewport() {
       className="flex-1 bg-macaron-viewportBackground relative overflow-hidden contain-strict"
       onWheel={onWheel}
     >
-      <FrameLabels />
       <div
         style={{
           position: "absolute",
@@ -88,6 +88,7 @@ export const Viewport: React.FC = observer(function Viewport() {
         ))}
       </div>
       <DragHandlerOverlay />
+      <VariantLabels />
       <Indicators />
       <TextEditor />
       <PanOverlay />
