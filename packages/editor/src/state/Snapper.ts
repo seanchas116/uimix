@@ -26,7 +26,7 @@ export class Snapper {
     siblings?: boolean;
     children?: boolean;
   }): Set<Selectable> {
-    const topLevels = new Set(projectState.rootSelectable.children);
+    const topLevels = new Set(projectState.rootSelectable.offsetChildren);
 
     const selection = new Set(projectState.selectedSelectables);
     if (!selection.size) {
@@ -35,23 +35,24 @@ export class Snapper {
 
     const children = new Set<Selectable>();
 
-    for (const selected of selection) {
-      for (const child of selected.children) {
+    for (const s of selection) {
+      for (const child of s.offsetChildren) {
         children.add(child);
       }
     }
 
     const parents = new Set<Selectable>();
-    for (const p of selection) {
-      if (p.parent) {
-        parents.add(p.parent);
+    for (const s of selection) {
+      const { offsetParent } = s;
+      if (offsetParent) {
+        parents.add(offsetParent);
       }
     }
 
     const siblings = new Set<Selectable>();
 
     for (const parent of parents) {
-      for (const child of parent.children) {
+      for (const child of parent.offsetChildren) {
         if (!child.ancestorSelected) {
           siblings.add(child);
         }

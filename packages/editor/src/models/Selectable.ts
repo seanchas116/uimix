@@ -70,12 +70,27 @@ export class Selectable {
     }
   }
 
+  // children/parent ignoring abstract nodes
+
   @computed get offsetParent(): Selectable | undefined {
     const parent = this.parent;
     if (parent?.node.type === "component") {
       return parent.offsetParent;
     }
     return parent;
+  }
+
+  @computed get offsetChildren(): Selectable[] {
+    const children: Selectable[] = [];
+
+    for (const child of this.children) {
+      if (child.originalNode.type === "component") {
+        children.push(...child.children);
+      } else {
+        children.push(child);
+      }
+    }
+    return children;
   }
 
   // ancestors ([root, ..., parent, this])
