@@ -47,7 +47,7 @@ export function usePointerStroke<T extends Element = Element, InitData = void>(
     }
     // Ignore events bubbled from portals
     // workaround for https://github.com/facebook/react/issues/19637
-    if (!e.currentTarget.contains(e.target)) {
+    if (!e.currentTarget.contains(e.target as Node)) {
       return;
     }
 
