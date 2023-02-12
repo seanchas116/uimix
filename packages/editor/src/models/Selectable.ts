@@ -158,6 +158,8 @@ export class Selectable {
   }
 
   @computed get mainComponent(): MainComponent | undefined {
+    // TODO: avoid infinite expansion of instances
+
     const originalNode = this.originalNode;
     if (originalNode.type === "instance") {
       const { mainComponentID } = this.originalStyle;
