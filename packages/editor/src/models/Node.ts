@@ -212,4 +212,11 @@ export class Node {
   get isVariant(): boolean {
     return this.parent?.type === "component" && this.type === "variant";
   }
+
+  get ownerComponent(): Node | undefined {
+    if (this.type === "component") {
+      return this;
+    }
+    return this.parent?.ownerComponent;
+  }
 }

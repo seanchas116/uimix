@@ -158,15 +158,17 @@ export class Selectable {
   }
 
   @computed get mainComponent(): MainComponent | undefined {
-    // TODO: avoid infinite expansion of instances
-
     const originalNode = this.originalNode;
     if (originalNode.type === "instance") {
       const { mainComponentID } = this.originalStyle;
       if (mainComponentID) {
+        const ownerComponents = this.nodePath.map(
+          (node) => node.ownerComponent
+        );
+
         const mainComponentNode = this.document.getNodeByID(mainComponentID);
-        const componentRoot = mainComponentNode?.children[0];
-        if (componentRoot) {
+        if (mainComponentNode && !ownerComponents.includes(mainComponentNode)) {
+          const componentRoot = mainComponentNode.children[0];
           return {
             componentNode: mainComponentNode,
             rootNode: componentRoot,
