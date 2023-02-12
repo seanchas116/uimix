@@ -74,7 +74,7 @@ const VariantLabel: React.FC<{
         //pointerEvents: frame.isLocked ? "none" : "auto",
       }}
       className="
-        absolute flex p-1 px-2 gap-1 items-center rounded-md
+        absolute flex p-1 gap-1 items-center rounded-md
         bg-neutral-500/10
         text-neutral-500
         hover:bg-blue-500/10
@@ -87,8 +87,8 @@ const VariantLabel: React.FC<{
       {...dragProps}
       onPointerLeave={onPointerLeave}
     >
-      <Icon icon={icon} className="text-xs" />
-      <span className="text-[11px] font-medium flex-1 mr-1">
+      <Icon icon={icon} className="text-base" />
+      <span className="text-xs font-medium flex-1 mr-1">
         <span>{variant.parent?.name}</span> › <span>{text}</span>
       </span>
       <DropdownMenu
@@ -100,7 +100,7 @@ const VariantLabel: React.FC<{
             }}
             {...props}
           >
-            <Icon icon="mdi:add" className="text-xs" />
+            <Icon icon="mdi:add" className="text-base" />
           </button>
         )}
         defs={[
