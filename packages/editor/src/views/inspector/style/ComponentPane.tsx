@@ -157,7 +157,7 @@ function PropRow({
   );
 }
 
-const ConditionEditor: React.FC<{
+export const ConditionEditor: React.FC<{
   value: VariantCondition;
   onChangeValue: (value: VariantCondition) => void;
 }> = ({ value: condition, onChangeValue: onChangeCondition }) => {

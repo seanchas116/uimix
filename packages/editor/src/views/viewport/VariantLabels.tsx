@@ -1,9 +1,13 @@
-import React, { createRef, useEffect } from "react";
+import React, { createRef, useEffect, useState } from "react";
+import * as RadixPopover from "@radix-ui/react-popover";
 import { projectState } from "../../state/ProjectState";
 import { Selectable } from "../../models/Selectable";
 import { observer } from "mobx-react-lite";
 import { scrollState } from "../../state/ScrollState";
-import { getIconAndTextForCondition } from "../inspector/style/ComponentPane";
+import {
+  ConditionEditor,
+  getIconAndTextForCondition,
+} from "../inspector/style/ComponentPane";
 import { selectableForDOM } from "./renderer/NodeRenderer";
 import { Icon } from "@iconify/react";
 import { usePointerStroke } from "../../components/hooks/usePointerStroke";
@@ -14,6 +18,7 @@ import { action } from "mobx";
 import { viewportState } from "../../state/ViewportState";
 import { IconButton } from "../../components/IconButton";
 import { DropdownMenu } from "../../components/Menu";
+import { popoverStyle } from "../../components/styles";
 
 const VariantLabel: React.FC<{
   variantSelectable: Selectable;
@@ -61,6 +66,8 @@ const VariantLabel: React.FC<{
     viewportState.hoveredSelectable = undefined;
   });
 
+  const [conditionEditorOpen, setConditionEditorOpen] = useState(false);
+
   const component = variant.parent;
   if (!component) {
     return null;
@@ -87,10 +94,40 @@ const VariantLabel: React.FC<{
       "
       aria-selected={variantSelectable.selected}
     >
+      {variant.condition && (
+        <RadixPopover.Root
+          open={conditionEditorOpen}
+          onOpenChange={(open) => setConditionEditorOpen(open)}
+        >
+          <RadixPopover.Trigger>
+            <div className="absolute inset-0 pointer-events-none" />
+          </RadixPopover.Trigger>
+          <RadixPopover.Portal>
+            <RadixPopover.Content
+              side="left"
+              align="start"
+              alignOffset={-12}
+              sideOffset={8}
+              className={`w-[200px] ${popoverStyle} rounded-lg shadow-xl p-2 flex flex-col gap-2`}
+            >
+              <ConditionEditor
+                value={variant.condition}
+                onChangeValue={action((value) => {
+                  variant.condition = value;
+                  projectState.undoManager.stopCapturing();
+                })}
+              />
+            </RadixPopover.Content>
+          </RadixPopover.Portal>
+        </RadixPopover.Root>
+      )}
       <div
         className="absolute inset-0 z-0"
         {...dragProps}
         onPointerLeave={onPointerLeave}
+        onDoubleClick={() => {
+          setConditionEditorOpen(true);
+        }}
       />
       <Icon icon={icon} className="text-base" />
       <span className="text-xs font-medium flex-1 mr-1">
