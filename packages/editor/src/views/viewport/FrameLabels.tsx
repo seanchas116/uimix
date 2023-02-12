@@ -1,5 +1,5 @@
 import { action } from "mobx";
-import React from "react";
+import React, { createRef, useEffect } from "react";
 import { projectState } from "../../state/ProjectState";
 import { Selectable } from "../../models/Selectable";
 import { observer } from "mobx-react-lite";
@@ -12,6 +12,7 @@ import { viewportState } from "../../state/ViewportState";
 import { Icon, IconifyIcon } from "@iconify/react";
 import { Rect } from "paintvec";
 import { getIconAndTextForCondition } from "../inspector/style/ComponentPane";
+import { selectableForDOM } from "./renderer/NodeRenderer";
 
 // const LabelWrap = styled.div`
 //   pointer-events: all;
@@ -89,13 +90,8 @@ const Label: React.FC<{
     onEnd: action((e, { initData: dragHandler }) => {
       dragHandler?.end(e.nativeEvent);
     }),
-    onHover: action(() => {
-      viewportState.hoveredSelectable = frame;
-    }),
   });
-  const onPointerLeave = action(() => {
-    viewportState.hoveredSelectable = undefined;
-  });
+
   // TODO: context menu
   // const onContextMenu = action((e: React.MouseEvent) => {
   //   e.preventDefault();
@@ -115,8 +111,17 @@ const Label: React.FC<{
   //   }
   // }
 
+  const ref = createRef<HTMLDivElement>();
+
+  useEffect(() => {
+    if (ref.current) {
+      selectableForDOM.set(ref.current, frame);
+    }
+  });
+
   return (
     <div
+      ref={ref}
       style={{
         left: `${pos.left}px`,
         top: `${pos.top}px`,
@@ -124,7 +129,6 @@ const Label: React.FC<{
       }}
       className="text-macaron-text/50 absolute pointer-events-all text-xs pb-1 translate-y-[-100%]"
       {...dragProps}
-      onPointerLeave={onPointerLeave}
       //onContextMenu={onContextMenu}
     >
       {iconSrc && <Icon icon={iconSrc} className="text-xs" />}
