@@ -176,4 +176,41 @@ describe(Document.name, () => {
     expect(textSelectable.selected).toBe(false);
     expect(textSelectable.ancestorSelected).toBe(true);
   });
+
+  it("avoid infinite instantiation", () => {
+    const ydoc = new Y.Doc();
+    const doc = new Document(ydoc.getMap("document"));
+
+    const [componentSelectable] = doc.rootSelectable.insert(0, [
+      {
+        type: "component",
+        name: "Test Component",
+        children: [
+          {
+            type: "frame",
+            name: "default",
+            children: [
+              {
+                type: "text",
+                name: "Text",
+              },
+            ],
+          },
+          {
+            type: "variant",
+            name: "hover",
+          },
+        ],
+      },
+    ]);
+
+    const [instance] = componentSelectable.children[0].append([
+      {
+        type: "instance",
+      },
+    ]);
+    instance.style.mainComponentID = componentSelectable.originalNode.id;
+
+    expect(instance.children.length).toBe(0);
+  });
 });
