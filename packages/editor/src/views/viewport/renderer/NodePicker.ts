@@ -20,6 +20,13 @@ function clickableAncestor(
       }
     }
   }
+  for (const selectable of projectState.rootSelectable.children) {
+    if (selectable.originalNode.type === "component") {
+      for (const child of selectable.children) {
+        clickables.add(child);
+      }
+    }
+  }
 
   let instance = instanceAtPos;
   let innerInstance = instanceAtPos;
