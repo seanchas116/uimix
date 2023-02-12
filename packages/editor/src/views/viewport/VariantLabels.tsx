@@ -69,15 +69,15 @@ const VariantLabel: React.FC<{
         width: "max-content",
         //pointerEvents: frame.isLocked ? "none" : "auto",
       }}
-      className="absolute flex p-1 gap-1 items-center bg-neutral-500/10 rounded-md text-neutral-500"
+      className="absolute flex p-1 gap-1 items-center bg-neutral-500/10 aria-selected:bg-blue-500/10 rounded-md text-neutral-500 aria-selected:text-blue-500"
+      aria-selected={variantSelectable.selected}
       //onContextMenu={onContextMenu}
       {...dragProps}
       onPointerLeave={onPointerLeave}
     >
       <Icon icon={icon} className="text-xs" />
-      <span className="text-xs font-normal">
-        <span className="font-normal">{variant.parent?.name}</span> -{" "}
-        <span>{text}</span>
+      <span className="text-xs font-medium">
+        <span>{variant.parent?.name}</span> › <span>{text}</span>
       </span>
     </div>
   );
