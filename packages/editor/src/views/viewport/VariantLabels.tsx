@@ -13,6 +13,7 @@ import { NodePickResult } from "./renderer/NodePicker";
 import { action } from "mobx";
 import { viewportState } from "../../state/ViewportState";
 import { IconButton } from "../../components/IconButton";
+import { DropdownMenu } from "../../components/Menu";
 
 const VariantLabel: React.FC<{
   variantSelectable: Selectable;
@@ -60,6 +61,8 @@ const VariantLabel: React.FC<{
     viewportState.hoveredSelectable = undefined;
   });
 
+  const component = variant.parent;
+
   return (
     <div
       ref={ref}
@@ -88,14 +91,53 @@ const VariantLabel: React.FC<{
       <span className="text-[11px] font-medium flex-1 mr-1">
         <span>{variant.parent?.name}</span> › <span>{text}</span>
       </span>
-      <button
-        className="-m-1 p-1 hover:bg-blue-500/10 rounded"
-        onPointerDown={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        <Icon icon="mdi:add" className="text-xs" />
-      </button>
+      <DropdownMenu
+        trigger={(props) => (
+          <button
+            className="-m-1 p-1 hover:bg-blue-500/10 rounded"
+            onPointerDown={(e) => {
+              e.stopPropagation();
+            }}
+            {...props}
+          >
+            <Icon icon="mdi:add" className="text-xs" />
+          </button>
+        )}
+        defs={[
+          {
+            type: "command",
+            text: "Add Variant",
+            onClick: action(() => {
+              console.log("onClick");
+              component?.append([
+                {
+                  type: "variant",
+                  condition: {
+                    type: "hover",
+                  },
+                },
+              ]);
+              projectState.undoManager.stopCapturing();
+            }),
+          },
+          {
+            type: "command",
+            text: "Add Breakpoint",
+            onClick: action(() => {
+              component?.append([
+                {
+                  type: "variant",
+                  condition: {
+                    type: "maxWidth",
+                    value: 767,
+                  },
+                },
+              ]);
+              projectState.undoManager.stopCapturing();
+            }),
+          },
+        ]}
+      />
     </div>
   );
 });
