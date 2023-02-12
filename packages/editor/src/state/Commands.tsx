@@ -88,7 +88,11 @@ class Commands {
 
   delete() {
     for (const selected of projectState.selectedSelectables) {
-      selected.originalNode.remove();
+      if (selected.idPath.length === 1) {
+        selected.originalNode.remove();
+      } else {
+        // TODO: hide?
+      }
     }
   }
 
