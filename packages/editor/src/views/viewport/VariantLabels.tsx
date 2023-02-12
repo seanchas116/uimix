@@ -104,10 +104,10 @@ const VariantLabel: React.FC<{
           </RadixPopover.Trigger>
           <RadixPopover.Portal>
             <RadixPopover.Content
-              side="left"
+              side="bottom"
               align="start"
-              alignOffset={-12}
-              sideOffset={8}
+              alignOffset={-4}
+              sideOffset={16}
               className={`w-[200px] ${popoverStyle} rounded-lg shadow-xl p-2 flex flex-col gap-2`}
             >
               <ConditionEditor
