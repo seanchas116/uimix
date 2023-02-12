@@ -11,6 +11,7 @@ import { NodePickResult } from "./renderer/NodePicker";
 import { viewportState } from "../../state/ViewportState";
 import { Icon, IconifyIcon } from "@iconify/react";
 import { Rect } from "paintvec";
+import { getIconAndTextForCondition } from "../inspector/style/ComponentPane";
 
 // const LabelWrap = styled.div`
 //   pointer-events: all;
@@ -34,26 +35,41 @@ const ComponentSection: React.FC<{
     return null;
   }
   const bboxInView = bbox.transform(scrollState.documentToViewport);
+  const topPadding = 32;
   const padding = 16;
 
   return (
-    <div
-      className="border border-neutral-300 bg-neutral-200 rounded-md"
-      style={{
-        position: "absolute",
-        left: bboxInView.left - padding + "px",
-        top: bboxInView.top - padding + "px",
-        width: bboxInView.width + padding * 2 + "px",
-        height: bboxInView.height + padding * 2 + "px",
-        pointerEvents: "none",
-      }}
-    />
+    <>
+      <div
+        className="border border-neutral-300 bg-neutral-200 rounded-md"
+        style={{
+          position: "absolute",
+          left: bboxInView.left - padding + "px",
+          top: bboxInView.top - topPadding + "px",
+          width: bboxInView.width + padding * 2 + "px",
+          height: bboxInView.height + padding + topPadding + "px",
+          pointerEvents: "none",
+        }}
+      />
+      {component.children.map((variant) => {
+        const condition =
+          variant.originalNode.type === "variant"
+            ? variant.originalNode.condition
+            : undefined;
+        const { text } = getIconAndTextForCondition(
+          condition ?? { type: "default" }
+        );
+
+        return <Label frame={variant} text={text} />;
+      })}
+    </>
   );
 });
 
 const Label: React.FC<{
   frame: Selectable;
-}> = observer(function Label({ frame }) {
+  text: React.ReactNode;
+}> = observer(function Label({ frame, text }) {
   const pos = frame.computedRect.transform(scrollState.documentToViewport);
 
   const dragProps = usePointerStroke<Element, DragHandler | undefined>({
@@ -112,7 +128,7 @@ const Label: React.FC<{
       //onContextMenu={onContextMenu}
     >
       {iconSrc && <Icon icon={iconSrc} className="text-xs" />}
-      {frame.originalNode.name}
+      {text}
     </div>
   );
 });
@@ -131,7 +147,7 @@ export const FrameLabels: React.FC = observer(function FrameLabels({}) {
         <ComponentSection component={component} key={component.id} />
       ))}
       {frames.map((frame) => (
-        <Label frame={frame} key={frame.id} />
+        <Label frame={frame} key={frame.id} text={frame.originalNode.name} />
       ))}
     </>
   );
