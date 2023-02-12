@@ -1,13 +1,8 @@
-import { action } from "mobx";
 import React, { createRef, useEffect } from "react";
 import { projectState } from "../../state/ProjectState";
 import { Selectable } from "../../models/Selectable";
 import { observer } from "mobx-react-lite";
 import { scrollState } from "../../state/ScrollState";
-import { usePointerStroke } from "../../components/hooks/usePointerStroke";
-import { DragHandler } from "./dragHandler/DragHandler";
-import { NodeClickMoveDragHandler } from "./dragHandler/NodeClickMoveDragHandler";
-import { NodePickResult } from "./renderer/NodePicker";
 import { Icon, IconifyIcon } from "@iconify/react";
 import { Rect } from "paintvec";
 import { getIconAndTextForCondition } from "../inspector/style/ComponentPane";
@@ -72,25 +67,6 @@ const Label: React.FC<{
 }> = observer(function Label({ frame, text }) {
   const pos = frame.computedRect.transform(scrollState.documentToViewport);
 
-  const dragProps = usePointerStroke<Element, DragHandler | undefined>({
-    onBegin: action((event) => {
-      return NodeClickMoveDragHandler.create(
-        new NodePickResult(
-          [frame],
-          scrollState.documentPosForEvent(event),
-          event.nativeEvent,
-          "click"
-        )
-      );
-    }),
-    onMove: action((e, { initData: dragHandler }) => {
-      dragHandler?.move(e.nativeEvent);
-    }),
-    onEnd: action((e, { initData: dragHandler }) => {
-      dragHandler?.end(e.nativeEvent);
-    }),
-  });
-
   // TODO: context menu
   // const onContextMenu = action((e: React.MouseEvent) => {
   //   e.preventDefault();
@@ -127,7 +103,6 @@ const Label: React.FC<{
         //pointerEvents: frame.isLocked ? "none" : "auto",
       }}
       className="text-macaron-text/50 absolute pointer-events-all text-xs pb-1 translate-y-[-100%]"
-      {...dragProps}
       //onContextMenu={onContextMenu}
     >
       {iconSrc && <Icon icon={iconSrc} className="text-xs" />}
