@@ -10,7 +10,6 @@ import { PanOverlay } from "./PanOverlay";
 import { DragHandlerOverlay } from "./dragHandler/DragHandlerOverlay";
 import { Indicators } from "./indicator/Indicators";
 import { TextEditor } from "./TextEditor";
-import { FrameLabels } from "./FrameLabels";
 import { VariantLabels } from "./VariantLabels";
 
 export const Viewport: React.FC = observer(function Viewport() {
