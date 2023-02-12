@@ -8,7 +8,6 @@ import { usePointerStroke } from "../../components/hooks/usePointerStroke";
 import { DragHandler } from "./dragHandler/DragHandler";
 import { NodeClickMoveDragHandler } from "./dragHandler/NodeClickMoveDragHandler";
 import { NodePickResult } from "./renderer/NodePicker";
-import { viewportState } from "../../state/ViewportState";
 import { Icon, IconifyIcon } from "@iconify/react";
 import { Rect } from "paintvec";
 import { getIconAndTextForCondition } from "../inspector/style/ComponentPane";

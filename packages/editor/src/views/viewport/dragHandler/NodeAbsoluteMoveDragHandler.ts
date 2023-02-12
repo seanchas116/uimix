@@ -43,7 +43,6 @@ export class NodeAbsoluteMoveDragHandler implements DragHandler {
     const snappedRect = snapper.snapMoveRect(
       this.initWholeBBox.translate(offset)
     );
-    const snappedOffset = snappedRect.topLeft.sub(this.initWholeBBox.topLeft);
 
     const parent =
       overridesAtPos.find((dst) => {
@@ -66,7 +65,7 @@ export class NodeAbsoluteMoveDragHandler implements DragHandler {
         return true;
       }) ?? projectState.document.rootSelectable;
 
-    for (const [instance, bbox] of this.targets) {
+    for (const [instance] of this.targets) {
       if (
         instance.parent?.node.type !== "component" &&
         instance.parent !== parent
