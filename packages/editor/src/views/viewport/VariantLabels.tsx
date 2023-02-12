@@ -188,20 +188,18 @@ const VariantLabel: React.FC<{
   );
 });
 
-export const VariantLabels: React.FC = observer(function FrameLabels({}) {
+export const VariantLabels: React.FC = observer(function VariantLabels() {
   const components = projectState.rootSelectable.children.filter(
     (s) => s.node.type === "component"
   );
 
   return (
     <>
-      {components.map((component) => (
-        <>
-          {component.children.map((variant) => (
-            <VariantLabel variantSelectable={variant} key={variant.id} />
-          ))}
-        </>
-      ))}
+      {components.flatMap((component) =>
+        component.children.map((variant) => (
+          <VariantLabel variantSelectable={variant} key={variant.id} />
+        ))
+      )}
     </>
   );
 });

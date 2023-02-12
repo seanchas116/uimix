@@ -49,6 +49,7 @@ export function Select<T extends string>({
           <RadixSelect.Viewport className="SelectViewport">
             {options.map((option) => (
               <RadixSelect.Item
+                key={option.value}
                 value={option.value}
                 className="pl-4 relative h-6 flex items-center outline-0 text-macaron-text [&[data-highlighted]]:bg-macaron-active [&[data-highlighted]]:text-macaron-activeText"
               >
