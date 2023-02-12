@@ -62,6 +62,9 @@ const VariantLabel: React.FC<{
   });
 
   const component = variant.parent;
+  if (!component) {
+    return null;
+  }
 
   return (
     <div
@@ -109,7 +112,7 @@ const VariantLabel: React.FC<{
             text: "Add Variant",
             onClick: action(() => {
               console.log("onClick");
-              component?.append([
+              const [variant] = component.append([
                 {
                   type: "variant",
                   condition: {
@@ -117,6 +120,8 @@ const VariantLabel: React.FC<{
                   },
                 },
               ]);
+              projectState.document.rootSelectable.deselect();
+              projectState.document.getSelectableForNode(variant)?.select();
               projectState.undoManager.stopCapturing();
             }),
           },
@@ -124,7 +129,7 @@ const VariantLabel: React.FC<{
             type: "command",
             text: "Add Breakpoint",
             onClick: action(() => {
-              component?.append([
+              const [variant] = component.append([
                 {
                   type: "variant",
                   condition: {
@@ -133,6 +138,8 @@ const VariantLabel: React.FC<{
                   },
                 },
               ]);
+              projectState.document.rootSelectable.deselect();
+              projectState.document.getSelectableForNode(variant)?.select();
               projectState.undoManager.stopCapturing();
             }),
           },

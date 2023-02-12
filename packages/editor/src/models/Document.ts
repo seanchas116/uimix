@@ -84,6 +84,10 @@ export class Document {
     });
   }
 
+  getSelectableForNode(node: Node): Selectable {
+    return this.getSelectable([node.id]);
+  }
+
   toJSON(): DocumentJSON {
     return toDocumentJSON(this.rootSelectable.children);
   }
