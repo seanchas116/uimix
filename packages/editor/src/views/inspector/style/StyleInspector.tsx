@@ -1,5 +1,4 @@
 import { BorderPane } from "./BorderPane";
-import { ComponentPane } from "./ComponentPane";
 import { DebugPane } from "./DebugPane";
 import { DimensionsPane } from "./DimensionsPane";
 import { FillPane } from "./FillPane";
@@ -9,7 +8,7 @@ import { TextPane } from "./TextPane";
 export function StyleInspector(): JSX.Element {
   return (
     <div className="flex flex-col">
-      <ComponentPane />
+      {/* <ComponentPane /> */}
       <DimensionsPane />
       <LayoutPane />
       <FillPane />
