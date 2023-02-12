@@ -69,7 +69,15 @@ const VariantLabel: React.FC<{
         width: "max-content",
         //pointerEvents: frame.isLocked ? "none" : "auto",
       }}
-      className="absolute flex p-1 gap-1 items-center bg-neutral-500/10 aria-selected:bg-blue-500/10 rounded-md text-neutral-500 aria-selected:text-blue-500 text-[10px]"
+      className="
+        absolute flex p-1 gap-1 items-center rounded-md
+        bg-neutral-500/10
+        text-neutral-500
+        hover:bg-blue-500/10
+        hover:text-blue-500
+        aria-selected:bg-blue-500/10
+        aria-selected:text-blue-500
+      "
       aria-selected={variantSelectable.selected}
       //onContextMenu={onContextMenu}
       {...dragProps}
