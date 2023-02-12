@@ -6,6 +6,12 @@ import { scrollState } from "../../state/ScrollState";
 import { getIconAndTextForCondition } from "../inspector/style/ComponentPane";
 import { selectableForDOM } from "./renderer/NodeRenderer";
 import { Icon } from "@iconify/react";
+import { usePointerStroke } from "../../components/hooks/usePointerStroke";
+import { DragHandler } from "./dragHandler/DragHandler";
+import { NodeClickMoveDragHandler } from "./dragHandler/NodeClickMoveDragHandler";
+import { NodePickResult } from "./renderer/NodePicker";
+import { action } from "mobx";
+import { viewportState } from "../../state/ViewportState";
 
 const VariantLabel: React.FC<{
   variantSelectable: Selectable;
@@ -27,6 +33,32 @@ const VariantLabel: React.FC<{
     }
   });
 
+  const dragProps = usePointerStroke<Element, DragHandler | undefined>({
+    onBegin: action((e) => {
+      return new NodeClickMoveDragHandler(
+        variantSelectable,
+        new NodePickResult(
+          [variantSelectable],
+          scrollState.documentPosForEvent(e.nativeEvent),
+          e.nativeEvent,
+          "click"
+        )
+      );
+    }),
+    onMove: action((e, { initData: dragHandler }) => {
+      dragHandler?.move(e.nativeEvent);
+    }),
+    onEnd: action((e, { initData: dragHandler }) => {
+      dragHandler?.end(e.nativeEvent);
+    }),
+    onHover: action(() => {
+      viewportState.hoveredSelectable = variantSelectable;
+    }),
+  });
+  const onPointerLeave = action(() => {
+    viewportState.hoveredSelectable = undefined;
+  });
+
   return (
     <div
       ref={ref}
@@ -39,6 +71,8 @@ const VariantLabel: React.FC<{
       }}
       className="absolute flex p-1 gap-1 items-center bg-neutral-500/10 rounded-md text-neutral-500"
       //onContextMenu={onContextMenu}
+      {...dragProps}
+      onPointerLeave={onPointerLeave}
     >
       <Icon icon={icon} className="text-xs" />
       <span className="text-xs font-normal">
