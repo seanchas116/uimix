@@ -128,11 +128,13 @@ export class Node {
     }
 
     if (this.type === "root") {
-      return true;
+      const allowed: NodeType[] = ["frame", "text", "component", "instance"];
+      return allowed.includes(type);
     }
 
     if (this.type === "frame") {
-      return true;
+      const allowed: NodeType[] = ["frame", "text", "instance"];
+      return allowed.includes(type);
     }
 
     return false;
