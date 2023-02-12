@@ -88,7 +88,7 @@ class Commands {
 
   delete() {
     for (const selected of projectState.selectedSelectables) {
-      selected.node.remove();
+      selected.originalNode.remove();
     }
   }
 
