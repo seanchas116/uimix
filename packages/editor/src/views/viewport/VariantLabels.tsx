@@ -12,6 +12,7 @@ import { NodeClickMoveDragHandler } from "./dragHandler/NodeClickMoveDragHandler
 import { NodePickResult } from "./renderer/NodePicker";
 import { action } from "mobx";
 import { viewportState } from "../../state/ViewportState";
+import { IconButton } from "../../components/IconButton";
 
 const VariantLabel: React.FC<{
   variantSelectable: Selectable;
@@ -70,7 +71,7 @@ const VariantLabel: React.FC<{
         //pointerEvents: frame.isLocked ? "none" : "auto",
       }}
       className="
-        absolute flex p-1 gap-1 items-center rounded-md
+        absolute flex p-1 px-2 gap-1 items-center rounded-md
         bg-neutral-500/10
         text-neutral-500
         hover:bg-blue-500/10
@@ -84,9 +85,17 @@ const VariantLabel: React.FC<{
       onPointerLeave={onPointerLeave}
     >
       <Icon icon={icon} className="text-xs" />
-      <span className="text-[11px] font-medium">
+      <span className="text-[11px] font-medium flex-1 mr-1">
         <span>{variant.parent?.name}</span> › <span>{text}</span>
       </span>
+      <button
+        className="-m-1 p-1 hover:bg-blue-500/10 rounded"
+        onPointerDown={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <Icon icon="mdi:add" className="text-xs" />
+      </button>
     </div>
   );
 });
