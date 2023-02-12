@@ -59,7 +59,6 @@ importers:
       mobx-react-lite: ^3.4.0
       node-data: workspace:*
       paintvec: ^0.5.0
-      paper: ^0.12.17
       parse-css-color: ^0.2.1
       path-browserify: ^1.0.1
       postcss: ^8.4.21
@@ -73,7 +72,6 @@ importers:
       slate: ^0.90.0
       slate-react: ^0.90.0
       sortablejs: ^1.15.0
-      svg-pathdata: ^6.0.3
       tailwind-merge: ^1.9.1
       tailwind-styled-components: ^2.2.0
       tailwindcss: ^3.2.6
@@ -110,7 +108,6 @@ importers:
       mobx-react-lite: 3.4.0_woojb62cqeyk443mbl7msrwu2e
       node-data: link:../node-data
       paintvec: 0.5.0
-      paper: 0.12.17
       parse-css-color: 0.2.1
       path-browserify: 1.0.1
       react: 18.2.0
@@ -121,7 +118,6 @@ importers:
       slate: 0.90.0
       slate-react: 0.90.0_vfkxdgngtm5gosdcaawdsu5ur4
       sortablejs: 1.15.0
-      svg-pathdata: 6.0.3
       tailwind-merge: 1.9.1
       tailwind-styled-components: 2.2.0_biqbaboplfbrettd7655fr4n2y
       tiny-typed-emitter: 2.1.0
@@ -10332,11 +10328,6 @@ packages:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
     dev: true
 
-  /paper/0.12.17:
-    resolution: {integrity: sha512-oCe+e1C2w8hKIcGoAqUjD0GGxGPv+itrRXlEFUmp3H8tY/NTnHOkYgpJFPGw6OJ8Q1Wa6+RgzlY7Dx/2WWHtkA==}
-    engines: {node: '>=8.0.0'}
-    dev: false
-
   /parallel-transform/1.2.0:
     resolution: {integrity: sha512-P2vSmIu38uIlvdcU7fDkyrxj33gTUy/ABO5ZUbGowxNCopBq/OoD42bP4UmMrJoPyk4Uqf0mu3mtWBhHCZD8yg==}
     dependencies:
@@ -12271,11 +12262,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
-
-  /svg-pathdata/6.0.3:
-    resolution: {integrity: sha512-qsjeeq5YjBZ5eMdFuUa4ZosMLxgr5RZ+F+Y1OrDhuOCEInRMA3x74XdBtggJcj9kOeInz0WE+LgCPDkZFlBYJw==}
-    engines: {node: '>=12.0.0'}
-    dev: false
 
   /symbol.prototype.description/1.0.5:
     resolution: {integrity: sha512-x738iXRYsrAt9WBhRCVG5BtIC3B7CUkFwbHW2zOvGtwM33s7JjrCDyq8V0zgMYVb5ymsL8+qkzzpANH63CPQaQ==}
