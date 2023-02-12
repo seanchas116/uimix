@@ -269,13 +269,15 @@ export const NodeTreeView: React.FC = observer(() => {
       canDrop={({ item, draggedItem }) => {
         return (
           !!draggedItem &&
-          item.selectable.canInsertChild &&
-          item.selectable.node.type !== "component"
+          item.selectable.originalNode.canInsert(
+            draggedItem.selectable.originalNode.type
+          )
         );
       }}
       handleDrop={({ item, draggedItem, before }) => {
         runInAction(() => {
           if (draggedItem) {
+            // TODO: prevent inserting variant as a first child of a component
             moveSelectables(
               item.selectable,
               before?.selectable,

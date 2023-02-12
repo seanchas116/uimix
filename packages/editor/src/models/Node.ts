@@ -118,7 +118,33 @@ export class Node {
     return this.children.length;
   }
 
+  canInsert(type: NodeType): boolean {
+    if (this.type === "component") {
+      if (this.children.length === 0) {
+        return type !== "variant";
+      } else {
+        return type === "variant";
+      }
+    }
+
+    if (this.type === "root") {
+      return true;
+    }
+
+    if (this.type === "frame") {
+      return true;
+    }
+
+    return false;
+  }
+
   insert(index: number, contents: Omit<NodeJSON, "id">[]): Node[] {
+    for (let i = 0; i < contents.length; i++) {
+      if (!this.canInsert(contents[i].type)) {
+        throw new Error("Cannot insert node of type " + contents[i].type);
+      }
+    }
+
     this.childrenData.insert(
       index,
       contents.map((content) => {
