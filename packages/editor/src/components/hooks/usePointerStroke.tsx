@@ -45,11 +45,6 @@ export function usePointerStroke<T extends Element = Element, InitData = void>(
     if (e.button !== 0) {
       return;
     }
-    // Ignore events bubbled from portals
-    // workaround for https://github.com/facebook/react/issues/19637
-    if (!e.currentTarget.contains(e.target as Node)) {
-      return;
-    }
 
     e.currentTarget.setPointerCapture(e.pointerId);
     const x = Math.round(e.clientX);

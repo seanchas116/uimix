@@ -86,10 +86,12 @@ const VariantLabel: React.FC<{
         aria-selected:text-blue-500
       "
       aria-selected={variantSelectable.selected}
-      //onContextMenu={onContextMenu}
-      {...dragProps}
-      onPointerLeave={onPointerLeave}
     >
+      <div
+        className="absolute inset-0 z-0"
+        {...dragProps}
+        onPointerLeave={onPointerLeave}
+      />
       <Icon icon={icon} className="text-base" />
       <span className="text-xs font-medium flex-1 mr-1">
         <span>{variant.parent?.name}</span> › <span>{text}</span>
@@ -97,7 +99,7 @@ const VariantLabel: React.FC<{
       <DropdownMenu
         trigger={(props) => (
           <button
-            className="-m-1 p-1 hover:bg-blue-500/10 rounded"
+            className="-m-1 p-1 hover:bg-blue-500/10 rounded relative z-10"
             onPointerDown={(e) => {
               e.stopPropagation();
             }}
