@@ -10,6 +10,7 @@ import { NodeClickMoveDragHandler } from "./dragHandler/NodeClickMoveDragHandler
 import { NodePickResult } from "./renderer/NodePicker";
 import { viewportState } from "../../state/ViewportState";
 import { Icon, IconifyIcon } from "@iconify/react";
+import { Rect } from "paintvec";
 
 // const LabelWrap = styled.div`
 //   pointer-events: all;
@@ -23,6 +24,32 @@ import { Icon, IconifyIcon } from "@iconify/react";
 //   align-items: center;
 //   gap: 2px;
 // `;
+
+const ComponentSection: React.FC<{
+  component: Selectable;
+}> = observer(function ComponentSection({ component }) {
+  const rects = component.children.map((c) => c.computedRect);
+  const bbox = Rect.union(...rects);
+  if (!bbox) {
+    return null;
+  }
+  const bboxInView = bbox.transform(scrollState.documentToViewport);
+  const padding = 16;
+
+  return (
+    <div
+      className="border border-neutral-300 bg-neutral-200 rounded-md"
+      style={{
+        position: "absolute",
+        left: bboxInView.left - padding + "px",
+        top: bboxInView.top - padding + "px",
+        width: bboxInView.width + padding * 2 + "px",
+        height: bboxInView.height + padding * 2 + "px",
+        pointerEvents: "none",
+      }}
+    />
+  );
+});
 
 const Label: React.FC<{
   frame: Selectable;
@@ -94,9 +121,15 @@ export const FrameLabels: React.FC = observer(function FrameLabels({}) {
   const frames = projectState.rootSelectable.children.filter(
     (s) => s.node.type === "frame"
   );
+  const components = projectState.rootSelectable.children.filter(
+    (s) => s.node.type === "component"
+  );
 
   return (
     <>
+      {components.map((component) => (
+        <ComponentSection component={component} key={component.id} />
+      ))}
       {frames.map((frame) => (
         <Label frame={frame} key={frame.id} />
       ))}

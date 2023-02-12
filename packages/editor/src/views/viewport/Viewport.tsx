@@ -72,6 +72,7 @@ export const Viewport: React.FC = observer(function Viewport() {
       className="flex-1 bg-macaron-viewportBackground relative overflow-hidden contain-strict"
       onWheel={onWheel}
     >
+      <FrameLabels />
       <div
         style={{
           position: "absolute",
@@ -87,7 +88,6 @@ export const Viewport: React.FC = observer(function Viewport() {
         ))}
       </div>
       <DragHandlerOverlay />
-      <FrameLabels />
       <Indicators />
       <TextEditor />
       <PanOverlay />
