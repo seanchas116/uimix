@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "backend:prepare-build": "cd ../backend && pnpm prisma:generate",
-    "build": "pnpm backend:prepare-build tsc && vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
