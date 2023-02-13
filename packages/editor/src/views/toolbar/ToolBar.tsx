@@ -72,6 +72,11 @@ export const ToolBar = observer(function ToolBar({
         />
         <div className="flex">
           <LargeToolButton
+            icon="material-symbols:widgets-outline-rounded"
+            //selected={viewportState.insertMode?.type === "component"}
+            text="Assets"
+          />
+          <LargeToolButton
             icon={textIcon}
             selected={viewportState.insertMode?.type === "text"}
             text="Text"
@@ -94,11 +99,6 @@ export const ToolBar = observer(function ToolBar({
             onClick={action(() => {
               commands.insertImage();
             })}
-          />
-          <LargeToolButton
-            icon="material-symbols:widgets-outline-rounded"
-            //selected={viewportState.insertMode?.type === "component"}
-            text="Component"
           />
         </div>
       </div>
