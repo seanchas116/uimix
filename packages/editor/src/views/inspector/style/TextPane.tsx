@@ -23,7 +23,7 @@ import googleFonts from "../../../fonts/GoogleFonts";
 
 const googleFontOptions = googleFonts.items.map((item) => ({
   value: item.family,
-  label: item.family,
+  text: item.family,
 }));
 
 const textAlignOptions: ToggleGroupItem<TextHorizontalAlign>[] = [
