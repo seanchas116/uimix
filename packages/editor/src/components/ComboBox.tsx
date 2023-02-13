@@ -4,6 +4,7 @@ import { Icon, IconifyIcon } from "@iconify/react";
 import { twMerge } from "tailwind-merge";
 import { CustomSelect, SelectOption } from "./Select";
 import { Input, UnstyledInput } from "./Input";
+import { useId } from "react";
 
 export function ComboBox({
   className,
@@ -20,6 +21,12 @@ export function ComboBox({
   onChange?: (value: string) => void;
   icon?: string | IconifyIcon;
 }): JSX.Element {
+  const datalistId = useId();
+
+  const optionsNode = options.map((o) => (
+    <option value={o.value}>{o.text}</option>
+  ));
+
   // TODO: use Radix Select (currently native select is much faster when there are many options)
   return (
     <div
@@ -30,20 +37,20 @@ export function ComboBox({
         className
       )}
     >
+      <datalist id={datalistId}>{optionsNode}</datalist>
       <select
         className="absolute inset-0 text-xs opacity-0"
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
       >
-        {options.map((o) => (
-          <option value={o.value}>{o.text}</option>
-        ))}
+        {optionsNode}
       </select>
       <UnstyledInput
         className="absolute inset-0 right-4 bg-transparent px-1.5 outline-0 placeholder:text-macaron-disabledText"
         value={value}
         onChangeValue={onChange}
         placeholder={placeholder}
+        list={datalistId}
       />
       <Icon
         icon={downIcon}
