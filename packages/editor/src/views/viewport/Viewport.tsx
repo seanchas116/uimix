@@ -10,7 +10,7 @@ import { PanOverlay } from "./PanOverlay";
 import { DragHandlerOverlay } from "./dragHandler/DragHandlerOverlay";
 import { Indicators } from "./indicator/Indicators";
 import { TextEditor } from "./TextEditor";
-import { VariantLabels } from "./VariantLabels";
+import { ComponentSections, VariantLabels } from "./VariantLabels";
 
 export const Viewport: React.FC = observer(function Viewport() {
   const ref = createRef<HTMLDivElement>();
@@ -72,6 +72,7 @@ export const Viewport: React.FC = observer(function Viewport() {
       className="flex-1 bg-macaron-viewportBackground relative overflow-hidden contain-strict"
       onWheel={onWheel}
     >
+      <ComponentSections />
       <div
         style={{
           position: "absolute",

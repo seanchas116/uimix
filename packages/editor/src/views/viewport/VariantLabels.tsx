@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from "react";
+import React, { Component, createRef, useEffect, useState } from "react";
 import * as RadixPopover from "@radix-ui/react-popover";
 import { projectState } from "../../state/ProjectState";
 import { Selectable } from "../../models/Selectable";
@@ -16,9 +16,58 @@ import { NodeClickMoveDragHandler } from "./dragHandler/NodeClickMoveDragHandler
 import { NodePickResult } from "./renderer/NodePicker";
 import { action } from "mobx";
 import { viewportState } from "../../state/ViewportState";
-import { IconButton } from "../../components/IconButton";
 import { DropdownMenu } from "../../components/Menu";
 import { popoverStyle } from "../../components/styles";
+import { Rect } from "paintvec";
+
+const ComponentSection: React.FC<{
+  component: Selectable;
+}> = observer(function ComponentSection({ component }) {
+  const rects = component.children.map((c) => c.computedRect);
+  const bbox = Rect.union(...rects);
+  if (!bbox) {
+    return null;
+  }
+  const bboxInView = bbox.transform(scrollState.documentToViewport);
+  const topPadding = 48;
+  const padding = 16;
+
+  return (
+    <div
+      className="border border-neutral-300 border-dashed rounded-md"
+      style={{
+        position: "absolute",
+        left: bboxInView.left - padding + "px",
+        top: bboxInView.top - topPadding + "px",
+        width: bboxInView.width + padding * 2 + "px",
+        height: bboxInView.height + padding + topPadding + "px",
+        pointerEvents: "none",
+      }}
+    >
+      <div className="absolute left-0 -top-5 text-xs text-neutral-500 font-medium flex gap-1">
+        <Icon
+          icon="material-symbols:widgets-rounded"
+          className="text-base text-macaron-component"
+        />
+        {component.originalNode.name}
+      </div>
+    </div>
+  );
+});
+
+export const ComponentSections: React.FC = observer(function VariantLabels() {
+  const components = projectState.rootSelectable.children.filter(
+    (s) => s.node.type === "component"
+  );
+
+  return (
+    <>
+      {components.map((component) => (
+        <ComponentSection component={component} key={component.id} />
+      ))}
+    </>
+  );
+});
 
 const VariantLabel: React.FC<{
   variantSelectable: Selectable;
@@ -130,9 +179,7 @@ const VariantLabel: React.FC<{
         }}
       />
       <Icon icon={icon} className="text-base" />
-      <span className="text-xs font-medium flex-1 mr-1">
-        <span>{variant.parent?.name}</span> › <span>{text}</span>
-      </span>
+      <span className="text-xs font-medium flex-1 mr-1">{text}</span>
       <DropdownMenu
         trigger={(props) => (
           <button
