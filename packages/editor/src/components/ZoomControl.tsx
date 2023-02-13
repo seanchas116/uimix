@@ -21,7 +21,7 @@ export const ZoomControl: React.FC<{
 }) {
   return (
     <div
-      className={twMerge("h-6 flex items-center", className)}
+      className={twMerge("h-6 flex items-center gap-1", className)}
       onDoubleClick={(e) => e.stopPropagation()}
     >
       <IconButton icon={removeIcon} onClick={onZoomOut} />
