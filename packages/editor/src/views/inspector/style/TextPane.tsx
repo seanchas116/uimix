@@ -18,6 +18,8 @@ import { ToggleGroupItem } from "../../../components/ToggleGroup";
 import { TextHorizontalAlign, TextVerticalAlign } from "node-data";
 import { InspectorTargetContext } from "../components/InspectorTargetContext";
 import { projectState } from "../../../state/ProjectState";
+import { InspectorComboBox } from "./inputs/InspectorComboBox";
+import googleFonts from "../../../fonts/GoogleFonts";
 
 const textAlignOptions: ToggleGroupItem<TextHorizontalAlign>[] = [
   {
@@ -70,11 +72,15 @@ export const TextPane: React.FC = observer(function TextPane() {
       />
       <InspectorTargetContext.Provider value={textSelectables}>
         <div className="flex flex-col gap-2">
-          <InspectorInput
+          <InspectorComboBox
             get={(s) => s.style.fontFamily}
             set={(s, value) => {
               s.style.fontFamily = value ?? "Inter";
             }}
+            options={googleFonts.items.slice(0, 1000).map((item) => ({
+              value: item.family,
+              label: item.family,
+            }))}
           />
           <div className="grid grid-cols-2 gap-2">
             <InspectorNumberInput

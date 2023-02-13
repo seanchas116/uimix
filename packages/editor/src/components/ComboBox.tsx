@@ -1,12 +1,9 @@
 import * as RadixSelect from "@radix-ui/react-select";
-import { popoverStyle } from "./styles";
-import checkIcon from "@iconify-icons/ic/check";
-import upIcon from "@iconify-icons/ic/keyboard-arrow-up";
 import downIcon from "@iconify-icons/ic/keyboard-arrow-down";
 import { Icon, IconifyIcon } from "@iconify/react";
 import { twMerge } from "tailwind-merge";
-import { CustomSelect, Select, SelectOption } from "./Select";
-import { Input, UnstyledInput } from "./Input";
+import { CustomSelect, SelectOption } from "./Select";
+import { Input } from "./Input";
 
 export function ComboBox({
   className,
@@ -14,16 +11,23 @@ export function ComboBox({
   placeholder,
   value,
   onChange,
+  icon,
 }: {
   className?: string;
   options: readonly SelectOption<string>[];
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
+  icon?: string | IconifyIcon;
 }): JSX.Element {
   return (
     <div className={twMerge("relative", className)}>
-      <Input value={value} onChange={onChange} placeholder={placeholder} />
+      <Input
+        icon={icon}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+      />
       <CustomSelect
         options={options}
         trigger={
