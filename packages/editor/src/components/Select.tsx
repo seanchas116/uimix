@@ -5,6 +5,7 @@ import upIcon from "@iconify-icons/ic/keyboard-arrow-up";
 import downIcon from "@iconify-icons/ic/keyboard-arrow-down";
 import { Icon, IconifyIcon } from "@iconify/react";
 import { twMerge } from "tailwind-merge";
+import React from "react";
 
 export interface SelectOption<T extends string> {
   value: T;
@@ -47,6 +48,32 @@ export function Select<T extends string>({
   );
 }
 
+const SelectItem: React.FC<{ option: SelectOption<string> }> = React.memo(
+  ({ option }) => {
+    return (
+      <RadixSelect.Item
+        value={option.value}
+        className="pl-4 relative h-6 flex items-center outline-0 text-macaron-text [&[data-highlighted]]:bg-macaron-active [&[data-highlighted]]:text-macaron-activeText"
+      >
+        <RadixSelect.ItemIndicator className="absolute left-1.5">
+          <Icon icon={checkIcon} className="text-xs opacity-60" />
+        </RadixSelect.ItemIndicator>
+        <RadixSelect.ItemText>
+          <div className="px-1.5 flex items-center gap-1">
+            {option.icon && (
+              <Icon
+                icon={option.icon}
+                className="text-xs text-macaron-disabledText"
+              />
+            )}
+            {option.text ?? option.value}
+          </div>
+        </RadixSelect.ItemText>
+      </RadixSelect.Item>
+    );
+  }
+);
+
 export function CustomSelect<T extends string>({
   options,
   value,
@@ -71,26 +98,7 @@ export function CustomSelect<T extends string>({
           </RadixSelect.ScrollUpButton>
           <RadixSelect.Viewport className="SelectViewport">
             {options.map((option) => (
-              <RadixSelect.Item
-                key={option.value}
-                value={option.value}
-                className="pl-4 relative h-6 flex items-center outline-0 text-macaron-text [&[data-highlighted]]:bg-macaron-active [&[data-highlighted]]:text-macaron-activeText"
-              >
-                <RadixSelect.ItemIndicator className="absolute left-1.5">
-                  <Icon icon={checkIcon} className="text-xs opacity-60" />
-                </RadixSelect.ItemIndicator>
-                <RadixSelect.ItemText>
-                  <div className="px-1.5 flex items-center gap-1">
-                    {option.icon && (
-                      <Icon
-                        icon={option.icon}
-                        className="text-xs text-macaron-disabledText"
-                      />
-                    )}
-                    {option.text ?? option.value}
-                  </div>
-                </RadixSelect.ItemText>
-              </RadixSelect.Item>
+              <SelectItem option={option} key={option.value} />
             ))}
           </RadixSelect.Viewport>
           <RadixSelect.ScrollDownButton className="w-full flex justify-center p-1">

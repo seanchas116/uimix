@@ -21,6 +21,11 @@ import { projectState } from "../../../state/ProjectState";
 import { InspectorComboBox } from "./inputs/InspectorComboBox";
 import googleFonts from "../../../fonts/GoogleFonts";
 
+const googleFontOptions = googleFonts.items.map((item) => ({
+  value: item.family,
+  label: item.family,
+}));
+
 const textAlignOptions: ToggleGroupItem<TextHorizontalAlign>[] = [
   {
     value: "start",
@@ -77,10 +82,7 @@ export const TextPane: React.FC = observer(function TextPane() {
             set={(s, value) => {
               s.style.fontFamily = value ?? "Inter";
             }}
-            options={googleFonts.items.slice(0, 1000).map((item) => ({
-              value: item.family,
-              label: item.family,
-            }))}
+            options={googleFontOptions}
           />
           <div className="grid grid-cols-2 gap-2">
             <InspectorNumberInput
