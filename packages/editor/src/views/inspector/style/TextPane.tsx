@@ -19,7 +19,7 @@ import { TextHorizontalAlign, TextVerticalAlign } from "node-data";
 import { InspectorTargetContext } from "../components/InspectorTargetContext";
 import { projectState } from "../../../state/ProjectState";
 import { InspectorComboBox } from "./inputs/InspectorComboBox";
-import googleFonts from "../../../fonts/GoogleFonts";
+import googleFonts from "../../../fonts/GoogleFonts.json";
 
 const googleFontOptions = googleFonts.items.map((item) => ({
   value: item.family,
