@@ -26,21 +26,44 @@ export function Select<T extends string>({
   onChange?: (value: T) => void;
 }): JSX.Element {
   return (
+    <CustomSelect
+      options={options}
+      value={value}
+      onChange={onChange}
+      trigger={
+        <RadixSelect.Trigger
+          className={twMerge(
+            "relative outline-0 h-6 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-xs placeholder:text-macaron-disabledText flex items-center justify-between",
+            className
+          )}
+        >
+          <RadixSelect.Value placeholder={placeholder} />
+          <RadixSelect.Icon className="absolute right-1.5">
+            <Icon icon={downIcon} className="text-xs text-macaron-label" />
+          </RadixSelect.Icon>
+        </RadixSelect.Trigger>
+      }
+    />
+  );
+}
+
+export function CustomSelect<T extends string>({
+  options,
+  value,
+  onChange,
+  trigger,
+}: {
+  options: readonly SelectOption<T>[];
+  value?: T;
+  onChange?: (value: T) => void;
+  trigger?: JSX.Element;
+}): JSX.Element {
+  return (
     <RadixSelect.Root
       value={value}
       onValueChange={(value) => onChange?.(value as T)}
     >
-      <RadixSelect.Trigger
-        className={twMerge(
-          "relative outline-0 h-6 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-xs placeholder:text-macaron-disabledText flex items-center justify-between",
-          className
-        )}
-      >
-        <RadixSelect.Value placeholder={placeholder} />
-        <RadixSelect.Icon className="absolute right-1.5">
-          <Icon icon={downIcon} className="text-xs text-macaron-label" />
-        </RadixSelect.Icon>
-      </RadixSelect.Trigger>
+      {trigger}
       <RadixSelect.Portal>
         <RadixSelect.Content className={popoverStyle}>
           <RadixSelect.ScrollUpButton className="w-full flex justify-center p-1">
