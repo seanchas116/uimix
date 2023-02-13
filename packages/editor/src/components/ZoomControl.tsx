@@ -26,7 +26,7 @@ export const ZoomControl: React.FC<{
     >
       <IconButton icon={removeIcon} onClick={onZoomOut} />
       <UnstyledInput
-        className="w-10 h-6 rounded text-xs text-center bg-transparent outline-0 focus:ring-1 ring-inset ring-macaron-active"
+        className="w-10 h-6 rounded text-xs text-macaron-text text-center bg-transparent outline-0 focus:ring-1 ring-inset ring-macaron-active"
         value={`${percentage}%`}
         onChangeValue={action((value) => {
           const newPercent = Number.parseFloat(value);

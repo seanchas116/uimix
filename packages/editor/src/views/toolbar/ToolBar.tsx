@@ -77,7 +77,7 @@ export const ToolBar = observer(function ToolBar({
         </ToolButton>
       </div>
 
-      <div className="absolute right-3 top-0 bottom-0 flex items-center contain-strict">
+      <div className="absolute right-3 top-0 bottom-0 flex items-center">
         <ZoomControl
           percentage={Math.round(scrollState.scale * 100)}
           onZoomOut={onZoomOut}
