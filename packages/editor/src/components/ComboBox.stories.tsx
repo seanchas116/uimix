@@ -1,11 +1,19 @@
 import React, { useState } from "react";
-import htmlTags from "html-tags";
 import { ComboBox } from "./ComboBox";
+import googleFonts from "../fonts/GoogleFonts";
+import { SelectOption } from "./Select";
 
 export default {
   title: "ComboBox",
   component: ComboBox,
 };
+
+const googleFontOptions: SelectOption<string>[] = googleFonts.items.map(
+  (item) => ({
+    value: item.family,
+    text: item.family,
+  })
+);
 
 export const Basic: React.FC = () => {
   const [value, setValue] = useState<string | undefined>("div");
@@ -16,10 +24,7 @@ export const Basic: React.FC = () => {
         value={value}
         onChange={setValue}
         placeholder="Select a tag"
-        options={htmlTags.map((tag) => ({
-          value: tag,
-          text: tag,
-        }))}
+        options={googleFontOptions}
       />
     </div>
   );

@@ -20,32 +20,24 @@ export function ComboBox({
   onChange?: (value: string) => void;
   icon?: string | IconifyIcon;
 }): JSX.Element {
+  // TODO: use Radix Select (currently native select is much faster when there are many options)
   return (
     <div className={twMerge("relative", className)}>
+      <select
+        className="absolute inset-0 text-xs"
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+      >
+        {options.map((o) => (
+          <option value={o.value}>{o.text}</option>
+        ))}
+      </select>
       <Input
+        className="relative mr-4"
         icon={icon}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-      />
-      <CustomSelect
-        options={options}
-        trigger={
-          <RadixSelect.Trigger
-            className={"absolute inset-0 pointer-events-none outline-none"}
-          >
-            <div className="opacity-0">
-              <RadixSelect.Value />
-            </div>
-            <RadixSelect.Icon className="absolute top-0 bottom-0 h-3 my-auto right-1.5 pointer-events-auto">
-              <Icon icon={downIcon} className="text-xs text-macaron-label" />
-            </RadixSelect.Icon>
-          </RadixSelect.Trigger>
-        }
-        value={
-          options.some((o) => o.value === value) ? value : options[0]?.value
-        }
-        onChange={onChange}
       />
     </div>
   );
