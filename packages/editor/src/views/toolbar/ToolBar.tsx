@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Icon } from "@iconify/react";
+import { Icon, IconProps } from "@iconify/react";
 import menuIcon from "@iconify-icons/ic/menu";
 import rectIcon from "@seanchas116/design-icons/json/rect.json";
 import textIcon from "@seanchas116/design-icons/json/text.json";
@@ -13,6 +13,28 @@ import { DropdownMenu } from "../../components/Menu";
 import { ToolButton } from "../../components/ToolButton";
 import { commands } from "../../state/Commands";
 import { viewportState } from "../../state/ViewportState";
+
+const LargeToolButton: React.FC<{
+  icon: IconProps["icon"];
+  selected?: boolean;
+  text: string;
+  onClick?: () => void;
+}> = ({ icon, selected, text, onClick }) => {
+  return (
+    <div
+      onClick={onClick}
+      aria-selected={selected}
+      className="flex w-fit gap-1 p-2 items-center rounded
+      hover:bg-macaron-uiBackground
+      aria-selected:bg-macaron-active
+      aria-selected:text-macaron-activeText
+      text-neutral-800"
+    >
+      <Icon icon={icon} className="text-base" />
+      <div className="font-medium text-xs">{text}</div>
+    </div>
+  );
+};
 
 export const ToolBar = observer(function ToolBar({
   className,
@@ -35,11 +57,11 @@ export const ToolBar = observer(function ToolBar({
   return (
     <div
       className={twMerge(
-        "box-content h-8 border-b border-macaron-separator bg-macaron-background text-macaron-text flex items-center justify-center relative",
+        "box-content h-10 border-b border-macaron-separator bg-macaron-background text-macaron-text flex items-center justify-center relative",
         className
       )}
     >
-      <div className="absolute left-3 top-0 bottom-0 flex items-center">
+      <div className="absolute left-3 top-0 bottom-0 flex gap-4 items-center">
         <DropdownMenu
           defs={commands.menu}
           trigger={(props) => (
@@ -48,33 +70,43 @@ export const ToolBar = observer(function ToolBar({
             </ToolButton>
           )}
         />
+        <div className="flex">
+          <LargeToolButton
+            icon={textIcon}
+            selected={viewportState.insertMode?.type === "text"}
+            text="Text"
+            onClick={action(() => {
+              commands.insertText();
+            })}
+          />
+          <LargeToolButton
+            icon={rectIcon}
+            selected={viewportState.insertMode?.type === "frame"}
+            text="Frame"
+            onClick={action(() => {
+              commands.insertFrame();
+            })}
+          />
+          <LargeToolButton
+            icon={imageIcon}
+            selected={viewportState.insertMode?.type === "image"}
+            text="Image"
+            onClick={action(() => {
+              commands.insertImage();
+            })}
+          />
+          <LargeToolButton
+            icon="material-symbols:widgets-outline-rounded"
+            //selected={viewportState.insertMode?.type === "component"}
+            text="Component"
+          />
+        </div>
       </div>
 
       <div className="flex">
-        <ToolButton
-          aria-pressed={viewportState.insertMode?.type === "frame"}
-          onClick={action(() => {
-            commands.insertFrame();
-          })}
-        >
-          <Icon icon={rectIcon} />
-        </ToolButton>
-        <ToolButton
-          aria-pressed={viewportState.insertMode?.type === "text"}
-          onClick={action(() => {
-            commands.insertText();
-          })}
-        >
-          <Icon icon={textIcon} />
-        </ToolButton>
-        <ToolButton
-          aria-pressed={viewportState.insertMode?.type === "image"}
-          onClick={action(async () => {
-            await commands.insertImage();
-          })}
-        >
-          <Icon icon={imageIcon} />
-        </ToolButton>
+        {
+          // TODO: title?
+        }
       </div>
 
       <div className="absolute right-3 top-0 bottom-0 flex items-center">
