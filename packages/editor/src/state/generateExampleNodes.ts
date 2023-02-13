@@ -124,12 +124,18 @@ export function generateExampleNodes(document: Document) {
     textNodeStyle.height = { type: "hugContents" };
     textNodeStyle.fill = Color.from(colors.gray[900])!.toHex();
 
-    const hoverRootNodeStyle = document.getSelectable([hoverVariant.id]).style;
-    hoverRootNodeStyle.position = {
-      x: { type: "start", start: 150 },
+    const hoverVariantStyle = document.getSelectable([hoverVariant.id]).style;
+    hoverVariantStyle.position = {
+      x: { type: "start", start: 200 },
       y: { type: "start", start: 400 },
     };
-    hoverRootNodeStyle.fill = Color.from(colors.blue[500])!.toHex();
+    hoverVariantStyle.fill = Color.from(colors.blue[500])!.toHex();
+
+    const mobileVariantStyle = document.getSelectable([mobileVariant.id]).style;
+    mobileVariantStyle.position = {
+      x: { type: "start", start: 350 },
+      y: { type: "start", start: 400 },
+    };
 
     const hoverTextNodeStyle = document.getSelectable([
       hoverVariant.id,
