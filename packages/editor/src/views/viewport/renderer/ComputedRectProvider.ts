@@ -1,5 +1,6 @@
 import { createAtom } from "mobx";
 import { Rect } from "paintvec";
+import { IComputedRectProvider } from "../../../models/Selectable";
 import { scrollState } from "../../../state/ScrollState";
 
 export const viewportRootMarker = "data-viewport-root";
@@ -30,7 +31,7 @@ function getComputedRect(element: Element): Rect {
   return localRect.translate(parentRect.topLeft);
 }
 
-export class ComputedRectProvider {
+export class ComputedRectProvider implements IComputedRectProvider {
   constructor(element: Element) {
     this.element = element;
     this._value = getComputedRect(element);

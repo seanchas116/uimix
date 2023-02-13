@@ -18,11 +18,8 @@ class ComputedRectUpdater {
   flush() {
     for (const topLevel of this.dirtyTopLevels) {
       const markDirtyRecursive = (selectable: Selectable) => {
-        const computedRectProvider = selectable.computedRectProvider;
-        if (computedRectProvider instanceof ComputedRectProvider) {
-          computedRectProvider.markDirty();
-          selectable.children.forEach(markDirtyRecursive);
-        }
+        selectable.computedRectProvider?.markDirty();
+        selectable.children.forEach(markDirtyRecursive);
       };
       markDirtyRecursive(topLevel);
     }

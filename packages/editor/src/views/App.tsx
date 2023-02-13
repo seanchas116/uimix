@@ -44,6 +44,19 @@ function useKeyHandling() {
 //   }, []);
 // }
 
+function useRectUpdateOnFontReload() {
+  useEffect(() => {
+    const onFontsLoaded = action(() => {
+      for (const selected of projectState.selectedSelectables) {
+        selected.computedRectProvider.markDirty();
+      }
+    });
+    document.fonts.addEventListener("loadingdone", onFontsLoaded);
+    return () =>
+      document.fonts.removeEventListener("loadingdone", onFontsLoaded);
+  }, []);
+}
+
 const FontLoader = observer(function FontLoader() {
   return (
     <FontLoadLink fonts={[...projectState.rootSelectable.usedFontFamilies]} />
@@ -53,6 +66,8 @@ const FontLoader = observer(function FontLoader() {
 export const App = observer(function App() {
   useKeyHandling();
   //useWindowTitle();
+
+  useRectUpdateOnFontReload();
 
   return (
     <TooltipProvider>

@@ -8,6 +8,11 @@ import { computed, makeObservable, observable } from "mobx";
 import { Rect } from "paintvec";
 import { resizeWithBoundingBox } from "../services/Resize";
 
+export interface IComputedRectProvider {
+  value: Rect | undefined;
+  markDirty(): void;
+}
+
 // a node or a inner node of an instance
 export class Selectable {
   constructor(document: Document, idPath: string[], data: Y.Map<any>) {
@@ -227,7 +232,7 @@ export class Selectable {
     return this.selected || !!this.parent?.ancestorSelected;
   }
 
-  @observable computedRectProvider: { value: Rect | undefined } | undefined =
+  @observable computedRectProvider: IComputedRectProvider | undefined =
     undefined;
 
   @computed get computedRect(): Rect {
