@@ -46,7 +46,8 @@ export function ComboBox({
         {optionsNode}
       </select>
       <UnstyledInput
-        className="absolute inset-0 right-4 bg-transparent px-1.5 outline-0 placeholder:text-macaron-disabledText"
+        className="absolute inset-0 right-4 bg-transparent px-1.5 outline-0 placeholder:text-macaron-disabledText
+        [&::-webkit-calendar-picker-indicator]:opacity-0"
         value={value}
         onChangeValue={onChange}
         placeholder={placeholder}
