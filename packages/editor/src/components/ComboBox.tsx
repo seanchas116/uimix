@@ -23,7 +23,7 @@ export function ComboBox({
 }): JSX.Element {
   return (
     <div className={twMerge("relative", className)}>
-      <Input value={value} onChange={onChange} />
+      <Input value={value} onChange={onChange} placeholder={placeholder} />
       <CustomSelect
         options={options}
         trigger={
@@ -38,7 +38,9 @@ export function ComboBox({
             </RadixSelect.Icon>
           </RadixSelect.Trigger>
         }
-        value={value}
+        value={
+          options.some((o) => o.value === value) ? value : options[0]?.value
+        }
         onChange={onChange}
       />
     </div>

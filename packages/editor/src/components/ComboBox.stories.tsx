@@ -15,6 +15,7 @@ export const Basic: React.FC = () => {
       <ComboBox
         value={value}
         onChange={setValue}
+        placeholder="Select a tag"
         options={htmlTags.map((tag) => ({
           value: tag,
           text: tag,
