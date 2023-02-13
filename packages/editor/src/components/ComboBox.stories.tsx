@@ -16,14 +16,14 @@ const googleFontOptions: SelectOption<string>[] = googleFonts.items.map(
 );
 
 export const Basic: React.FC = () => {
-  const [value, setValue] = useState<string | undefined>("div");
+  const [value, setValue] = useState<string | undefined>("");
 
   return (
     <div className="flex flex-col gap-2 w-[200px]">
       <ComboBox
         value={value}
         onChange={setValue}
-        placeholder="Select a tag"
+        placeholder="Select a font"
         options={googleFontOptions}
       />
     </div>
