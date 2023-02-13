@@ -306,6 +306,21 @@ export class Selectable {
     const { originalNode } = this;
     return originalNode.type === "root" || originalNode.type === "frame";
   }
+
+  @computed.struct get usedFontFamilies(): Set<string> {
+    const { style } = this;
+    const result = new Set<string>();
+    if (style.fontFamily) {
+      result.add(style.fontFamily);
+    }
+
+    for (const child of this.children) {
+      for (const font of child.usedFontFamilies) {
+        result.add(font);
+      }
+    }
+    return result;
+  }
 }
 
 interface MainComponent {

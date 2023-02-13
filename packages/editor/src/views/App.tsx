@@ -8,6 +8,8 @@ import { ContextMenu } from "./ContextMenu";
 import { commands } from "../state/Commands";
 import { action } from "mobx";
 import { OutlineSideBar } from "./outline/OutlineSideBar";
+import { FontLoadLink } from "../components/FontLoadLink";
+import { projectState } from "../state/ProjectState";
 
 function useKeyHandling() {
   useEffect(() => {
@@ -42,12 +44,19 @@ function useKeyHandling() {
 //   }, []);
 // }
 
+const FontLoader = observer(function FontLoader() {
+  return (
+    <FontLoadLink fonts={[...projectState.rootSelectable.usedFontFamilies]} />
+  );
+});
+
 export const App = observer(function App() {
   useKeyHandling();
   //useWindowTitle();
 
   return (
     <TooltipProvider>
+      <FontLoader />
       <div className="flex flex-col fixed top-0 left-0 w-full h-full text-xs bg-macaron-background text-macaron-text select-none">
         <ToolBar className="shrink-0" />
         <div className="flex flex-1">
