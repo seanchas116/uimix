@@ -18,7 +18,8 @@ import { action } from "mobx";
 import { viewportState } from "../../state/ViewportState";
 import { DropdownMenu } from "../../components/Menu";
 import { popoverStyle } from "../../components/styles";
-import { Rect } from "paintvec";
+import { Rect, Vec2 } from "paintvec";
+import { resizeWithBoundingBox } from "../../services/Resize";
 
 const componentSectionTopPadding = 48;
 const componentSectionPadding = 16;
@@ -66,6 +67,35 @@ export const ComponentSections: React.FC = observer(function VariantLabels() {
   );
 });
 
+class ComponentLabelDragHandler implements DragHandler {
+  constructor(event: PointerEvent, component: Selectable) {
+    this.initPos = scrollState.documentPosForEvent(event);
+    this.targets = component.children.map((c) => [c.computedRect, c]);
+
+    if (!(event.shiftKey || event.metaKey)) {
+      projectState.rootSelectable.deselect();
+    }
+    component.select();
+  }
+
+  initPos: Vec2;
+  targets: [Rect, Selectable][];
+
+  move(event: PointerEvent) {
+    const pos = scrollState.documentPosForEvent(event);
+    const offset = pos.sub(this.initPos);
+
+    for (const [rect, target] of this.targets) {
+      resizeWithBoundingBox(target, rect.translate(offset), {
+        x: true,
+        y: true,
+      });
+    }
+  }
+
+  end() {}
+}
+
 const ComponentLabel: React.FC<{
   component: Selectable;
 }> = observer(function ComponentSection({ component }) {
@@ -76,23 +106,26 @@ const ComponentLabel: React.FC<{
   }
   const bboxInView = bbox.transform(scrollState.documentToViewport);
 
-  const onMouseEnter = action(() => {
-    viewportState.hoveredSelectable = component;
+  const dragProps = usePointerStroke<Element, DragHandler | undefined>({
+    onBegin: action((e) => {
+      if (e.button !== 0) {
+        return;
+      }
+      return new ComponentLabelDragHandler(e.nativeEvent, component);
+    }),
+    onMove: action((e, { initData: dragHandler }) => {
+      dragHandler?.move(e.nativeEvent);
+    }),
+    onEnd: action((e, { initData: dragHandler }) => {
+      dragHandler?.end(e.nativeEvent);
+    }),
+    onHover: action(() => {
+      viewportState.hoveredSelectable = component;
+    }),
   });
-  const onMouseLeave = action(() => {
+  const onPointerLeave = action(() => {
     viewportState.hoveredSelectable = undefined;
   });
-  const onClick = action((e: React.MouseEvent) => {
-    if (e.button !== 0) {
-      return;
-    }
-    if (!(e.shiftKey || e.metaKey)) {
-      projectState.rootSelectable.deselect();
-    }
-    component.select();
-  });
-
-  // TODO: drag to move
 
   return (
     <div
@@ -101,9 +134,8 @@ const ComponentLabel: React.FC<{
         left: bboxInView.left - componentSectionPadding + "px",
         top: bboxInView.top - componentSectionTopPadding - 20 + "px",
       }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onClick={onClick}
+      {...dragProps}
+      onPointerLeave={onPointerLeave}
     >
       <Icon
         icon="material-symbols:widgets-rounded"
