@@ -4,7 +4,8 @@ Open-source Web site & component editor to fill in the gaps between no-code and 
 
 This is the successor project of [Macaron](https://macaron-elements.com/)
 
-[Figma File](https://www.figma.com/file/Ec45PJS7toeZIZWXKBYthG/UIMix-editor?node-id=0%3A1&t=5n9xAh34Qj7xe1Pc-1)
+* [Demo](https://uimix-editor.vercel.app/)
+* [Figma File](https://www.figma.com/file/Ec45PJS7toeZIZWXKBYthG/UIMix-editor?node-id=0%3A1&t=5n9xAh34Qj7xe1Pc-1)
 
 🚧 Very work-in-progress, do not use in production!
 
