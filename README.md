@@ -19,6 +19,7 @@ This is the successor project of [Macaron](https://macaron-elements.com/)
 ## Potential plans
 
 - [ ] Sync with Figma files
+- [ ] Collaborative editing
 - [ ] Support other frameworks or Web Components
 - [ ] Managed hosting
 - [ ] Publish as a WYSIWYG editor library
