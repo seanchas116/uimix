@@ -7,8 +7,8 @@ Open-source Web site & component editor to fill in the gaps between no-code and 
 ## Roadmap
 
 - [ ] Freehand editing equivalent to Figma / Framer
-- [ ] Save files to GitHub repos (or local directory)
-- [ ] Compile UIMix files to React components
+- [ ] Save files to GitHub repos (or local directories)
+- [ ] Compile UIMix files to freely overridable React components with types
 - [ ] Import React components into the editor
 
 ## Potential plans
