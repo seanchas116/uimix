@@ -1,4 +1,4 @@
-import React, { Component, createRef, useEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import * as RadixPopover from "@radix-ui/react-popover";
 import { projectState } from "../../state/ProjectState";
 import { Selectable } from "../../models/Selectable";
@@ -20,6 +20,9 @@ import { DropdownMenu } from "../../components/Menu";
 import { popoverStyle } from "../../components/styles";
 import { Rect } from "paintvec";
 
+const componentSectionTopPadding = 48;
+const componentSectionPadding = 16;
+
 const ComponentSection: React.FC<{
   component: Selectable;
 }> = observer(function ComponentSection({ component }) {
@@ -29,29 +32,23 @@ const ComponentSection: React.FC<{
     return null;
   }
   const bboxInView = bbox.transform(scrollState.documentToViewport);
-  const topPadding = 48;
-  const padding = 16;
 
   return (
     <div
       className="border border-neutral-300 border-dashed rounded-md"
       style={{
         position: "absolute",
-        left: bboxInView.left - padding + "px",
-        top: bboxInView.top - topPadding + "px",
-        width: bboxInView.width + padding * 2 + "px",
-        height: bboxInView.height + padding + topPadding + "px",
+        left: bboxInView.left - componentSectionPadding + "px",
+        top: bboxInView.top - componentSectionTopPadding + "px",
+        width: bboxInView.width + componentSectionPadding * 2 + "px",
+        height:
+          bboxInView.height +
+          componentSectionPadding +
+          componentSectionTopPadding +
+          "px",
         pointerEvents: "none",
       }}
-    >
-      <div className="absolute left-0 -top-5 text-xs text-neutral-500 font-medium flex gap-1">
-        <Icon
-          icon="material-symbols:widgets-rounded"
-          className="text-base text-macaron-component"
-        />
-        {component.originalNode.name}
-      </div>
-    </div>
+    />
   );
 });
 
@@ -66,6 +63,54 @@ export const ComponentSections: React.FC = observer(function VariantLabels() {
         <ComponentSection component={component} key={component.id} />
       ))}
     </>
+  );
+});
+
+const ComponentLabel: React.FC<{
+  component: Selectable;
+}> = observer(function ComponentSection({ component }) {
+  const rects = component.children.map((c) => c.computedRect);
+  const bbox = Rect.union(...rects);
+  if (!bbox) {
+    return null;
+  }
+  const bboxInView = bbox.transform(scrollState.documentToViewport);
+
+  const onMouseEnter = action(() => {
+    viewportState.hoveredSelectable = component;
+  });
+  const onMouseLeave = action(() => {
+    viewportState.hoveredSelectable = undefined;
+  });
+  const onClick = action((e: React.MouseEvent) => {
+    if (e.button !== 0) {
+      return;
+    }
+    if (!(e.shiftKey || e.metaKey)) {
+      projectState.rootSelectable.deselect();
+    }
+    component.select();
+  });
+
+  // TODO: drag to move
+
+  return (
+    <div
+      className="absolute text-xs text-neutral-500 font-medium flex gap-1"
+      style={{
+        left: bboxInView.left - componentSectionPadding + "px",
+        top: bboxInView.top - componentSectionTopPadding - 20 + "px",
+      }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onClick={onClick}
+    >
+      <Icon
+        icon="material-symbols:widgets-rounded"
+        className="text-base text-macaron-component"
+      />
+      {component.originalNode.name}
+    </div>
   );
 });
 
@@ -242,6 +287,9 @@ export const VariantLabels: React.FC = observer(function VariantLabels() {
 
   return (
     <>
+      {components.map((component) => (
+        <ComponentLabel component={component} key={component.id} />
+      ))}
       {components.flatMap((component) =>
         component.children.map((variant) => (
           <VariantLabel variantSelectable={variant} key={variant.id} />
