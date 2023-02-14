@@ -48,7 +48,7 @@ function useRectUpdateOnFontReload() {
   useEffect(() => {
     const onFontsLoaded = action(() => {
       for (const selected of projectState.selectedSelectables) {
-        selected.computedRectProvider.markDirty();
+        selected.computedRectProvider?.markDirty();
       }
     });
     document.fonts.addEventListener("loadingdone", onFontsLoaded);
