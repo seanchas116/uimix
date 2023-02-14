@@ -20,6 +20,7 @@ import { DropdownMenu } from "../../components/Menu";
 import { popoverStyle } from "../../components/styles";
 import { Rect, Vec2 } from "paintvec";
 import { resizeWithBoundingBox } from "../../services/Resize";
+import { twMerge } from "tailwind-merge";
 
 const componentSectionTopPadding = 48;
 const componentSectionPadding = 16;
@@ -36,7 +37,10 @@ const ComponentSection: React.FC<{
 
   return (
     <div
-      className="border border-neutral-300 border-dashed rounded-md"
+      className={twMerge(
+        "border border-neutral-300 border-dashed rounded-md",
+        component.selected && "border-macaron-active"
+      )}
       style={{
         position: "absolute",
         left: bboxInView.left - componentSectionPadding + "px",
@@ -129,7 +133,10 @@ const ComponentLabel: React.FC<{
 
   return (
     <div
-      className="absolute text-xs text-neutral-500 font-medium flex gap-1"
+      className={twMerge(
+        "absolute text-xs text-neutral-500 font-medium flex gap-1",
+        component.selected && "text-macaron-active"
+      )}
       style={{
         left: bboxInView.left - componentSectionPadding + "px",
         top: bboxInView.top - componentSectionTopPadding - 20 + "px",
