@@ -1,4 +1,4 @@
-import { NodeJSON } from "node-data";
+import { DocumentJSON, NodeJSON } from "node-data";
 import * as Y from "yjs";
 import { getOrCreate } from "../state/Collection";
 import { generateID } from "../utils/ID";
@@ -7,11 +7,6 @@ import { ObservableYMap } from "../utils/ObservableYMap";
 import { Node } from "./Node";
 import { Selectable } from "./Selectable";
 import { IStyle } from "./Style";
-
-export interface DocumentJSON {
-  nodes: NodeJSON[];
-  styles: Record<string, Partial<IStyle>>;
-}
 
 export class Document {
   constructor(data: Y.Map<any>) {

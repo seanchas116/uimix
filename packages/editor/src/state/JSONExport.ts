@@ -1,5 +1,5 @@
 import { runInAction } from "mobx";
-import { DocumentJSON } from "../models/Document";
+import { DocumentJSON } from "node-data";
 import { projectState } from "./ProjectState";
 
 const filePickerOptions = {
@@ -24,8 +24,7 @@ export async function exportToJSON() {
 export async function importJSON() {
   const [fileHandle] = await showOpenFilePicker(filePickerOptions);
   const data = await (await fileHandle.getFile()).text();
-  // TODO: validate
-  const projectJSON = JSON.parse(data) as DocumentJSON;
+  const projectJSON = DocumentJSON.parse(JSON.parse(data));
 
   runInAction(() => {
     projectState.document.loadJSON(projectJSON);
