@@ -35,7 +35,7 @@ importers:
       '@types/path-browserify': ^1.0.0
       '@types/react': ^18.0.28
       '@types/react-color': ^3.0.6
-      '@types/react-dom': ^18.0.10
+      '@types/react-dom': ^18.0.11
       '@types/sortablejs': ^1.15.0
       '@types/ua-parser-js': ^0.7.36
       '@types/wicg-file-system-access': ^2020.9.5
@@ -70,7 +70,7 @@ importers:
       react-merge-refs: ^2.0.1
       react-sortablejs: ^6.1.4
       slate: ^0.90.0
-      slate-react: ^0.90.0
+      slate-react: ^0.91.0
       sortablejs: ^1.15.0
       tailwind-merge: ^1.9.1
       tailwind-styled-components: ^2.2.0
@@ -80,7 +80,7 @@ importers:
       ua-parser-js: ^1.0.33
       vite: ^4.1.1
       vitest: ^0.28.5
-      yjs: ^13.5.45
+      yjs: ^13.5.46
       zod: ^3.20.6
     dependencies:
       '@emotion/react': 11.10.5_wkiylh6bncbdhwh6tncqb3s2nm
@@ -116,13 +116,13 @@ importers:
       react-merge-refs: 2.0.1
       react-sortablejs: 6.1.4_pkvhgat2fktt3g4eqjjiisgkie
       slate: 0.90.0
-      slate-react: 0.90.0_vfkxdgngtm5gosdcaawdsu5ur4
+      slate-react: 0.91.0_vfkxdgngtm5gosdcaawdsu5ur4
       sortablejs: 1.15.0
       tailwind-merge: 1.9.1
       tailwind-styled-components: 2.2.0_biqbaboplfbrettd7655fr4n2y
       tiny-typed-emitter: 2.1.0
       ua-parser-js: 1.0.33
-      yjs: 13.5.45
+      yjs: 13.5.46
       zod: 3.20.6
     devDependencies:
       '@babel/core': 7.20.12
@@ -139,7 +139,7 @@ importers:
       '@types/path-browserify': 1.0.0
       '@types/react': 18.0.28
       '@types/react-color': 3.0.6
-      '@types/react-dom': 18.0.10
+      '@types/react-dom': 18.0.11
       '@types/sortablejs': 1.15.0
       '@types/ua-parser-js': 0.7.36
       '@types/wicg-file-system-access': 2020.9.5
@@ -4419,8 +4419,8 @@ packages:
       '@types/reactcss': 1.2.6
     dev: true
 
-  /@types/react-dom/18.0.10:
-    resolution: {integrity: sha512-E42GW/JA4Qv15wQdqJq8DL4JhNpB3prJgjgapN3qJT9K2zO5IIAQh4VXvCEDupoqAwnz0cY4RlXeC/ajX5SFHg==}
+  /@types/react-dom/18.0.11:
+    resolution: {integrity: sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw==}
     dependencies:
       '@types/react': 18.0.28
     dev: true
@@ -11812,8 +11812,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /slate-react/0.90.0_vfkxdgngtm5gosdcaawdsu5ur4:
-    resolution: {integrity: sha512-z6pGd6jjU5VazLxlDi6zL3a6yaPBPJ+A2VyIlE/h/rvDywaLYGvk0xcrA9NrK71Dr47HK5ZN2zFEZNleh6wlPA==}
+  /slate-react/0.91.0_vfkxdgngtm5gosdcaawdsu5ur4:
+    resolution: {integrity: sha512-jNguVhrWWajTeifFVoM0TgNKocphODfTFiIYrZyyRIImEJ1Qibmb776ca29aCSDWO36KgUy5DUYwxdHyvEgaHw==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -13566,8 +13566,8 @@ packages:
       yargs-parser: 20.2.9
     dev: true
 
-  /yjs/13.5.45:
-    resolution: {integrity: sha512-9VUNDvb9oJHdYSMdzIpdM/agVm+EEFKRN+843CFqQuq5bo/BP3EAaxofRG9jQut3sqtGQT4A9YdQvOeeAjU6aA==}
+  /yjs/13.5.46:
+    resolution: {integrity: sha512-KIY4BEWYCm79Sr4JTDvgirXmz3lVZ5n7h6nKlsBYu97f/HDQo+XSoq92RqBiybejF9E/L5Iz+56zZrSfBKZ5DQ==}
     dependencies:
       lib0: 0.2.62
     dev: false
