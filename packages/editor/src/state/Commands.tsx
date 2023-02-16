@@ -124,11 +124,12 @@ class Commands {
 
     viewportState.insertMode = {
       type: "image",
-      source: {
-        dataURL: dataURL,
-        width: image.width,
-        height: image.height,
-      },
+      // TODO: image source
+      // source: {
+      //   dataURL: dataURL,
+      //   width: image.width,
+      //   height: image.height,
+      // },
     };
   }
 

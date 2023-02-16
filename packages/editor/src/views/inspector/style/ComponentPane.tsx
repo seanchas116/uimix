@@ -11,7 +11,6 @@ import tagIcon from "@iconify-icons/ic/sharp-numbers";
 import { Icon, IconifyIcon } from "@iconify/react";
 import textIcon from "@seanchas116/design-icons/json/text.json";
 import switchIcon from "@seanchas116/design-icons/json/switch.json";
-import { Property } from "node-data";
 import { projectState } from "../../../state/ProjectState";
 import { viewportState } from "../../../state/ViewportState";
 import { IconButton } from "../../../components/IconButton";
@@ -22,7 +21,8 @@ import { Select } from "../../../components/Select";
 import { DropdownMenu } from "../../../components/Menu";
 import { InspectorHeading } from "../components/InspectorHeading";
 import { InspectorPane } from "../components/InspectorPane";
-import { Node, VariantCondition } from "../../../models/Node";
+import { Node } from "../../../models/Node";
+import { VariantCondition } from "node-data";
 
 export function getIconAndTextForCondition(
   condition:
@@ -68,6 +68,7 @@ export function getIconAndTextForCondition(
   }
 }
 
+/*
 function PropRow({
   property,
   onChange,
@@ -156,6 +157,7 @@ function PropRow({
     </div>
   );
 }
+*/
 
 export const ConditionEditor: React.FC<{
   value: VariantCondition;

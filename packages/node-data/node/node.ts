@@ -1,17 +1,3 @@
-import {
-  AllStyleData,
-  FrameStyleData,
-  ShapeStyleData,
-  StackStyleData,
-  TextStyleData,
-} from "../style/style";
-import {
-  Property,
-  PropReference,
-  VariantData,
-  PageData,
-} from "../component/component";
-import { PathData, RectData } from "../geometry/geometry";
 import { z } from "zod";
 
 export const NodeType = z.enum([

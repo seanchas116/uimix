@@ -1,12 +1,13 @@
 import { ObservableYMap } from "../utils/ObservableYMap";
 import { Document } from "./Document";
-import { Node, NodeJSON } from "./Node";
+import { Node } from "./Node";
 import { CascadedStyle, defaultStyle, IStyle, PartialStyle } from "./Style";
 import * as Y from "yjs";
 import { getOrCreate } from "../state/Collection";
 import { computed, makeObservable, observable } from "mobx";
 import { Rect } from "paintvec";
 import { resizeWithBoundingBox } from "../services/Resize";
+import { NodeJSON } from "node-data";
 
 export interface IComputedRectProvider {
   value: Rect | undefined;

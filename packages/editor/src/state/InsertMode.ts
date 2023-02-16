@@ -1,5 +1,3 @@
-import { ImageSource } from "node-data";
-
 export type InsertMode =
   | {
       type: "frame";
@@ -9,5 +7,5 @@ export type InsertMode =
     }
   | {
       type: "image";
-      source: ImageSource;
+      //source: ImageSource;
     };

@@ -3,41 +3,10 @@ import { ObservableYMap } from "../utils/ObservableYMap";
 import { Document } from "./Document";
 import * as Y from "yjs";
 import { generateID } from "../utils/ID";
-import { z } from "zod";
 import { getOrCreate } from "../state/Collection";
-
-export interface NodeJSON {
-  id?: string;
-  type: NodeType;
-  name?: string;
-  condition?: VariantCondition;
-  children?: NodeJSON[];
-}
-
-export const NodeType = z.enum([
-  "root",
-  "frame",
-  "text",
-  "component",
-  "variant",
-  "instance",
-]);
-
-export type NodeType = z.infer<typeof NodeType>;
+import { NodeJSON, NodeType, VariantCondition } from "node-data";
 
 export const abstractNodeTypes: NodeType[] = ["component"];
-
-export type VariantCondition =
-  | {
-      type: "hover";
-    }
-  | {
-      type: "active";
-    }
-  | {
-      type: "maxWidth";
-      value: number;
-    };
 
 export class Node {
   constructor(document: Document, parent: Node | undefined, data: Y.Map<any>) {

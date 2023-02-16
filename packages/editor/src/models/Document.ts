@@ -1,9 +1,10 @@
+import { NodeJSON } from "node-data";
 import * as Y from "yjs";
 import { getOrCreate } from "../state/Collection";
 import { generateID } from "../utils/ID";
 import { ObservableMultiMap } from "../utils/ObservableMultiMap";
 import { ObservableYMap } from "../utils/ObservableYMap";
-import { Node, NodeJSON } from "./Node";
+import { Node } from "./Node";
 import { Selectable } from "./Selectable";
 import { IStyle } from "./Style";
 
