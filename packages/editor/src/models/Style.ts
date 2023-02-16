@@ -1,64 +1,9 @@
 import { isEqual } from "lodash-es";
-import {
-  PositionConstraint,
-  SizeConstraint,
-  StackAlign,
-  StackDirection,
-  StackJustify,
-  TextHorizontalAlign,
-  TextVerticalAlign,
-} from "node-data";
+import { StyleJSON } from "node-data";
 import { ObservableYMap } from "../utils/ObservableYMap";
 import * as Y from "yjs";
 
-export interface IStyle {
-  position: {
-    readonly x: PositionConstraint;
-    readonly y: PositionConstraint;
-  };
-  absolute: boolean;
-  width: SizeConstraint;
-  height: SizeConstraint;
-
-  topLeftRadius: number;
-  topRightRadius: number;
-  bottomRightRadius: number;
-  bottomLeftRadius: number;
-
-  fill: string | null;
-  border: string | null;
-  borderTopWidth: number;
-  borderRightWidth: number;
-  borderBottomWidth: number;
-  borderLeftWidth: number;
-
-  // layout
-
-  layout: "none" | "stack"; // TODO: grid
-  stackDirection: StackDirection;
-  stackAlign: StackAlign;
-  stackJustify: StackJustify;
-  gap: number;
-  paddingTop: number;
-  paddingRight: number;
-  paddingBottom: number;
-  paddingLeft: number;
-
-  // text
-
-  textContent: string;
-  fontFamily: string;
-  fontWeight: number;
-  fontSize: number;
-  lineHeight: number;
-  letterSpacing: number;
-  textHorizontalAlign: TextHorizontalAlign;
-  textVerticalAlign: TextVerticalAlign;
-
-  // instance
-
-  mainComponentID: string | null;
-}
+export type IStyle = StyleJSON;
 
 export const defaultStyle: IStyle = {
   position: {

@@ -4,30 +4,30 @@ import { SizeConstraint } from "./value/size";
 import { StackAlign, StackDirection, StackJustify } from "./value/stack";
 import { TextHorizontalAlign, TextVerticalAlign } from "./value/text";
 
-export const CommonStyleMixin = z.object({
-  x: PositionConstraint,
-  y: PositionConstraint,
+export const StyleJSON = z.object({
+  position: z.object({
+    x: PositionConstraint,
+    y: PositionConstraint,
+  }),
+  absolute: z.boolean(),
   width: SizeConstraint,
   height: SizeConstraint,
+
+  topLeftRadius: z.number(),
+  topRightRadius: z.number(),
+  bottomRightRadius: z.number(),
+  bottomLeftRadius: z.number(),
+
   fill: z.union([z.string(), z.null()]),
   border: z.union([z.string(), z.null()]),
   borderTopWidth: z.number(),
   borderRightWidth: z.number(),
   borderBottomWidth: z.number(),
   borderLeftWidth: z.number(),
-});
-export type CommonStyleMixin = z.infer<typeof CommonStyleMixin>;
 
-export const FrameStyleMixin = z.object({
-  topLeftRadius: z.number(),
-  topRightRadius: z.number(),
-  bottomRightRadius: z.number(),
-  bottomLeftRadius: z.number(),
-});
-export const FrameStyleData = CommonStyleMixin.merge(FrameStyleMixin);
-export type FrameStyleData = z.infer<typeof FrameStyleData>;
+  // layout
 
-export const StackStyleMixin = z.object({
+  layout: z.enum(["none", "stack"]),
   stackDirection: StackDirection,
   stackAlign: StackAlign,
   stackJustify: StackJustify,
@@ -36,12 +36,10 @@ export const StackStyleMixin = z.object({
   paddingRight: z.number(),
   paddingBottom: z.number(),
   paddingLeft: z.number(),
-});
-export const StackStyleData =
-  CommonStyleMixin.merge(FrameStyleMixin).merge(StackStyleMixin);
-export type StackStyleData = z.infer<typeof StackStyleData>;
 
-export const TextStyleMixin = z.object({
+  // text
+
+  textContent: z.string(),
   fontFamily: z.string(),
   fontWeight: z.number(),
   fontSize: z.number(),
@@ -49,14 +47,9 @@ export const TextStyleMixin = z.object({
   letterSpacing: z.number(),
   textHorizontalAlign: TextHorizontalAlign,
   textVerticalAlign: TextVerticalAlign,
+
+  // instance
+  mainComponentID: z.union([z.string(), z.null()]),
 });
-export const TextStyleData = CommonStyleMixin.merge(TextStyleMixin);
-export type TextStyleData = z.infer<typeof TextStyleData>;
 
-export const ShapeStyleData = CommonStyleMixin;
-export type ShapeStyleData = z.infer<typeof ShapeStyleData>;
-
-export const AllStyleData = CommonStyleMixin.merge(FrameStyleMixin)
-  .merge(StackStyleMixin)
-  .merge(TextStyleMixin);
-export type AllStyleData = z.infer<typeof AllStyleData>;
+export type StyleJSON = z.infer<typeof StyleJSON>;
