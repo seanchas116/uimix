@@ -16,9 +16,9 @@ const filePickerOptions = {
 
 export async function exportToJSON() {
   const fileHandle = await showSaveFilePicker(filePickerOptions);
-  const projectJSON = projectState.document.toJSON();
+  const documentJSON = projectState.document.toJSON();
   const writable = await fileHandle.createWritable();
-  await writable.write(formatJSON(JSON.stringify(projectJSON)));
+  await writable.write(formatJSON(JSON.stringify(documentJSON)));
   await writable.close();
 }
 
