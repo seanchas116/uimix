@@ -3,8 +3,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node-dev src/index.ts --respawn --transpileOnly"
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev src/server.ts --respawn --transpileOnly"
   },
   "dependencies": {
     "@trpc/server": "^10.11.1",
