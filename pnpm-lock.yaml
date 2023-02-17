@@ -56,6 +56,7 @@ importers:
       '@types/dedent': ^0.7.0
       '@types/lodash-es': ^4.17.6
       '@types/path-browserify': ^1.0.0
+      '@types/prettier': ^2.7.2
       '@types/react': ^18.0.28
       '@types/react-color': ^3.0.6
       '@types/react-dom': ^18.0.11
@@ -132,6 +133,7 @@ importers:
       paintvec: 0.5.0
       parse-css-color: 0.2.1
       path-browserify: 1.0.1
+      prettier: 2.8.4
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-draggable-tree: 0.7.0
@@ -160,6 +162,7 @@ importers:
       '@types/dedent': 0.7.0
       '@types/lodash-es': 4.17.6
       '@types/path-browserify': 1.0.0
+      '@types/prettier': 2.7.2
       '@types/react': 18.0.28
       '@types/react-color': 3.0.6
       '@types/react-dom': 18.0.11
@@ -176,7 +179,6 @@ importers:
       eslint-plugin-import: 2.27.5_mcvs2y73sfmcxqzpjj5lr7a2m4
       html-tags: 3.2.0
       postcss: 8.4.21
-      prettier: 2.8.4
       react-color: 2.19.3_react@18.2.0
       tailwindcss: 3.2.6_postcss@8.4.21
       typescript: 4.9.5
@@ -4496,6 +4498,10 @@ packages:
 
   /@types/path-browserify/1.0.0:
     resolution: {integrity: sha512-XMCcyhSvxcch8b7rZAtFAaierBYdeHXVvg2iYnxOV0MCQHmPuRRmGZPFDRzPayxcGiiSL1Te9UIO+f3cuj0tfw==}
+    dev: true
+
+  /@types/prettier/2.7.2:
+    resolution: {integrity: sha512-KufADq8uQqo1pYKVIYzfKbJfBAc0sOeXqGbFaSpv8MRmC/zXgowNZmFcbngndGk922QDmOASEXUZCaY48gs4cg==}
     dev: true
 
   /@types/pretty-hrtime/1.0.1:
@@ -10880,7 +10886,7 @@ packages:
     resolution: {integrity: sha512-vIS4Rlc2FNh0BySk3Wkd6xmwxB0FpOndW5fisM5H8hsZSxU2VWVB5CWIkIjWvrHjIhxk2g3bfMKM87zNTrZddw==}
     engines: {node: '>=10.13.0'}
     hasBin: true
-    dev: true
+    dev: false
 
   /pretty-error/2.1.2:
     resolution: {integrity: sha512-EY5oDzmsX5wvuynAByrmY0P0hcp+QpnAKbJng2A2MPjVKXCxrDSUkzghVJ4ZGPIv+JC4gX8fPUWscC0RtjsWGw==}
