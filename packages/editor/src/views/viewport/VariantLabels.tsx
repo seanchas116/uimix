@@ -291,7 +291,7 @@ const VariantLabel: React.FC<{
                 },
               ]);
               projectState.document.rootSelectable.deselect();
-              projectState.document.getSelectableForNode(variant)?.select();
+              projectState.project.getSelectableForNode(variant)?.select();
               projectState.undoManager.stopCapturing();
             }),
           },
@@ -309,7 +309,7 @@ const VariantLabel: React.FC<{
                 },
               ]);
               projectState.document.rootSelectable.deselect();
-              projectState.document.getSelectableForNode(variant)?.select();
+              projectState.project.getSelectableForNode(variant)?.select();
               projectState.undoManager.stopCapturing();
             }),
           },

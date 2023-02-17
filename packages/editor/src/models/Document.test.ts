@@ -3,11 +3,22 @@ import { Document } from "./Document";
 import * as Y from "yjs";
 import { moveSelectables, Selectable } from "./Selectable";
 import { Color } from "../utils/Color";
+import { Project } from "./Project";
+import { generateExampleNodes } from "./generateExampleNodes";
+import * as fs from "fs";
+import * as path from "path";
+import { DocumentJSON } from "uimix-node-data";
+
+function createEmptyDocument() {
+  const ydoc = new Y.Doc();
+  const project = new Project(ydoc.getMap("project"));
+  const doc = project.getOrCreateDocument("Page 1");
+  return [project, doc] as const;
+}
 
 describe(Document.name, () => {
   it("can insert nodes", () => {
-    const ydoc = new Y.Doc();
-    const doc = new Document(ydoc.getMap("document"));
+    const [proj, doc] = createEmptyDocument();
 
     doc.root.insert(0, [{ type: "frame", name: "Frame" }]);
 
@@ -23,8 +34,8 @@ describe(Document.name, () => {
     expect(doc.root.children[1].index).toBe(1);
     expect(doc.root.children.length).toBe(2);
 
-    const selectable0 = doc.getSelectable([doc.root.children[0].id]);
-    const selectable1 = doc.getSelectable([doc.root.children[1].id]);
+    const selectable0 = proj.getSelectable([doc.root.children[0].id]);
+    const selectable1 = proj.getSelectable([doc.root.children[1].id]);
     selectable0.style.gap = 10;
     expect(selectable0.originalNode === doc.root.children[0]).toBe(true);
     expect(selectable0.style.gap).toBe(10);
@@ -39,8 +50,7 @@ describe(Document.name, () => {
   });
 
   it("can move nodes", () => {
-    const ydoc = new Y.Doc();
-    const doc = new Document(ydoc.getMap("document"));
+    const [proj, doc] = createEmptyDocument();
 
     const frames: Selectable[] = [];
 
@@ -48,7 +58,7 @@ describe(Document.name, () => {
       const [frame] = doc.rootSelectable.append([
         { type: "frame", name: `Frame ${i}` },
       ]);
-      const frameSelectable = doc.getSelectable([frame.id]);
+      const frameSelectable = proj.getSelectable([frame.id]);
       const style = frameSelectable.style;
       style.position = {
         x: { type: "start", start: i * 100 + 50 },
@@ -96,8 +106,7 @@ describe(Document.name, () => {
   });
 
   it("handles components", () => {
-    const ydoc = new Y.Doc();
-    const doc = new Document(ydoc.getMap("document"));
+    const [proj, doc] = createEmptyDocument();
 
     doc.root.insert(0, [
       {
@@ -128,7 +137,7 @@ describe(Document.name, () => {
     const [rootNode, hoverVariant] = doc.root.children[0].children;
     const textNode = rootNode.children[0];
 
-    const rootSelectable = doc.getSelectable([rootNode.id]);
+    const rootSelectable = proj.getSelectable([rootNode.id]);
     expect(rootSelectable.originalNode.type).toBe("frame");
     rootSelectable.style.gap = 12;
 
@@ -137,7 +146,7 @@ describe(Document.name, () => {
     expect(textSelectable.originalNode.type).toBe("text");
     textSelectable.style.fontSize = 24;
 
-    const hoverSelectable = doc.getSelectable([hoverVariant.id]);
+    const hoverSelectable = proj.getSelectable([hoverVariant.id]);
     expect(hoverSelectable.originalNode === hoverVariant).toBe(true);
     expect(hoverSelectable.node === rootNode).toBe(true);
     expect(hoverSelectable.style.gap).toBe(12);
@@ -149,7 +158,7 @@ describe(Document.name, () => {
       },
     ]);
 
-    const instanceSelectable = doc.getSelectable([instanceNode.id]);
+    const instanceSelectable = proj.getSelectable([instanceNode.id]);
     instanceSelectable.style.mainComponentID = componentID;
 
     const instanceTextSelectable = instanceSelectable.children[0];
@@ -178,8 +187,7 @@ describe(Document.name, () => {
   });
 
   it("avoid infinite instantiation", () => {
-    const ydoc = new Y.Doc();
-    const doc = new Document(ydoc.getMap("document"));
+    const [proj, doc] = createEmptyDocument();
 
     const [componentSelectable] = doc.rootSelectable.insert(0, [
       {
@@ -212,5 +220,31 @@ describe(Document.name, () => {
     instance.style.mainComponentID = componentSelectable.originalNode.id;
 
     expect(instance.children.length).toBe(0);
+  });
+
+  it("example node snapshot", () => {
+    const documentJSON = DocumentJSON.parse(
+      JSON.parse(
+        fs.readFileSync(
+          path.join(__dirname, "__fixtures__/document.json"),
+          "utf-8"
+        )
+      )
+    );
+    const [proj, doc] = createEmptyDocument();
+    doc.loadJSON(documentJSON);
+
+    expect(doc.toJSON()).toEqual(documentJSON);
+  });
+
+  it("can be renamed", () => {
+    const [proj, doc] = createEmptyDocument();
+
+    generateExampleNodes(doc);
+    const oldData = doc.toJSON();
+    proj.renameDocumentOrFolder(doc.filePath, "New Name");
+    const newData = proj.getOrCreateDocument("New Name").toJSON();
+
+    expect(oldData).toEqual(newData);
   });
 });

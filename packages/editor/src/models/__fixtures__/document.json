@@ -1,0 +1,308 @@
+{
+  "nodes": [
+    {
+      "id": "1BvSb7sdsRmYxFy2wY4mDv",
+      "name": "Frame 0",
+      "type": "frame",
+      "children": []
+    },
+    {
+      "id": "1BvSb7seTAwgfvwrdgNunZ",
+      "name": "Frame 1",
+      "type": "frame",
+      "children": []
+    },
+    {
+      "id": "1BvSb7sekytyFWrdEvLLv7",
+      "name": "Frame 2",
+      "type": "frame",
+      "children": []
+    },
+    {
+      "id": "1BvSb7semF3sQF46H4sT5K",
+      "name": "Frame 3",
+      "type": "frame",
+      "children": []
+    },
+    {
+      "id": "1BvSb7sev5yMMipaYNtygo",
+      "name": "Frame 4",
+      "type": "frame",
+      "children": []
+    },
+    {
+      "id": "1BvSb7sf2DDngZfYGA5XQi",
+      "name": "Frame 5",
+      "type": "frame",
+      "children": []
+    },
+    {
+      "id": "1BvSb7sf62V5fGxJxxGRJs",
+      "name": "Frame 6",
+      "type": "frame",
+      "children": []
+    },
+    {
+      "id": "1BvSb7sf6GYJUYBGYTyomZ",
+      "name": "Frame 7",
+      "type": "frame",
+      "children": []
+    },
+    {
+      "id": "1BvSb7sf6P4Wy1bYpb7tAD",
+      "name": "Frame 8",
+      "type": "frame",
+      "children": []
+    },
+    {
+      "id": "1BvSb7sfKPYtx1MTWs1eHE",
+      "name": "Frame 9",
+      "type": "frame",
+      "children": []
+    },
+    {
+      "id": "1BvSb7sfUQzqQLneNbfeTB",
+      "name": "Stack",
+      "type": "frame",
+      "children": [
+        {
+          "id": "1BvSb7sfihmnQJpfwsnBbx",
+          "name": "Text",
+          "type": "text",
+          "children": []
+        },
+        {
+          "id": "1BvSb7sfWY524LwFrmtG6t",
+          "name": "Item 0",
+          "type": "frame",
+          "children": []
+        },
+        {
+          "id": "1BvSb7sfP6foo9Ufhoa2Mj",
+          "name": "Item 1",
+          "type": "frame",
+          "children": []
+        },
+        {
+          "id": "1BvSb7sffpL1JTWEhHjkA4",
+          "name": "Item 2",
+          "type": "frame",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "1BvSb7sfbEBTMeGVpUXdgG",
+      "name": "Button",
+      "type": "component",
+      "children": [
+        {
+          "id": "1BvSb7sfbSa8bV3if1Pf1t",
+          "name": "",
+          "type": "frame",
+          "children": [
+            {
+              "id": "1BvSb7sfnS4VbptbxJdj1k",
+              "name": "Text",
+              "type": "text",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "1BvSb7sfq69CHByfjo5q77",
+          "name": "Hover",
+          "type": "variant",
+          "condition": { "type": "hover" },
+          "children": []
+        },
+        {
+          "id": "1BvSb7sfuA1epPBp6NHyNH",
+          "name": "Mobile",
+          "type": "variant",
+          "condition": { "type": "maxWidth", "value": 767 },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "1BvSb7sgEagE2MUai2sSj6",
+      "name": "Instance",
+      "type": "instance",
+      "children": []
+    }
+  ],
+  "styles": {
+    "1BvSb7sdsRmYxFy2wY4mDv": {
+      "position": {
+        "x": { "type": "start", "start": 50 },
+        "y": { "type": "start", "start": 90 }
+      },
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7seTAwgfvwrdgNunZ": {
+      "position": {
+        "x": { "type": "start", "start": 150 },
+        "y": { "type": "start", "start": 90 }
+      },
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7sekytyFWrdEvLLv7": {
+      "position": {
+        "x": { "type": "start", "start": 250 },
+        "y": { "type": "start", "start": 90 }
+      },
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7semF3sQF46H4sT5K": {
+      "position": {
+        "x": { "type": "start", "start": 350 },
+        "y": { "type": "start", "start": 90 }
+      },
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7sev5yMMipaYNtygo": {
+      "position": {
+        "x": { "type": "start", "start": 450 },
+        "y": { "type": "start", "start": 90 }
+      },
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7sf2DDngZfYGA5XQi": {
+      "position": {
+        "x": { "type": "start", "start": 550 },
+        "y": { "type": "start", "start": 90 }
+      },
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7sf62V5fGxJxxGRJs": {
+      "position": {
+        "x": { "type": "start", "start": 650 },
+        "y": { "type": "start", "start": 90 }
+      },
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7sf6GYJUYBGYTyomZ": {
+      "position": {
+        "x": { "type": "start", "start": 750 },
+        "y": { "type": "start", "start": 90 }
+      },
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7sf6P4Wy1bYpb7tAD": {
+      "position": {
+        "x": { "type": "start", "start": 850 },
+        "y": { "type": "start", "start": 90 }
+      },
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7sfKPYtx1MTWs1eHE": {
+      "position": {
+        "x": { "type": "start", "start": 950 },
+        "y": { "type": "start", "start": 90 }
+      },
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7sfUQzqQLneNbfeTB": {
+      "position": {
+        "x": { "type": "start", "start": 50 },
+        "y": { "type": "start", "start": 200 }
+      },
+      "width": { "type": "hugContents" },
+      "height": { "type": "hugContents" },
+      "fill": "#FFFFFF",
+      "layout": "stack",
+      "gap": 10,
+      "paddingTop": 10,
+      "paddingRight": 20,
+      "paddingBottom": 30,
+      "paddingLeft": 40
+    },
+    "1BvSb7sfihmnQJpfwsnBbx": {
+      "textContent": "Hello, world!",
+      "width": { "type": "hugContents" },
+      "height": { "type": "hugContents" },
+      "fontSize": 20,
+      "fill": "#000000"
+    },
+    "1BvSb7sfWY524LwFrmtG6t": {
+      "width": { "type": "fixed", "value": 50 },
+      "height": { "type": "fixed", "value": 50 },
+      "fill": "#EF4444"
+    },
+    "1BvSb7sfP6foo9Ufhoa2Mj": {
+      "width": { "type": "fixed", "value": 40 },
+      "height": { "type": "fixed", "value": 80 },
+      "fill": "#22C55E"
+    },
+    "1BvSb7sffpL1JTWEhHjkA4": {
+      "width": { "type": "fixed", "value": 80 },
+      "height": { "type": "fixed", "value": 40 },
+      "fill": "#3B82F6"
+    },
+    "1BvSb7sfbEBTMeGVpUXdgG": {},
+    "1BvSb7sfbSa8bV3if1Pf1t": {
+      "position": {
+        "x": { "type": "start", "start": 50 },
+        "y": { "type": "start", "start": 400 }
+      },
+      "width": { "type": "hugContents" },
+      "height": { "type": "hugContents" },
+      "fill": "#E5E7EB",
+      "layout": "stack",
+      "paddingLeft": 8,
+      "paddingRight": 8,
+      "paddingTop": 4,
+      "paddingBottom": 4
+    },
+    "1BvSb7sfnS4VbptbxJdj1k": {
+      "textContent": "Button",
+      "width": { "type": "hugContents" },
+      "height": { "type": "hugContents" },
+      "fill": "#111827"
+    },
+    "1BvSb7sfq69CHByfjo5q77": {
+      "position": {
+        "x": { "type": "start", "start": 200 },
+        "y": { "type": "start", "start": 400 }
+      },
+      "fill": "#3B82F6"
+    },
+    "1BvSb7sfq69CHByfjo5q77:1BvSb7sfnS4VbptbxJdj1k": { "fill": "#FFFFFF" },
+    "1BvSb7sfuA1epPBp6NHyNH": {
+      "position": {
+        "x": { "type": "start", "start": 350 },
+        "y": { "type": "start", "start": 400 }
+      }
+    },
+    "1BvSb7sfuA1epPBp6NHyNH:1BvSb7sfnS4VbptbxJdj1k": {},
+    "1BvSb7sgEagE2MUai2sSj6": {
+      "position": {
+        "x": { "type": "start", "start": 50 },
+        "y": { "type": "start", "start": 500 }
+      },
+      "mainComponentID": "1BvSb7sfbEBTMeGVpUXdgG"
+    },
+    "1BvSb7sgEagE2MUai2sSj6:1BvSb7sfnS4VbptbxJdj1k": {}
+  }
+}

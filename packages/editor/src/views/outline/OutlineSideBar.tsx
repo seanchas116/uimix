@@ -8,6 +8,7 @@ import {
 import { ScrollArea } from "../../components/ScrollArea";
 import { NodeTreeView } from "./NodeTreeView";
 import { Icon } from "@iconify/react";
+import { DocumentTreeView } from "./DocumentTreeView";
 
 export const OutlineSideBar: React.FC = observer(() => {
   return (
@@ -25,10 +26,10 @@ export const OutlineSideBar: React.FC = observer(() => {
             Layers
           </span>
         </SideBarTabsTrigger>
-        <SideBarTabsTrigger value="code">
+        <SideBarTabsTrigger value="pages">
           <span className="flex gap-1.5 items-center">
             <Icon icon="material-symbols:topic-outline" className="text-base" />
-            Files
+            Pages
           </span>
         </SideBarTabsTrigger>
       </SideBarTabsList>
@@ -40,9 +41,12 @@ export const OutlineSideBar: React.FC = observer(() => {
           <NodeTreeView />
         </ScrollArea>
       </SideBarTabsContent>
-      <SideBarTabsContent value="code" className="flex-1 relative outline-none">
+      <SideBarTabsContent
+        value="pages"
+        className="flex-1 relative outline-none"
+      >
         <ScrollArea className="absolute left-0 top-0 w-full h-full">
-          <div></div>
+          <DocumentTreeView />
         </ScrollArea>
       </SideBarTabsContent>
     </SideBarTabsRoot>

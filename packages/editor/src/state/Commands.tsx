@@ -11,6 +11,8 @@ import { Clipboard } from "./Clipboard";
 import { autoLayout, removeLayout } from "../services/AutoLayout";
 import { createComponent } from "../services/CreateComponent";
 import { toDocumentJSON } from "../models/Document";
+import { DocumentHierarchyEntry } from "../models/Project";
+import { posix as path } from "path-browserify";
 
 class Commands {
   @computed get canUndo(): boolean {
@@ -75,7 +77,7 @@ class Commands {
         data.nodes
       );
       for (const [id, styleJSON] of Object.entries(data.styles)) {
-        const selectable = projectState.document.getSelectable(id.split(":"));
+        const selectable = projectState.project.getSelectable(id.split(":"));
         if (selectable) {
           selectable.selfStyle.loadJSON(styleJSON);
         }
@@ -322,6 +324,40 @@ class Commands {
       this.autoLayoutCommand,
       this.removeLayoutCommand,
     ];
+  }
+
+  contextMenuForFile(file: DocumentHierarchyEntry): MenuItemDef[] {
+    if (file.type === "directory") {
+      return [
+        {
+          type: "command",
+          text: "New File",
+          onClick: action(() => {
+            const newPath = path.join(file.path, "Page 1");
+            projectState.createDocument(newPath);
+          }),
+        },
+        {
+          type: "command",
+          text: "Delete",
+          disabled: projectState.project.documentCount === 1,
+          onClick: action(() => {
+            projectState.deleteDocumentOrFolder(file.path);
+          }),
+        },
+      ];
+    } else {
+      return [
+        {
+          type: "command",
+          text: "Delete",
+          disabled: projectState.project.documentCount === 1,
+          onClick: action(() => {
+            projectState.deleteDocumentOrFolder(file.path);
+          }),
+        },
+      ];
+    }
   }
 
   handleKeyDown(event: KeyboardEvent): boolean {

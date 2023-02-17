@@ -1,5 +1,4 @@
 import { ObservableYMap } from "../utils/ObservableYMap";
-import { Document } from "./Document";
 import { Node } from "./Node";
 import { CascadedStyle, defaultStyle, IStyle, PartialStyle } from "./Style";
 import * as Y from "yjs";
@@ -8,6 +7,7 @@ import { computed, makeObservable, observable } from "mobx";
 import { Rect } from "paintvec";
 import { resizeWithBoundingBox } from "../services/Resize";
 import { NodeJSON } from "uimix-node-data";
+import { Project } from "./Project";
 
 export interface IComputedRectProvider {
   value: Rect | undefined;
@@ -16,8 +16,8 @@ export interface IComputedRectProvider {
 
 // a node or a inner node of an instance
 export class Selectable {
-  constructor(document: Document, idPath: string[], data: Y.Map<any>) {
-    this.document = document;
+  constructor(project: Project, idPath: string[], data: Y.Map<any>) {
+    this.project = project;
     this.idPath = idPath;
     this.data = ObservableYMap.get(data);
     makeObservable(this);
@@ -25,7 +25,7 @@ export class Selectable {
 
   readonly data: ObservableYMap<any>;
 
-  readonly document: Document;
+  readonly project: Project;
 
   // Non component root nodes:
   // [outermost instance ID, ..., innermost instance ID, original node ID]
@@ -41,12 +41,12 @@ export class Selectable {
     const mainComponent = this.mainComponent;
     if (mainComponent) {
       return mainComponent.rootNode.children.map((child) => {
-        return this.document.getSelectable([...this.idPath, child.id]);
+        return this.project.getSelectable([...this.idPath, child.id]);
       });
     }
 
     return this.originalNode.children.map((child) => {
-      return this.document.getSelectable([
+      return this.project.getSelectable([
         ...this.idPath.slice(0, -1),
         child.id,
       ]);
@@ -62,14 +62,14 @@ export class Selectable {
     }
 
     if (nodePath.length === 1) {
-      return this.document.getSelectable([parentNode.id]);
+      return this.project.getSelectable([parentNode.id]);
     }
 
     if (parentNode.isComponentRoot) {
       // looks like a component root
-      return this.document.getSelectable(this.idPath.slice(0, -1));
+      return this.project.getSelectable(this.idPath.slice(0, -1));
     } else {
-      return this.document.getSelectable([
+      return this.project.getSelectable([
         ...this.idPath.slice(0, -1),
         parentNode.id,
       ]);
@@ -115,7 +115,7 @@ export class Selectable {
   }
 
   @computed get nodePath(): Node[] {
-    return this.idPath.map((id) => this.document.getNodeByIDOrThrow(id));
+    return this.idPath.map((id) => this.project.getNodeByIDOrThrow(id));
   }
 
   @computed get originalNode(): Node {
@@ -150,13 +150,13 @@ export class Selectable {
       if (type === "displayed") {
         const mainComponent = this.mainComponent;
         if (mainComponent) {
-          superStyle = this.document
+          superStyle = this.project
             .getSelectable([mainComponent.rootNode.id])
             .getStyle("original");
         }
       }
     } else {
-      const superSelectable = this.document.getSelectable(this.idPath.slice(1));
+      const superSelectable = this.project.getSelectable(this.idPath.slice(1));
       superStyle = superSelectable.getStyle(type);
     }
 
@@ -172,7 +172,7 @@ export class Selectable {
           (node) => node.ownerComponent
         );
 
-        const mainComponentNode = this.document.getNodeByID(mainComponentID);
+        const mainComponentNode = this.project.getNodeByID(mainComponentID);
         if (mainComponentNode && !ownerComponents.includes(mainComponentNode)) {
           const componentRoot = mainComponentNode.children[0];
           return {

@@ -3,7 +3,6 @@ import { action, runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { TreeView, TreeViewItem, TreeViewItemRow } from "react-draggable-tree";
-import clsx from "clsx";
 import widgetsIcon from "@iconify-icons/ic/widgets";
 import outlineWidgetsIcon from "@iconify-icons/ic/outline-widgets";
 import rectIcon from "@seanchas116/design-icons/json/rect.json";
@@ -150,7 +149,7 @@ const TreeRow: React.FC<{
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onContextMenu={onContextMenu}
-      className={clsx("w-full h-8 px-1")}
+      className="w-full h-8 px-1"
     >
       <div
         className={twMerge(

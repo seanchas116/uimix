@@ -1,13 +1,15 @@
-import { Document } from "../models/Document";
+import { Document } from "./Document";
 import { Color } from "../utils/Color";
 import colors from "tailwindcss/colors.js";
 
 export function generateExampleNodes(document: Document) {
+  const project = document.project;
+
   for (let i = 0; i < 10; ++i) {
     const [frame] = document.root.append([
       { type: "frame", name: `Frame ${i}` },
     ]);
-    const frameSelectable = document.getSelectable([frame.id]);
+    const frameSelectable = project.getSelectable([frame.id]);
     const style = frameSelectable.style;
     style.position = {
       x: { type: "start", start: i * 100 + 50 },
@@ -21,7 +23,7 @@ export function generateExampleNodes(document: Document) {
   {
     const [stack] = document.root.append([{ type: "frame", name: "Stack" }]);
 
-    const stackStyle = document.getSelectable([stack.id]).style;
+    const stackStyle = project.getSelectable([stack.id]).style;
 
     stackStyle.position = {
       x: { type: "start", start: 50 },
@@ -38,28 +40,28 @@ export function generateExampleNodes(document: Document) {
     stackStyle.paddingLeft = 40;
 
     const [stackItem0] = stack.append([{ type: "frame", name: "Item 0" }]);
-    const stackItem0Style = document.getSelectable([stackItem0.id]).style;
+    const stackItem0Style = project.getSelectable([stackItem0.id]).style;
 
     stackItem0Style.width = { type: "fixed", value: 50 };
     stackItem0Style.height = { type: "fixed", value: 50 };
     stackItem0Style.fill = Color.from(colors.red[500])!.toHex();
 
     const [stackItem1] = stack.append([{ type: "frame", name: "Item 1" }]);
-    const stackItem1Style = document.getSelectable([stackItem1.id]).style;
+    const stackItem1Style = project.getSelectable([stackItem1.id]).style;
 
     stackItem1Style.width = { type: "fixed", value: 40 };
     stackItem1Style.height = { type: "fixed", value: 80 };
     stackItem1Style.fill = Color.from(colors.green[500])!.toHex();
 
     const [stackItem2] = stack.append([{ type: "frame", name: "Item 2" }]);
-    const stackItem2Style = document.getSelectable([stackItem2.id]).style;
+    const stackItem2Style = project.getSelectable([stackItem2.id]).style;
 
     stackItem2Style.width = { type: "fixed", value: 80 };
     stackItem2Style.height = { type: "fixed", value: 40 };
     stackItem2Style.fill = Color.from(colors.blue[500])!.toHex();
 
     const [text] = stack.prepend([{ type: "text", name: "Text" }]);
-    const textStyle = document.getSelectable([text.id]).style;
+    const textStyle = project.getSelectable([text.id]).style;
     textStyle.textContent = "Hello, world!";
     textStyle.width = { type: "hugContents" };
     textStyle.height = { type: "hugContents" };
@@ -82,7 +84,7 @@ export function generateExampleNodes(document: Document) {
     const [rootNode] = componentNode.append([{ type: "frame" }]);
 
     const [textNode] = rootNode.append([{ type: "text", name: "Text" }]);
-    const textNodeProps = document.getSelectable([textNode.id]).style;
+    const textNodeProps = project.getSelectable([textNode.id]).style;
     textNodeProps.textContent = "Button";
 
     const [hoverVariant] = componentNode.append([
@@ -105,7 +107,7 @@ export function generateExampleNodes(document: Document) {
       value: 767,
     };
 
-    const rootNodeStyle = document.getSelectable([rootNode.id]).style;
+    const rootNodeStyle = project.getSelectable([rootNode.id]).style;
     rootNodeStyle.position = {
       x: { type: "start", start: 50 },
       y: { type: "start", start: 400 },
@@ -119,25 +121,25 @@ export function generateExampleNodes(document: Document) {
     rootNodeStyle.paddingTop = 4;
     rootNodeStyle.paddingBottom = 4;
 
-    const textNodeStyle = document.getSelectable([textNode.id]).style;
+    const textNodeStyle = project.getSelectable([textNode.id]).style;
     textNodeStyle.width = { type: "hugContents" };
     textNodeStyle.height = { type: "hugContents" };
     textNodeStyle.fill = Color.from(colors.gray[900])!.toHex();
 
-    const hoverVariantStyle = document.getSelectable([hoverVariant.id]).style;
+    const hoverVariantStyle = project.getSelectable([hoverVariant.id]).style;
     hoverVariantStyle.position = {
       x: { type: "start", start: 200 },
       y: { type: "start", start: 400 },
     };
     hoverVariantStyle.fill = Color.from(colors.blue[500])!.toHex();
 
-    const mobileVariantStyle = document.getSelectable([mobileVariant.id]).style;
+    const mobileVariantStyle = project.getSelectable([mobileVariant.id]).style;
     mobileVariantStyle.position = {
       x: { type: "start", start: 350 },
       y: { type: "start", start: 400 },
     };
 
-    const hoverTextNodeStyle = document.getSelectable([
+    const hoverTextNodeStyle = project.getSelectable([
       hoverVariant.id,
       textNode.id,
     ]).style;
@@ -147,7 +149,7 @@ export function generateExampleNodes(document: Document) {
       { type: "instance", name: "Instance" },
     ]);
 
-    const instanceNodeStyle = document.getSelectable([instanceNode.id]).style;
+    const instanceNodeStyle = project.getSelectable([instanceNode.id]).style;
     instanceNodeStyle.position = {
       x: { type: "start", start: 50 },
       y: { type: "start", start: 500 },

@@ -17,6 +17,8 @@ export class Node {
     this.childrenData = getOrCreate(data, "children", () => new Y.Array<any>());
     this.parent = parent;
 
+    const project = document.project;
+
     const onChildrenChange = () => {
       const oldChildren = new Map<Y.Map<any>, Node>();
       for (const instance of this.children) {
@@ -40,11 +42,11 @@ export class Node {
       }
 
       for (const removed of removedChildren) {
-        document.onRemoveNode(removed);
+        project.onRemoveNode(removed);
       }
 
       for (const added of addedChildren) {
-        document.onAddNode(added);
+        project.onAddNode(added);
       }
 
       this.children = newChildren;
