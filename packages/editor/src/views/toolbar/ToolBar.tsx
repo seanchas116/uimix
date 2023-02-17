@@ -109,13 +109,21 @@ export const ToolBar = observer(function ToolBar({
         }
       </div>
 
-      <div className="absolute right-3 top-0 bottom-0 flex items-center">
+      <div className="absolute right-3 top-0 bottom-0 flex items-center gap-4">
         <ZoomControl
           percentage={Math.round(scrollState.scale * 100)}
           onZoomOut={onZoomOut}
           onZoomIn={onZoomIn}
           onChangePercentage={onChangeZoomPercent}
         />
+        <a
+          className="bg-macaron-active rounded px-2 py-1.5 text-xs hover:bg-macaron-activeHover text-macaron-activeText flex items-center gap-1"
+          target="_blank"
+          href="https://github.com/seanchas116/uimix"
+        >
+          <Icon icon="mdi:github" className="text-base" />
+          GitHub
+        </a>
       </div>
     </div>
   );
