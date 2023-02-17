@@ -1,5 +1,5 @@
 {
-  "name": "node-data",
+  "name": "uimix-node-data",
   "license": "MIT",
   "dependencies": {
     "zod": "^3.20.6"

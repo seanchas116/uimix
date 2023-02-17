@@ -1,5 +1,5 @@
 import { isEqual } from "lodash-es";
-import { StyleJSON } from "node-data";
+import { StyleJSON } from "uimix-node-data";
 import { ObservableYMap } from "../utils/ObservableYMap";
 import * as Y from "yjs";
 

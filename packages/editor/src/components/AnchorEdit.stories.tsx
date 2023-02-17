@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PositionConstraintType } from "node-data";
+import { PositionConstraintType } from "uimix-node-data";
 import { AnchorEdit } from "./AnchorEdit";
 
 export default {

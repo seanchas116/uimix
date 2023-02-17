@@ -1,7 +1,7 @@
 import { range, clamp } from "lodash-es";
 import React, { useState } from "react";
 import styled from "@emotion/styled";
-import { StackAlign, StackJustify } from "node-data";
+import { StackAlign, StackJustify } from "uimix-node-data";
 import colors from "../colors.js";
 
 const AlignmentEditSVG = styled.svg<{ direction: "x" | "y" }>`

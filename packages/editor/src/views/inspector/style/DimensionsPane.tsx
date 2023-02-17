@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { observer } from "mobx-react-lite";
-import { SizeConstraintType } from "node-data";
+import { SizeConstraintType } from "uimix-node-data";
 import hugContentsIcon from "@seanchas116/design-icons/json/hug-contents.json";
 import fixedSizeIcon from "@seanchas116/design-icons/json/fixed-size.json";
 import fillAreaIcon from "@seanchas116/design-icons/json/fill-area.json";

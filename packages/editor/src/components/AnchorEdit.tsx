@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
-import { PositionConstraintType } from "node-data";
+import { PositionConstraintType } from "uimix-node-data";
 import colors from "../colors";
 import { Color } from "../utils/Color";
 

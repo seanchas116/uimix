@@ -4,7 +4,7 @@ import { Document } from "./Document";
 import * as Y from "yjs";
 import { generateID } from "../utils/ID";
 import { getOrCreate } from "../state/Collection";
-import { NodeJSON, NodeType, VariantCondition } from "node-data";
+import { NodeJSON, NodeType, VariantCondition } from "uimix-node-data";
 
 export const abstractNodeTypes: NodeType[] = ["component"];
 

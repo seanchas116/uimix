@@ -1,5 +1,5 @@
 import { cloneDeep } from "lodash-es";
-import { NodeJSON } from "node-data";
+import { NodeJSON } from "uimix-node-data";
 import { IStyle } from "../models/Style";
 import { generateID } from "../utils/ID";
 

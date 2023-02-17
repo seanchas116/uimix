@@ -1,4 +1,4 @@
-import { DocumentJSON, NodeJSON } from "node-data";
+import { DocumentJSON, NodeJSON } from "uimix-node-data";
 import * as Y from "yjs";
 import { getOrCreate } from "../state/Collection";
 import { generateID } from "../utils/ID";

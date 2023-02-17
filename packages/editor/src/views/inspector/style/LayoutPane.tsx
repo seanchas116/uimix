@@ -11,7 +11,7 @@ import { InspectorToggleGroup } from "./inputs/InspectorToggleGroup";
 import { sameOrMixed } from "../../../utils/Mixed";
 import { projectState } from "../../../state/ProjectState";
 import { IconButton } from "../../../components/IconButton";
-import { StackDirection } from "node-data";
+import { StackDirection } from "uimix-node-data";
 import { AlignmentEdit } from "../../../components/AlignmentEdit";
 import { ToggleGroupItem } from "../../../components/ToggleGroup";
 import { InspectorHeading } from "../components/InspectorHeading";

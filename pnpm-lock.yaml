@@ -5,6 +5,29 @@ importers:
   .:
     specifiers: {}
 
+  packages/devserver:
+    specifiers:
+      '@trpc/server': ^10.11.1
+      '@types/cors': ^2.8.13
+      '@types/express': ^4.17.17
+      cors: ^2.8.5
+      express: ^4.18.2
+      trpc-panel: ^1.2.8
+      ts-node-dev: ^2.0.0
+      typescript: ^4.9.5
+      zod: ^3.20.6
+    dependencies:
+      '@trpc/server': 10.11.1
+      cors: 2.8.5
+      express: 4.18.2
+      trpc-panel: 1.2.8_rddbu46lyy4fcqpvwrkjezbvue
+      zod: 3.20.6
+    devDependencies:
+      '@types/cors': 2.8.13
+      '@types/express': 4.17.17
+      ts-node-dev: 2.0.0_typescript@4.9.5
+      typescript: 4.9.5
+
   packages/editor:
     specifiers:
       '@babel/core': ^7.20.12
@@ -57,7 +80,6 @@ importers:
       material-symbols: ^0.4.4
       mobx: ^6.8.0
       mobx-react-lite: ^3.4.0
-      node-data: workspace:*
       paintvec: ^0.5.0
       parse-css-color: ^0.2.1
       path-browserify: ^1.0.1
@@ -78,6 +100,7 @@ importers:
       tiny-typed-emitter: ^2.1.0
       typescript: ^4.9.5
       ua-parser-js: ^1.0.33
+      uimix-node-data: workspace:*
       vite: ^4.1.1
       vitest: ^0.28.5
       yjs: ^13.5.46
@@ -106,7 +129,6 @@ importers:
       material-symbols: 0.4.4
       mobx: 6.8.0
       mobx-react-lite: 3.4.0_woojb62cqeyk443mbl7msrwu2e
-      node-data: link:../node-data
       paintvec: 0.5.0
       parse-css-color: 0.2.1
       path-browserify: 1.0.1
@@ -122,6 +144,7 @@ importers:
       tailwind-styled-components: 2.2.0_biqbaboplfbrettd7655fr4n2y
       tiny-typed-emitter: 2.1.0
       ua-parser-js: 1.0.33
+      uimix-node-data: link:../node-data
       yjs: 13.5.46
       zod: 3.20.6
     devDependencies:
@@ -165,29 +188,6 @@ importers:
       zod: ^3.20.6
     dependencies:
       zod: 3.20.6
-
-  packages/studio:
-    specifiers:
-      '@trpc/server': ^10.11.1
-      '@types/cors': ^2.8.13
-      '@types/express': ^4.17.17
-      cors: ^2.8.5
-      express: ^4.18.2
-      trpc-panel: ^1.2.8
-      ts-node-dev: ^2.0.0
-      typescript: ^4.9.5
-      zod: ^3.20.6
-    dependencies:
-      '@trpc/server': 10.11.1
-      cors: 2.8.5
-      express: 4.18.2
-      trpc-panel: 1.2.8_rddbu46lyy4fcqpvwrkjezbvue
-      zod: 3.20.6
-    devDependencies:
-      '@types/cors': 2.8.13
-      '@types/express': 4.17.17
-      ts-node-dev: 2.0.0_typescript@4.9.5
-      typescript: 4.9.5
 
 packages:
 

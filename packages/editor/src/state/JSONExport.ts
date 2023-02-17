@@ -1,5 +1,5 @@
 import { runInAction } from "mobx";
-import { DocumentJSON } from "node-data";
+import { DocumentJSON } from "uimix-node-data";
 import { projectState } from "./ProjectState";
 
 const filePickerOptions = {
