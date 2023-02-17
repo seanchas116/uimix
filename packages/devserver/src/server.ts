@@ -4,7 +4,7 @@ import express from "express";
 import cors from "cors";
 import { createServer } from "http";
 import { renderTrpcPanel } from "trpc-panel";
-import { appRouter, createContext } from ".";
+import { appRouter, createContext } from "./api";
 
 const app = express();
 app.use(

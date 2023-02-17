@@ -1,17 +1,17 @@
 {
   "name": "uimix-editor",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "tsc && vite build",
+    "build-storybook": "build-storybook",
+    "dev": "vite",
+    "format": "prettier --write src",
+    "lint": "eslint src",
     "preview": "vite preview",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
-    "test": "vitest",
-    "lint": "eslint src",
-    "format": "prettier --write src"
+    "test": "vitest"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -37,7 +37,6 @@
     "material-symbols": "^0.4.4",
     "mobx": "^6.8.0",
     "mobx-react-lite": "^3.4.0",
-    "uimix-node-data": "workspace:*",
     "paintvec": "^0.5.0",
     "parse-css-color": "^0.2.1",
     "path-browserify": "^1.0.1",
@@ -53,6 +52,7 @@
     "tailwind-styled-components": "^2.2.0",
     "tiny-typed-emitter": "^2.1.0",
     "ua-parser-js": "^1.0.33",
+    "uimix-node-data": "workspace:*",
     "yjs": "^13.5.46",
     "zod": "^3.20.6"
   },
