@@ -12,7 +12,7 @@ import { DocumentJSON } from "uimix-node-data";
 function createEmptyDocument() {
   const ydoc = new Y.Doc();
   const project = new Project(ydoc.getMap("project"));
-  const doc = project.getOrCreateDocument("Page 1");
+  const doc = project.documents.getOrCreate("Page 1");
   return [project, doc] as const;
 }
 
@@ -34,8 +34,8 @@ describe(Document.name, () => {
     expect(doc.root.children[1].index).toBe(1);
     expect(doc.root.children.length).toBe(2);
 
-    const selectable0 = proj.getSelectable([doc.root.children[0].id]);
-    const selectable1 = proj.getSelectable([doc.root.children[1].id]);
+    const selectable0 = proj.selectables.get([doc.root.children[0].id]);
+    const selectable1 = proj.selectables.get([doc.root.children[1].id]);
     selectable0.style.gap = 10;
     expect(selectable0.originalNode === doc.root.children[0]).toBe(true);
     expect(selectable0.style.gap).toBe(10);
@@ -58,7 +58,7 @@ describe(Document.name, () => {
       const [frame] = doc.rootSelectable.append([
         { type: "frame", name: `Frame ${i}` },
       ]);
-      const frameSelectable = proj.getSelectable([frame.id]);
+      const frameSelectable = proj.selectables.get([frame.id]);
       const style = frameSelectable.style;
       style.position = {
         x: { type: "start", start: i * 100 + 50 },
@@ -137,7 +137,7 @@ describe(Document.name, () => {
     const [rootNode, hoverVariant] = doc.root.children[0].children;
     const textNode = rootNode.children[0];
 
-    const rootSelectable = proj.getSelectable([rootNode.id]);
+    const rootSelectable = proj.selectables.get([rootNode.id]);
     expect(rootSelectable.originalNode.type).toBe("frame");
     rootSelectable.style.gap = 12;
 
@@ -146,7 +146,7 @@ describe(Document.name, () => {
     expect(textSelectable.originalNode.type).toBe("text");
     textSelectable.style.fontSize = 24;
 
-    const hoverSelectable = proj.getSelectable([hoverVariant.id]);
+    const hoverSelectable = proj.selectables.get([hoverVariant.id]);
     expect(hoverSelectable.originalNode === hoverVariant).toBe(true);
     expect(hoverSelectable.node === rootNode).toBe(true);
     expect(hoverSelectable.style.gap).toBe(12);
@@ -158,7 +158,7 @@ describe(Document.name, () => {
       },
     ]);
 
-    const instanceSelectable = proj.getSelectable([instanceNode.id]);
+    const instanceSelectable = proj.selectables.get([instanceNode.id]);
     instanceSelectable.style.mainComponentID = componentID;
 
     const instanceTextSelectable = instanceSelectable.children[0];
@@ -242,8 +242,8 @@ describe(Document.name, () => {
 
     generateExampleNodes(doc);
     const oldData = doc.toJSON();
-    proj.renameDocumentOrFolder(doc.filePath, "New Name");
-    const newData = proj.getOrCreateDocument("New Name").toJSON();
+    proj.documents.renameDocumentOrFolder(doc.filePath, "New Name");
+    const newData = proj.documents.getOrCreate("New Name").toJSON();
 
     expect(oldData).toEqual(newData);
   });

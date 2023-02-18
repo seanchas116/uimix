@@ -22,7 +22,7 @@ export class Document {
     }
 
     this.root = new Node(this, undefined, rootData);
-    this.project.nodesForID.set(this.root.id, this.root);
+    this.project.nodes.add(this.root);
   }
 
   readonly project: Project;
@@ -31,7 +31,7 @@ export class Document {
   readonly root: Node;
 
   get rootSelectable(): Selectable {
-    return this.project.getSelectable([this.root.id]);
+    return this.project.selectables.get([this.root.id]);
   }
 
   toJSON(): DocumentJSON {
@@ -42,7 +42,7 @@ export class Document {
     this.root.clear();
     this.root.append(json.nodes);
     for (const [id, style] of Object.entries(json.styles)) {
-      const selectable = this.project.getSelectable(id.split(":"));
+      const selectable = this.project.selectables.get(id.split(":"));
       selectable.selfStyle.loadJSON(style);
     }
   }

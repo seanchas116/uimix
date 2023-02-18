@@ -41,12 +41,12 @@ export class Selectable {
     const mainComponent = this.mainComponent;
     if (mainComponent) {
       return mainComponent.rootNode.children.map((child) => {
-        return this.project.getSelectable([...this.idPath, child.id]);
+        return this.project.selectables.get([...this.idPath, child.id]);
       });
     }
 
     return this.originalNode.children.map((child) => {
-      return this.project.getSelectable([
+      return this.project.selectables.get([
         ...this.idPath.slice(0, -1),
         child.id,
       ]);
@@ -62,14 +62,14 @@ export class Selectable {
     }
 
     if (nodePath.length === 1) {
-      return this.project.getSelectable([parentNode.id]);
+      return this.project.selectables.get([parentNode.id]);
     }
 
     if (parentNode.isComponentRoot) {
       // looks like a component root
-      return this.project.getSelectable(this.idPath.slice(0, -1));
+      return this.project.selectables.get(this.idPath.slice(0, -1));
     } else {
-      return this.project.getSelectable([
+      return this.project.selectables.get([
         ...this.idPath.slice(0, -1),
         parentNode.id,
       ]);
@@ -115,7 +115,7 @@ export class Selectable {
   }
 
   @computed get nodePath(): Node[] {
-    return this.idPath.map((id) => this.project.getNodeByIDOrThrow(id));
+    return this.idPath.map((id) => this.project.nodes.getOrThrow(id));
   }
 
   @computed get originalNode(): Node {
@@ -150,13 +150,15 @@ export class Selectable {
       if (type === "displayed") {
         const mainComponent = this.mainComponent;
         if (mainComponent) {
-          superStyle = this.project
-            .getSelectable([mainComponent.rootNode.id])
+          superStyle = this.project.selectables
+            .get([mainComponent.rootNode.id])
             .getStyle("original");
         }
       }
     } else {
-      const superSelectable = this.project.getSelectable(this.idPath.slice(1));
+      const superSelectable = this.project.selectables.get(
+        this.idPath.slice(1)
+      );
       superStyle = superSelectable.getStyle(type);
     }
 
@@ -172,7 +174,7 @@ export class Selectable {
           (node) => node.ownerComponent
         );
 
-        const mainComponentNode = this.project.getNodeByID(mainComponentID);
+        const mainComponentNode = this.project.nodes.get(mainComponentID);
         if (mainComponentNode && !ownerComponents.includes(mainComponentNode)) {
           const componentRoot = mainComponentNode.children[0];
           return {

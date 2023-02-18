@@ -42,11 +42,11 @@ export class Node {
       }
 
       for (const removed of removedChildren) {
-        project.onRemoveNode(removed);
+        project.nodes.remove(removed);
       }
 
       for (const added of addedChildren) {
-        project.onAddNode(added);
+        project.nodes.add(added);
       }
 
       this.children = newChildren;

@@ -6,10 +6,9 @@ export function generateExampleNodes(document: Document) {
   const project = document.project;
 
   for (let i = 0; i < 10; ++i) {
-    const [frame] = document.root.append([
+    const [frameSelectable] = document.rootSelectable.append([
       { type: "frame", name: `Frame ${i}` },
     ]);
-    const frameSelectable = project.getSelectable([frame.id]);
     const style = frameSelectable.style;
     style.position = {
       x: { type: "start", start: i * 100 + 50 },
@@ -21,9 +20,10 @@ export function generateExampleNodes(document: Document) {
   }
 
   {
-    const [stack] = document.root.append([{ type: "frame", name: "Stack" }]);
-
-    const stackStyle = project.getSelectable([stack.id]).style;
+    const [stackSelectable] = document.rootSelectable.append([
+      { type: "frame", name: "Stack" },
+    ]);
+    const stackStyle = stackSelectable.style;
 
     stackStyle.position = {
       x: { type: "start", start: 50 },
@@ -39,29 +39,35 @@ export function generateExampleNodes(document: Document) {
     stackStyle.paddingBottom = 30;
     stackStyle.paddingLeft = 40;
 
-    const [stackItem0] = stack.append([{ type: "frame", name: "Item 0" }]);
-    const stackItem0Style = project.getSelectable([stackItem0.id]).style;
+    const [stackItem0] = stackSelectable.append([
+      { type: "frame", name: "Item 0" },
+    ]);
+    const stackItem0Style = stackItem0.style;
 
     stackItem0Style.width = { type: "fixed", value: 50 };
     stackItem0Style.height = { type: "fixed", value: 50 };
     stackItem0Style.fill = Color.from(colors.red[500])!.toHex();
 
-    const [stackItem1] = stack.append([{ type: "frame", name: "Item 1" }]);
-    const stackItem1Style = project.getSelectable([stackItem1.id]).style;
+    const [stackItem1] = stackSelectable.append([
+      { type: "frame", name: "Item 1" },
+    ]);
+    const stackItem1Style = stackItem1.style;
 
     stackItem1Style.width = { type: "fixed", value: 40 };
     stackItem1Style.height = { type: "fixed", value: 80 };
     stackItem1Style.fill = Color.from(colors.green[500])!.toHex();
 
-    const [stackItem2] = stack.append([{ type: "frame", name: "Item 2" }]);
-    const stackItem2Style = project.getSelectable([stackItem2.id]).style;
+    const [stackItem2] = stackSelectable.append([
+      { type: "frame", name: "Item 2" },
+    ]);
+    const stackItem2Style = stackItem2.style;
 
     stackItem2Style.width = { type: "fixed", value: 80 };
     stackItem2Style.height = { type: "fixed", value: 40 };
     stackItem2Style.fill = Color.from(colors.blue[500])!.toHex();
 
-    const [text] = stack.prepend([{ type: "text", name: "Text" }]);
-    const textStyle = project.getSelectable([text.id]).style;
+    const [text] = stackSelectable.prepend([{ type: "text", name: "Text" }]);
+    const textStyle = text.style;
     textStyle.textContent = "Hello, world!";
     textStyle.width = { type: "hugContents" };
     textStyle.height = { type: "hugContents" };
@@ -70,7 +76,7 @@ export function generateExampleNodes(document: Document) {
   }
 
   {
-    const [componentNode] = document.root.append([
+    const [componentNode] = document.rootSelectable.append([
       { type: "component", name: "Button" },
     ]);
 
@@ -84,13 +90,13 @@ export function generateExampleNodes(document: Document) {
     const [rootNode] = componentNode.append([{ type: "frame" }]);
 
     const [textNode] = rootNode.append([{ type: "text", name: "Text" }]);
-    const textNodeProps = project.getSelectable([textNode.id]).style;
+    const textNodeProps = textNode.style;
     textNodeProps.textContent = "Button";
 
     const [hoverVariant] = componentNode.append([
       { type: "variant", name: "Hover" },
     ]);
-    hoverVariant.condition = {
+    hoverVariant.node.condition = {
       type: "hover",
     };
     // TODO: condition
@@ -102,12 +108,12 @@ export function generateExampleNodes(document: Document) {
     const [mobileVariant] = componentNode.append([
       { type: "variant", name: "Mobile" },
     ]);
-    mobileVariant.condition = {
+    mobileVariant.node.condition = {
       type: "maxWidth",
       value: 767,
     };
 
-    const rootNodeStyle = project.getSelectable([rootNode.id]).style;
+    const rootNodeStyle = rootNode.style;
     rootNodeStyle.position = {
       x: { type: "start", start: 50 },
       y: { type: "start", start: 400 },
@@ -121,35 +127,35 @@ export function generateExampleNodes(document: Document) {
     rootNodeStyle.paddingTop = 4;
     rootNodeStyle.paddingBottom = 4;
 
-    const textNodeStyle = project.getSelectable([textNode.id]).style;
+    const textNodeStyle = textNode.style;
     textNodeStyle.width = { type: "hugContents" };
     textNodeStyle.height = { type: "hugContents" };
     textNodeStyle.fill = Color.from(colors.gray[900])!.toHex();
 
-    const hoverVariantStyle = project.getSelectable([hoverVariant.id]).style;
+    const hoverVariantStyle = hoverVariant.style;
     hoverVariantStyle.position = {
       x: { type: "start", start: 200 },
       y: { type: "start", start: 400 },
     };
     hoverVariantStyle.fill = Color.from(colors.blue[500])!.toHex();
 
-    const mobileVariantStyle = project.getSelectable([mobileVariant.id]).style;
+    const mobileVariantStyle = mobileVariant.style;
     mobileVariantStyle.position = {
       x: { type: "start", start: 350 },
       y: { type: "start", start: 400 },
     };
 
-    const hoverTextNodeStyle = project.getSelectable([
-      hoverVariant.id,
-      textNode.id,
+    const hoverTextNodeStyle = project.selectables.get([
+      hoverVariant.node.id,
+      textNode.node.id,
     ]).style;
     hoverTextNodeStyle.fill = Color.from(colors.white)!.toHex();
 
-    const [instanceNode] = document.root.append([
+    const [instanceNode] = document.rootSelectable.append([
       { type: "instance", name: "Instance" },
     ]);
 
-    const instanceNodeStyle = project.getSelectable([instanceNode.id]).style;
+    const instanceNodeStyle = instanceNode.style;
     instanceNodeStyle.position = {
       x: { type: "start", start: 50 },
       y: { type: "start", start: 500 },

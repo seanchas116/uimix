@@ -125,7 +125,9 @@ const DocumentRow = observer(
 );
 
 export const DocumentTreeView = observer(() => {
-  const rootItem = buildTreeViewItem(projectState.project.toHierarchy());
+  const rootItem = buildTreeViewItem(
+    projectState.project.documents.toHierarchy()
+  );
 
   return (
     <TreeView

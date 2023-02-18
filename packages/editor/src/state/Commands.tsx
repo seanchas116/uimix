@@ -77,7 +77,7 @@ class Commands {
         data.nodes
       );
       for (const [id, styleJSON] of Object.entries(data.styles)) {
-        const selectable = projectState.project.getSelectable(id.split(":"));
+        const selectable = projectState.project.selectables.get(id.split(":"));
         if (selectable) {
           selectable.selfStyle.loadJSON(styleJSON);
         }
@@ -340,7 +340,7 @@ class Commands {
         {
           type: "command",
           text: "Delete",
-          disabled: projectState.project.documentCount === 1,
+          disabled: projectState.project.documents.count === 1,
           onClick: action(() => {
             projectState.deleteDocumentOrFolder(file.path);
           }),
@@ -351,7 +351,7 @@ class Commands {
         {
           type: "command",
           text: "Delete",
-          disabled: projectState.project.documentCount === 1,
+          disabled: projectState.project.documents.count === 1,
           onClick: action(() => {
             projectState.deleteDocumentOrFolder(file.path);
           }),

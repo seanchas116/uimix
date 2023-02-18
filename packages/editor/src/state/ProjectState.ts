@@ -12,7 +12,7 @@ export class ProjectState {
     const projectData = ydoc.getMap("project");
 
     this.project = new Project(projectData);
-    this.document = this.project.getOrCreateDocument("Page 1");
+    this.document = this.project.documents.getOrCreate("Page 1");
     this.undoManager = new Y.UndoManager(projectData);
     generateExampleNodes(this.document);
     makeObservable(this);
@@ -34,45 +34,47 @@ export class ProjectState {
   readonly collapsedPaths = observable.set<string>();
 
   openDocument(path: string) {
-    this.document = this.project.getOrCreateDocument(path);
+    this.document = this.project.documents.getOrCreate(path);
   }
 
   createDocument(path: string) {
     const existingFilePaths = new Set(
-      this.project.documents.map((d) => d.filePath)
+      this.project.documents.all.map((d) => d.filePath)
     );
     const newPath = getIncrementalUniqueName(existingFilePaths, path);
-    this.project.getOrCreateDocument(newPath);
+    this.project.documents.getOrCreate(newPath);
     this.undoManager.stopCapturing();
   }
 
   deleteDocumentOrFolder(path: string) {
-    const affectedDocuments = this.project.affectedDocumentsForPath(path);
+    const affectedDocuments =
+      this.project.documents.affectedDocumentsForPath(path);
     const deletingCurrent = affectedDocuments.includes(this.document);
 
-    if (this.project.documentCount === affectedDocuments.length) {
+    if (this.project.documents.count === affectedDocuments.length) {
       return;
     }
-    this.project.deleteDocumentOrFolder(path);
+    this.project.documents.deleteDocumentOrFolder(path);
 
     if (deletingCurrent) {
-      this.document = this.project.documents[0];
+      this.document = this.project.documents.all[0];
     }
 
     this.undoManager.stopCapturing();
   }
 
   renameDocumentOrFolder(path: string, newPath: string) {
-    const affectedDocuments = this.project.affectedDocumentsForPath(path);
+    const affectedDocuments =
+      this.project.documents.affectedDocumentsForPath(path);
     const renamingCurrent = affectedDocuments.includes(this.document);
     let newCurrentPath: string | undefined;
     if (renamingCurrent) {
       newCurrentPath = newPath + this.document.filePath.slice(path.length);
     }
 
-    this.project.renameDocumentOrFolder(path, newPath);
+    this.project.documents.renameDocumentOrFolder(path, newPath);
     if (newCurrentPath) {
-      this.document = this.project.getOrCreateDocument(newCurrentPath);
+      this.document = this.project.documents.getOrCreate(newCurrentPath);
     }
     this.undoManager.stopCapturing();
   }

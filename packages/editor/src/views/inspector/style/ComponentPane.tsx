@@ -219,7 +219,7 @@ const VariantRow = observer(function VariantRow({
   if (!rootNode) {
     return null;
   }
-  const selectable = projectState.project.getSelectable([variant.id]);
+  const selectable = projectState.project.selectables.get([variant.id]);
 
   const condition = variant.type === "variant" ? variant.condition : undefined;
   const { icon, text } = getIconAndTextForCondition(
