@@ -4,7 +4,7 @@ This is a local editor server for [UIMix](https://github.com/seanchas116/uimix).
 Launch it with `uimix` in your project directory.
 
 ```sh
-npm install -g @uimix/cli
+npm install -g uimix
 uimix
 ```
 
