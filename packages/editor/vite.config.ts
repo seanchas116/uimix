@@ -5,8 +5,11 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   server: {
     proxy: {
-      "/trpc": "http://localhost:4000",
       "/panel": "http://localhost:4000",
+      "/trpc": {
+        target: "ws://localhost:4000",
+        ws: true,
+      },
     },
   },
   plugins: [

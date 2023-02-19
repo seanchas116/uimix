@@ -1,5 +1,5 @@
 import { sum } from "lodash-es";
-import { StackAlign } from "uimix-node-data";
+import { StackAlign } from "@uimix/node-data";
 import { Rect } from "paintvec";
 import { Selectable } from "../models/Selectable";
 import { assertNonNull } from "../utils/Assert";

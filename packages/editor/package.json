@@ -1,5 +1,5 @@
 {
-  "name": "uimix-editor",
+  "name": "@uimix/editor",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -28,6 +28,8 @@
     "@radix-ui/react-tooltip": "^1.0.3",
     "@seanchas116/design-icons": "^1.0.1",
     "@thoughtbot/tailwindcss-aria-attributes": "^0.2.0",
+    "@trpc/client": "^10.11.1",
+    "@uimix/node-data": "workspace:*",
     "any-base": "^1.1.0",
     "ariakit": "2.0.0-next.43",
     "clsx": "^1.2.1",
@@ -53,7 +55,6 @@
     "tailwind-styled-components": "^2.2.0",
     "tiny-typed-emitter": "^2.1.0",
     "ua-parser-js": "^1.0.33",
-    "uimix-node-data": "workspace:*",
     "yjs": "^13.5.46",
     "zod": "^3.20.6"
   },

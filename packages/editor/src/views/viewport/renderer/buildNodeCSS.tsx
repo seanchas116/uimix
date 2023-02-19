@@ -1,4 +1,4 @@
-import { StackDirection } from "uimix-node-data";
+import { StackDirection } from "@uimix/node-data";
 import { Node } from "../../../models/Node";
 import { IStyle } from "../../../models/Style";
 

@@ -4,7 +4,7 @@ import { Document } from "./Document";
 import * as Y from "yjs";
 import { generateID } from "../utils/ID";
 import { getOrCreate } from "../state/Collection";
-import { NodeJSON, NodeType, VariantCondition } from "uimix-node-data";
+import { NodeJSON, NodeType, VariantCondition } from "@uimix/node-data";
 
 export const abstractNodeTypes: NodeType[] = ["component"];
 
@@ -68,7 +68,7 @@ export class Node {
   @observable.ref children: readonly Node[] = [];
 
   @computed get name(): string {
-    return getOrCreate(this.data, "name", () => "");
+    return this.data.get("name") ?? "";
   }
 
   set name(name: string) {
@@ -78,7 +78,7 @@ export class Node {
   // Applicable only to variant nodes
 
   @computed get condition(): VariantCondition | undefined {
-    return getOrCreate(this.data, "condition", () => undefined);
+    return this.data.get("condition");
   }
 
   set condition(selector: VariantCondition | undefined) {

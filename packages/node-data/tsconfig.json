@@ -10,6 +10,6 @@
     "lib": ["esnext"],
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "emitDeclarationOnly": true
+    "noEmit": true
   }
 }

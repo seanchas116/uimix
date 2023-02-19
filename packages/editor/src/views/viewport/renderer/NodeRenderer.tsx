@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { StackDirection } from "uimix-node-data";
+import { StackDirection } from "@uimix/node-data";
 import React, { createRef, useEffect } from "react";
 import { Selectable } from "../../../models/Selectable";
 import { viewportState } from "../../../state/ViewportState";

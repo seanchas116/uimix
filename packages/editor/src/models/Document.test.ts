@@ -7,7 +7,7 @@ import { Project } from "./Project";
 import { generateExampleNodes } from "./generateExampleNodes";
 import * as fs from "fs";
 import * as path from "path";
-import { DocumentJSON } from "uimix-node-data";
+import { DocumentJSON } from "@uimix/node-data";
 
 function createEmptyDocument() {
   const ydoc = new Y.Doc();

@@ -1,20 +1,49 @@
 import { initTRPC } from "@trpc/server";
 import { z } from "zod";
 import { Context } from "./context";
+import { observable } from "@trpc/server/observable";
+import { ProjectJSON } from "@uimix/node-data";
+import { FileController } from "../controller/FileController.js";
 
-const t = initTRPC.context<Context>().create();
+export function createAppRouter(options: { projectPath: string }) {
+  const t = initTRPC.context<Context>().create();
 
-export const appRouter = t.router({
-  hello: t.procedure
-    .input(
-      z.object({
-        name: z.string(),
-      })
-    )
-    .query((req) => {
-      const { input } = req;
-      return `Hello ${input.name}`;
+  const fileController = new FileController({
+    projectPath: options.projectPath,
+  });
+
+  return t.router({
+    hello: t.procedure
+      .input(
+        z.object({
+          name: z.string(),
+        })
+      )
+      .query((req) => {
+        const { input } = req;
+        return `Hello ${input.name}`;
+      }),
+
+    onChange: t.procedure.subscription(() => {
+      return observable<ProjectJSON>((emit) =>
+        fileController.onChange((data) => emit.next(data))
+      );
     }),
-});
 
-export type AppRouter = typeof appRouter;
+    save: t.procedure
+      .input(
+        z.object({
+          project: ProjectJSON,
+        })
+      )
+      .mutation(async (req) => {
+        await fileController.save(req.input.project);
+      }),
+
+    load: t.procedure.query(async (req) => {
+      return await fileController.load();
+    }),
+  });
+}
+
+export type AppRouter = ReturnType<typeof createAppRouter>;

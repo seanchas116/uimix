@@ -22,7 +22,7 @@ import { DropdownMenu } from "../../../components/Menu";
 import { InspectorHeading } from "../components/InspectorHeading";
 import { InspectorPane } from "../components/InspectorPane";
 import { Node } from "../../../models/Node";
-import { VariantCondition } from "uimix-node-data";
+import { VariantCondition } from "@uimix/node-data";
 
 export function getIconAndTextForCondition(
   condition:

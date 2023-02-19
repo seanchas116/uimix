@@ -1,5 +1,5 @@
 import { runInAction } from "mobx";
-import { DocumentJSON } from "uimix-node-data";
+import { DocumentJSON } from "@uimix/node-data";
 import { formatJSON } from "../utils/Format";
 import { projectState } from "./ProjectState";
 

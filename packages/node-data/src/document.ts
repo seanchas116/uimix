@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { NodeJSON } from "./node/node";
-import { StyleJSON } from "./style/style";
+import { NodeJSON } from "./node/node.js";
+import { StyleJSON } from "./style/style.js";
 
 export const DocumentJSON = z.object({
   // TODO: version

@@ -1,6 +1,11 @@
 {
-  "name": "uimix-node-data",
+  "name": "@uimix/node-data",
   "license": "MIT",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "zod": "^3.20.6"
   }

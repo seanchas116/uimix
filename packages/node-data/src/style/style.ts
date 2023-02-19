@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { PositionConstraint } from "./value/position";
-import { SizeConstraint } from "./value/size";
-import { StackAlign, StackDirection, StackJustify } from "./value/stack";
-import { TextHorizontalAlign, TextVerticalAlign } from "./value/text";
+import { PositionConstraint } from "./value/position.js";
+import { SizeConstraint } from "./value/size.js";
+import { StackAlign, StackDirection, StackJustify } from "./value/stack.js";
+import { TextHorizontalAlign, TextVerticalAlign } from "./value/text.js";
 
 export const StyleJSON = z.object({
   position: z.object({

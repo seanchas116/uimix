@@ -6,7 +6,7 @@ import { getOrCreate } from "../state/Collection";
 import { computed, makeObservable, observable } from "mobx";
 import { Rect } from "paintvec";
 import { resizeWithBoundingBox } from "../services/Resize";
-import { NodeJSON } from "uimix-node-data";
+import { NodeJSON } from "@uimix/node-data";
 import { Project } from "./Project";
 
 export interface IComputedRectProvider {
