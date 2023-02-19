@@ -6,6 +6,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontSize: {
+        "macaron-base": ["11px", "16px"],
+      },
       colors: {
         macaron: colors,
       },

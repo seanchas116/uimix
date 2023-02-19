@@ -102,7 +102,7 @@ const Label: React.FC<{
         top: `${pos.top}px`,
         //pointerEvents: frame.isLocked ? "none" : "auto",
       }}
-      className="text-macaron-text/50 absolute pointer-events-all text-xs pb-1 translate-y-[-100%]"
+      className="text-macaron-text/50 absolute pointer-events-all text-macaron-base pb-1 translate-y-[-100%]"
       //onContextMenu={onContextMenu}
     >
       {iconSrc && <Icon icon={iconSrc} className="text-xs" />}

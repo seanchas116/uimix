@@ -33,13 +33,13 @@ export function ComboBox({
       className={twMerge(
         `relative
          outline-0 w-full h-7 bg-macaron-uiBackground rounded
-         focus-within:ring-1 ring-inset ring-macaron-active text-macaron-text text-xs`,
+         focus-within:ring-1 ring-inset ring-macaron-active text-macaron-text text-macaron-base`,
         className
       )}
     >
       <datalist id={datalistId}>{optionsNode}</datalist>
       <select
-        className="absolute inset-0 text-xs opacity-0"
+        className="absolute inset-0 text-macaron-base opacity-0"
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
       >

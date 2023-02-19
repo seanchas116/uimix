@@ -9,7 +9,7 @@ import { css } from "@emotion/react";
 import clsx from "clsx";
 
 const inputClassNames =
-  "outline-0 min-w-0 h-6 px-1.5 bg-transparent focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-xs placeholder:text-macaron-disabledText";
+  "outline-0 min-w-0 h-6 px-1.5 bg-transparent focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-macaron-base placeholder:text-macaron-disabledText";
 
 export const SeparableInput: React.VFC<{
   title: string;

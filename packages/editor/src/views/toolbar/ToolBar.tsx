@@ -31,7 +31,7 @@ const LargeToolButton: React.FC<{
       text-neutral-800"
     >
       <Icon icon={icon} className="text-base" />
-      <div className="font-medium text-xs">{text}</div>
+      <div className="font-medium text-macaron-base">{text}</div>
     </div>
   );
 };

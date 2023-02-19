@@ -28,7 +28,7 @@ const InputColumn: React.FC<JSX.IntrinsicElements["div"]> = tw.div`
 `;
 
 const Input = tw(UnstyledInput)`
-  outline-0 w-full h-6 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-xs placeholder:text-macaron-disabledText text-center
+  outline-0 w-full h-6 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-macaron-base placeholder:text-macaron-disabledText text-center
 `;
 
 const InputLabel = tw.label`

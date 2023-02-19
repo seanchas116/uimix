@@ -134,7 +134,7 @@ const ComponentLabel: React.FC<{
   return (
     <div
       className={twMerge(
-        "absolute text-xs text-neutral-500 font-medium flex gap-1",
+        "absolute text-macaron-base text-neutral-500 font-medium flex gap-1",
         component.selected && "text-macaron-active"
       )}
       style={{
@@ -263,7 +263,7 @@ const VariantLabel: React.FC<{
         }}
       />
       <Icon icon={icon} className="text-base" />
-      <span className="text-xs font-medium flex-1 mr-1">{text}</span>
+      <span className="text-macaron-base font-medium flex-1 mr-1">{text}</span>
       <DropdownMenu
         trigger={(props) => (
           <button

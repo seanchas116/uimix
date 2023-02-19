@@ -64,7 +64,7 @@ export const Input: React.FC<{
     <Tooltip text={tooltip}>
       <div className={twMerge("h-fit relative", className)}>
         <UnstyledInput
-          className="block outline-0 w-full h-7 px-1.5 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-xs placeholder:text-macaron-disabledText"
+          className="block outline-0 w-full h-7 px-1.5 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-macaron-base placeholder:text-macaron-disabledText"
           value={value}
           onChangeValue={onChange}
           placeholder={placeholder}
