@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "build": "run-z build:tsc build:esbuild build:copy-static",
-    "build:copy-static": "cp -r ../editor/dist ./dist/static",
+    "build:copy-static": "rm -rf ./dist/static && cp -r ../editor/dist ./dist/static",
     "build:esbuild": "node build.cjs",
     "build:tsc": "tsc",
     "dev": "nodemon --watch './src/**/*.ts' -e ts,tsx,json --exec 'ts-node-esm src/cli.ts'",
