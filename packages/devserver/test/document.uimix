@@ -130,6 +130,12 @@
       "type": "instance",
       "name": "Instance",
       "children": []
+    },
+    {
+      "id": "1BvWFKLUD4hYm3udN2HQ4a",
+      "type": "frame",
+      "name": "Frame",
+      "children": []
     }
   ],
   "styles": {
@@ -303,6 +309,15 @@
       },
       "mainComponentID": "1BvSb7sfbEBTMeGVpUXdgG"
     },
-    "1BvSb7sgEagE2MUai2sSj6:1BvSb7sfnS4VbptbxJdj1k": {}
+    "1BvSb7sgEagE2MUai2sSj6:1BvSb7sfnS4VbptbxJdj1k": {},
+    "1BvWFKLUD4hYm3udN2HQ4a": {
+      "position": {
+        "x": { "type": "start", "start": 383 },
+        "y": { "type": "start", "start": 516 }
+      },
+      "width": { "type": "fixed", "value": 334 },
+      "height": { "type": "fixed", "value": 301 },
+      "fill": "#FFFFFF"
+    }
   }
 }
