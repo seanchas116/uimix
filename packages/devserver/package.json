@@ -1,14 +1,27 @@
 {
   "name": "uimix",
   "version": "0.0.1",
+  "description": "Low-code UI development tool for React",
+  "homepage": "https://github.com/seanchas116/uimix",
+  "bugs": {
+    "url": "https://github.com/seanchas116/uimix/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seanchas116/uimix.git"
+  },
   "license": "MIT",
+  "author": "Ryohei Ikegami",
   "type": "module",
   "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "run-z build:tsc build:esbuild build:copy-static",
     "build:copy-static": "cp -r ../editor/dist ./dist/static",
-    "build:tsc": "tsc",
     "build:esbuild": "node build.cjs",
+    "build:tsc": "tsc",
     "dev": "nodemon --watch './src/**/*.ts' -e ts,tsx,json --exec 'ts-node-esm src/cli.ts'",
     "start": "node dist/cli.js"
   },
