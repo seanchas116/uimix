@@ -1,6 +1,6 @@
 # UIMix local editor server
 
-This is a local editor server for UIMix.
+This is a local editor server for [UIMix](https://github.com/seanchas116/uimix).
 Launch it with `uimix` in your project directory.
 
 ```sh
