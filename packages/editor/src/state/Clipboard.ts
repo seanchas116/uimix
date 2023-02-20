@@ -1,4 +1,3 @@
-import { cloneDeep } from "lodash-es";
 import { NodeJSON } from "@uimix/node-data";
 import { IStyle } from "../models/Style";
 import { generateID } from "../utils/ID";
@@ -6,29 +5,24 @@ import { generateID } from "../utils/ID";
 const mimeType = "application/x-macaron-nodes";
 
 interface NodeClipboardData {
-  nodes: NodeJSON[];
+  nodes: Record<string, NodeJSON>;
   styles: Record<string, Partial<IStyle>>;
 }
 
 function reassignNewIDs(data: NodeClipboardData): NodeClipboardData {
   const idMap = new Map<string, string>();
 
-  const newNodes = cloneDeep(data.nodes);
-
-  const generateRecursive = (node: NodeJSON) => {
-    const oldID = node.id;
+  const newNodes: Record<string, NodeJSON> = {};
+  for (const [id, node] of Object.entries(data.nodes)) {
     const newID = generateID();
-    if (oldID) {
-      idMap.set(oldID, newID);
-    }
-    node.id = newID;
+    idMap.set(id, newID);
+    newNodes[newID] = { ...node };
+  }
 
-    for (const child of node.children ?? []) {
-      generateRecursive(child);
+  for (const node of Object.values(newNodes)) {
+    if (node.parent) {
+      node.parent = idMap.get(node.parent) ?? node.parent;
     }
-  };
-  for (const node of newNodes) {
-    generateRecursive(node);
   }
 
   const newStyles: Record<string, Partial<IStyle>> = {};
@@ -61,7 +55,7 @@ export class Clipboard {
     const item = items.find((item) => item.types.includes(`web ${mimeType}`));
     if (!item) {
       return {
-        nodes: [],
+        nodes: {},
         styles: {},
       };
     }

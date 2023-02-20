@@ -3,12 +3,12 @@ import { z } from "zod";
 import { Context } from "./context";
 import { observable } from "@trpc/server/observable";
 import { ProjectJSON } from "@uimix/node-data";
-import { FileController } from "../controller/FileController.js";
+import { ProjectController } from "../controller/ProjectController.js";
 
 export function createAppRouter(options: { projectPath: string }) {
   const t = initTRPC.context<Context>().create();
 
-  const fileController = new FileController({
+  const projectController = new ProjectController({
     projectPath: options.projectPath,
   });
 
@@ -26,7 +26,7 @@ export function createAppRouter(options: { projectPath: string }) {
 
     onChange: t.procedure.subscription(() => {
       return observable<ProjectJSON>((emit) =>
-        fileController.onChange((data) => emit.next(data))
+        projectController.onChange((data) => emit.next(data))
       );
     }),
 
@@ -37,11 +37,11 @@ export function createAppRouter(options: { projectPath: string }) {
         })
       )
       .mutation(async (req) => {
-        await fileController.save(req.input.project);
+        await projectController.save(req.input.project);
       }),
 
     load: t.procedure.query(async (req) => {
-      return await fileController.load();
+      return await projectController.load();
     }),
   });
 }

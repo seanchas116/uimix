@@ -64,12 +64,7 @@ export function autoLayout(selectable: Selectable): void {
   selectable.style.paddingRight = Math.max(0, width - offsetBBox.right);
   selectable.style.paddingBottom = Math.max(0, height - offsetBBox.bottom);
 
-  const childrenData = flex.elements.map((e) => e.node.toJSON());
-
-  for (const child of flex.elements) {
-    child.node.remove();
-  }
-  selectable.append(childrenData);
+  selectable.originalNode.append(flex.elements.map((e) => e.originalNode));
 
   selectable.style.layout = "stack";
 }

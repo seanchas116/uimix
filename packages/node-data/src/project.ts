@@ -1,8 +1,11 @@
 import { z } from "zod";
-import { DocumentJSON } from "./document.js";
+import { NodeJSON } from "./node/node.js";
+import { StyleJSON } from "./style/style.js";
 
 export const ProjectJSON = z.object({
-  documents: z.record(DocumentJSON),
+  // TODO: version
+  nodes: z.record(NodeJSON),
+  styles: z.record(StyleJSON.partial()),
 });
 
 export type ProjectJSON = z.infer<typeof ProjectJSON>;

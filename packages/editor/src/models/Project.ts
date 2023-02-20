@@ -3,142 +3,65 @@
 import * as Y from "yjs";
 import { posix as path } from "path-browserify";
 import { getOrCreate } from "../state/Collection";
-import { ObservableYMap } from "../utils/ObservableYMap";
-import { Document } from "./Document";
-import { Selectable } from "./Selectable";
-import { ObservableMultiMap } from "../utils/ObservableMultiMap";
-import { Node } from "./Node";
+import { SelectableMap } from "./Selectable";
+import { Node, NodeMap } from "./Node";
 import { computed, makeObservable } from "mobx";
+import { ProjectJSON } from "@uimix/node-data";
+import { toProjectJSON } from "./toProjectJSON";
 
-class Nodes {
-  readonly nodes = new ObservableMultiMap<string, Node>();
-
-  get(id: string): Node | undefined {
-    const nodes = [...this.nodes.get(id)];
-    return nodes[0];
-  }
-
-  getOrThrow(id: string): Node {
-    const node = this.get(id);
-    if (!node) {
-      throw new Error(`Node with id ${id} not found`);
-    }
-    return node;
-  }
-
-  // do not call this directly
-  add(node: Node) {
-    this.nodes.set(node.id, node);
-    for (const child of node.children) {
-      this.add(child);
-    }
-  }
-
-  // do not call this directly
-  remove(node: Node) {
-    this.nodes.deleteValue(node.id, node);
-    for (const child of node.children) {
-      this.remove(child);
-    }
-  }
-}
-
-class Selectables {
-  constructor(project: Project, data: Y.Map<Y.Map<any>>) {
-    this.project = project;
-    this.selectablesData = data;
-  }
-
-  private readonly project: Project;
-  private readonly selectablesData: Y.Map<Y.Map<any>>;
-  private readonly selectablesCache = new WeakMap<Y.Map<any>, Selectable>();
-
-  private getSelectableData(idPath: string[]): Y.Map<any> {
-    const key = idPath.join(":");
-    let data = this.selectablesData.get(key);
-    if (data === undefined) {
-      data = new Y.Map();
-      this.selectablesData.set(key, data);
-    }
-    return data;
-  }
-
-  get(idPath: string[]): Selectable {
-    const data = this.getSelectableData(idPath);
-    return getOrCreate(this.selectablesCache, data, () => {
-      return new Selectable(this.project, idPath, data);
-    });
-  }
-
-  getForNode(node: Node): Selectable {
-    return this.get([node.id]);
-  }
-}
-
-export interface DocumentHierarchyDirectoryEntry {
+export interface PageHierarchyFolderEntry {
   type: "directory";
   path: string;
   name: string;
-  children: DocumentHierarchyEntry[];
+  children: PageHierarchyEntry[];
 }
 
-export interface DocumentHierarchyDocumentEntry {
+export interface PageHierarchyPageEntry {
   type: "file";
   path: string;
   name: string;
-  document: Document;
+  page: Node;
 }
 
-export type DocumentHierarchyEntry =
-  | DocumentHierarchyDirectoryEntry
-  | DocumentHierarchyDocumentEntry;
+export type PageHierarchyEntry =
+  | PageHierarchyFolderEntry
+  | PageHierarchyPageEntry;
 
-class Documents {
-  constructor(project: Project, data: Y.Map<any>) {
+class Pages {
+  constructor(project: Project) {
     this.project = project;
-    this.data = ObservableYMap.get(data);
+    this.node = project.node;
     makeObservable(this);
   }
 
+  node: Node;
   readonly project: Project;
-  private readonly data: ObservableYMap<any>; // file path => document data
-  private readonly _documents = new Map<string, Document>(); // file path => document
-
-  get all(): Document[] {
-    return [...this.data].map(([filePath, data]) =>
-      this.getForData(filePath, data)
-    );
-  }
 
   @computed get count(): number {
-    return this.data.size;
+    return this.node.childCount;
   }
 
-  private getForData(filePath: string, data: Y.Map<any>): Document {
-    let document = this._documents.get(filePath);
-    if (document === undefined) {
-      document = new Document(this.project, filePath, data);
-      this._documents.set(filePath, document);
-    }
-    return document;
+  get all(): Node[] {
+    return this.node.children;
   }
 
-  getOrCreate(filePath: string): Document {
-    const data = getOrCreate(this.data, filePath, () => new Y.Map<any>());
-    return this.getForData(filePath, data);
+  create(filePath: string): Node {
+    const node = this.project.nodes.create("page");
+    node.name = filePath;
+    return node;
   }
 
-  toHierarchy(): DocumentHierarchyDirectoryEntry {
-    const root: DocumentHierarchyDirectoryEntry = {
+  toHierarchy(): PageHierarchyFolderEntry {
+    const root: PageHierarchyFolderEntry = {
       type: "directory",
       name: "",
       path: "",
       children: [],
     };
-    const parents = new Map<string, DocumentHierarchyDirectoryEntry>();
+    const parents = new Map<string, PageHierarchyFolderEntry>();
     parents.set("", root);
 
-    const mkdirp = (segments: string[]): DocumentHierarchyDirectoryEntry => {
+    const mkdirp = (segments: string[]): PageHierarchyFolderEntry => {
       if (segments.length === 0) {
         return root;
       }
@@ -149,7 +72,7 @@ class Documents {
       }
 
       const parent = mkdirp(segments.slice(0, -1));
-      const dir: DocumentHierarchyDirectoryEntry = {
+      const dir: PageHierarchyFolderEntry = {
         type: "directory",
         name: segments[segments.length - 1],
         path: segments.join("/"),
@@ -160,18 +83,18 @@ class Documents {
       return dir;
     };
 
-    const docs = Array.from(this.all);
-    docs.sort((a, b) => a.filePath.localeCompare(b.filePath));
+    const pages = Array.from(this.all);
+    pages.sort((a, b) => a.name.localeCompare(b.name));
 
-    for (const doc of docs) {
-      const segments = doc.filePath.split(path.sep);
+    for (const page of pages) {
+      const segments = page.name.split(path.sep);
       const parent = mkdirp(segments.slice(0, -1));
 
-      const item: DocumentHierarchyDocumentEntry = {
+      const item: PageHierarchyPageEntry = {
         type: "file",
         name: segments[segments.length - 1],
-        path: doc.filePath,
-        document: doc,
+        path: page.name,
+        page,
       };
       parent.children.push(item);
     }
@@ -179,65 +102,71 @@ class Documents {
     return root;
   }
 
-  affectedDocumentsForPath(path: string): Document[] {
+  affectedPagesForPath(path: string): Node[] {
     return this.all.filter(
-      (doc) => doc.filePath === path || doc.filePath.startsWith(path + "/")
+      (page) => page.name === path || page.name.startsWith(path + "/")
     );
   }
 
-  deleteDocumentOrFolder(path: string) {
-    const documentsToDelete = this.affectedDocumentsForPath(path);
+  deletePageOrPageFolder(path: string) {
+    const pagesToDelete = this.affectedPagesForPath(path);
 
-    for (const doc of documentsToDelete) {
-      this.data.delete(doc.filePath);
-      this._documents.delete(doc.filePath);
-      this.project.nodes.remove(doc.root);
+    for (const page of pagesToDelete) {
+      page.remove();
+      // TODO: delete dangling nodes?
+      //this.project.nodes.remove(doc.root);
     }
   }
 
-  renameDocumentOrFolder(path: string, newPath: string) {
+  renamePageOrPageFolder(path: string, newPath: string) {
     if (path === newPath) {
       return;
     }
 
-    const documentsToDelete = this.affectedDocumentsForPath(path);
+    const pagesToDelete = this.affectedPagesForPath(path);
 
-    const newPaths = documentsToDelete.map(
-      (doc) => newPath + doc.filePath.slice(path.length)
-    );
-
-    for (const newPath of newPaths) {
-      if (this.data.has(newPath)) {
-        throw new Error(`Path ${newPath} already exists`);
-      }
-    }
-
-    for (let i = 0; i < documentsToDelete.length; i++) {
-      const doc = documentsToDelete[i];
-      const json = doc.root.toJSON();
-      this.data.delete(doc.filePath);
-      this._documents.delete(doc.filePath);
-      this.project.nodes.remove(doc.root);
-
-      const newDoc = this.getOrCreate(newPaths[i]);
-      newDoc.root.append(json.children ?? []);
+    for (const page of pagesToDelete) {
+      page.name = newPath + page.name.slice(path.length);
     }
   }
 }
 
 export class Project {
   constructor(data: Y.Map<any>) {
-    this.selectables = new Selectables(
+    this.nodes = new NodeMap(
+      this,
+      getOrCreate(data, "nodes", () => new Y.Map())
+    );
+    this.selectables = new SelectableMap(
       this,
       getOrCreate(data, "selectables", () => new Y.Map())
     );
-    this.documents = new Documents(
-      this,
-      getOrCreate(data, "documents", () => new Y.Map())
-    );
+    this.node = this.nodes.create("project");
+    this.pages = new Pages(this);
   }
 
-  readonly nodes = new Nodes();
-  readonly selectables: Selectables;
-  readonly documents: Documents;
+  readonly nodes: NodeMap;
+  readonly selectables: SelectableMap;
+  readonly node: Node;
+  readonly pages: Pages;
+
+  toJSON(): ProjectJSON {
+    return toProjectJSON(this.node.children.map((c) => c.selectable));
+  }
+
+  loadJSON(json: ProjectJSON) {
+    this.node.clear();
+
+    for (const [id, nodeJSON] of Object.entries(json.nodes)) {
+      const node = this.nodes.getOrCreate(nodeJSON.type, id);
+      node.loadJSON(nodeJSON);
+      if (node.type === "page") {
+        this.node.append([node]);
+      }
+    }
+    for (const [id, style] of Object.entries(json.styles)) {
+      const selectable = this.selectables.get(id.split(":"));
+      selectable.selfStyle.loadJSON(style);
+    }
+  }
 }

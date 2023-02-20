@@ -10,9 +10,11 @@ import { handleShortcut, MenuCommandDef, MenuItemDef } from "./MenuItemDef";
 import { Clipboard } from "./Clipboard";
 import { autoLayout, removeLayout } from "../services/AutoLayout";
 import { createComponent } from "../services/CreateComponent";
-import { toDocumentJSON } from "../models/Document";
-import { DocumentHierarchyEntry } from "../models/Project";
+import { PageHierarchyEntry } from "../models/Project";
 import { posix as path } from "path-browserify";
+import { Node } from "../models/Node";
+import { toProjectJSON } from "../models/toProjectJSON";
+import { generateExampleNodes } from "../models/generateExampleNodes";
 
 class Commands {
   @computed get canUndo(): boolean {
@@ -37,7 +39,9 @@ class Commands {
 
   async copy() {
     // TODO: copy from instance contents
-    const json = toDocumentJSON(projectState.selectedSelectables);
+    const json = toProjectJSON(
+      projectState.selectedNodes.map((node) => node.selectable)
+    );
     await Clipboard.writeNodes(json);
   }
 
@@ -47,8 +51,8 @@ class Commands {
     runInAction(() => {
       const getInsertionTarget = () => {
         const defaultTarget = {
-          parent: projectState.document.rootSelectable,
-          index: projectState.document.rootSelectable.children.length,
+          parent: projectState.page,
+          next: undefined,
         };
 
         const selectedSelectables = projectState.selectedSelectables;
@@ -66,24 +70,34 @@ class Commands {
           return defaultTarget;
         }
 
-        const index = parent.children.indexOf(lastSelectable) + 1;
-        return { parent, index };
+        return {
+          parent: parent.originalNode,
+          next: lastSelectable.originalNode.nextSibling,
+        };
       };
 
       const insertionTarget = getInsertionTarget();
-      projectState.document.rootSelectable.deselect();
-      const selectables = insertionTarget.parent.insert(
-        insertionTarget.index,
-        data.nodes
-      );
+      projectState.page.selectable.deselect();
+
+      const nodes: Node[] = [];
+      for (const [id, nodeJSON] of Object.entries(data.nodes)) {
+        const node = projectState.project.nodes.create(nodeJSON.type, id);
+        node.loadJSON(nodeJSON);
+        nodes.push(node);
+      }
+      const topNodes = nodes.filter((node) => !node.parentID);
+
+      insertionTarget.parent.insertBefore(topNodes, insertionTarget.next);
+
       for (const [id, styleJSON] of Object.entries(data.styles)) {
         const selectable = projectState.project.selectables.get(id.split(":"));
         if (selectable) {
           selectable.selfStyle.loadJSON(styleJSON);
         }
       }
-      for (const selectable of selectables) {
-        selectable.select();
+
+      for (const node of topNodes) {
+        node.selectable.select();
       }
     });
   }
@@ -293,6 +307,16 @@ class Commands {
           this.insertFrameCommand,
           this.insertTextCommand,
           this.insertImageCommand,
+          { type: "separator" },
+          {
+            type: "command",
+            text: "Generate Example Nodes",
+            onClick: action(() => {
+              const page = projectState.page;
+              generateExampleNodes(page);
+              projectState.undoManager.stopCapturing();
+            }),
+          },
         ],
       },
       {
@@ -326,7 +350,7 @@ class Commands {
     ];
   }
 
-  contextMenuForFile(file: DocumentHierarchyEntry): MenuItemDef[] {
+  contextMenuForFile(file: PageHierarchyEntry): MenuItemDef[] {
     if (file.type === "directory") {
       return [
         {
@@ -334,15 +358,15 @@ class Commands {
           text: "New File",
           onClick: action(() => {
             const newPath = path.join(file.path, "Page 1");
-            projectState.createDocument(newPath);
+            projectState.createPage(newPath);
           }),
         },
         {
           type: "command",
           text: "Delete",
-          disabled: projectState.project.documents.count === 1,
+          disabled: projectState.project.pages.count === 1,
           onClick: action(() => {
-            projectState.deleteDocumentOrFolder(file.path);
+            projectState.deletePageOrPageFolder(file.path);
           }),
         },
       ];
@@ -351,9 +375,9 @@ class Commands {
         {
           type: "command",
           text: "Delete",
-          disabled: projectState.project.documents.count === 1,
+          disabled: projectState.project.pages.count === 1,
           onClick: action(() => {
-            projectState.deleteDocumentOrFolder(file.path);
+            projectState.deletePageOrPageFolder(file.path);
           }),
         },
       ];

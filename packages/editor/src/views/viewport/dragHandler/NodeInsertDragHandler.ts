@@ -26,7 +26,8 @@ export class NodeInsertDragHandler implements DragHandler {
     const parent = pickResult.default ?? projectState.rootSelectable;
 
     if (mode.type === "text") {
-      const [selectable] = parent.append([{ type: "text", name: "Text" }]);
+      const selectable = parent.append("text");
+      selectable.originalNode.name = "Text";
       this.instance = selectable;
       this.instance.style.textContent = "Type Something";
       this.instance.style.fill = Color.from("black").toHex();
@@ -34,13 +35,15 @@ export class NodeInsertDragHandler implements DragHandler {
       this.instance.style.height = { type: "hugContents" };
     } else if (mode.type === "image") {
       // TODO: support image
-      const [selectable] = parent.append([{ type: "frame", name: "Image" }]);
+      const selectable = parent.append("frame");
+      selectable.originalNode.name = "Image";
       this.instance = selectable;
       this.instance.style.fill = Color.from("white").toHex();
       this.instance.style.width = { type: "fixed", value: 100 };
       this.instance.style.height = { type: "fixed", value: 100 };
     } else {
-      const [selectable] = parent.append([{ type: "frame", name: "Frame" }]);
+      const selectable = parent.append("frame");
+      selectable.originalNode.name = "Frame";
       this.instance = selectable;
       this.instance.style.fill = Color.from("white").toHex();
       this.instance.style.width = { type: "fixed", value: 100 };

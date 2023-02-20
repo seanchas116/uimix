@@ -321,6 +321,7 @@ function getCurrentComponent(): Node | undefined {
   }
 }
 
+/*
 export const ComponentPane: React.FC = observer(function ComponentPane() {
   const component = getCurrentComponent();
   if (!component) {
@@ -329,7 +330,7 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
 
   return (
     <>
-      {/* <InspectorPane>
+       <InspectorPane>
         <InspectorHeading
           text="Properties"
           buttons={
@@ -378,7 +379,7 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
             ))}
           </ReactSortable>
         </div>
-      </InspectorPane> */}
+      </InspectorPane>
       <InspectorPane>
         <InspectorHeading
           icon="material-symbols:widgets-rounded"
@@ -477,7 +478,9 @@ export const ComponentPane: React.FC = observer(function ComponentPane() {
               <VariantRow key={v.id} component={component} variant={v} />
             ))}
         </div>
-      </InspectorPane> */}
+      </InspectorPane> 
     </>
   );
 });
+
+*/

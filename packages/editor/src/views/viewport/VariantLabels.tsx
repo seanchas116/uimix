@@ -282,16 +282,15 @@ const VariantLabel: React.FC<{
             text: "Add Variant",
             onClick: action(() => {
               console.log("onClick");
-              const [variant] = component.append([
-                {
-                  type: "variant",
-                  condition: {
-                    type: "hover",
-                  },
-                },
-              ]);
-              projectState.document.rootSelectable.deselect();
-              projectState.project.selectables.getForNode(variant)?.select();
+
+              const variant = projectState.project.nodes.create("variant");
+              variant.condition = {
+                type: "hover",
+              };
+              component.append([variant]);
+
+              projectState.page.selectable.deselect();
+              variant.selectable.select();
               projectState.undoManager.stopCapturing();
             }),
           },
@@ -299,17 +298,15 @@ const VariantLabel: React.FC<{
             type: "command",
             text: "Add Breakpoint",
             onClick: action(() => {
-              const [variant] = component.append([
-                {
-                  type: "variant",
-                  condition: {
-                    type: "maxWidth",
-                    value: 767,
-                  },
-                },
-              ]);
-              projectState.document.rootSelectable.deselect();
-              projectState.project.selectables.getForNode(variant)?.select();
+              const variant = projectState.project.nodes.create("variant");
+              variant.condition = {
+                type: "maxWidth",
+                value: 767,
+              };
+              component.append([variant]);
+
+              projectState.page.selectable.deselect();
+              variant.selectable.select();
               projectState.undoManager.stopCapturing();
             }),
           },

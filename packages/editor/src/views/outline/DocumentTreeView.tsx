@@ -14,18 +14,18 @@ import {
 import { projectState } from "../../state/ProjectState";
 import { DoubleClickToEdit } from "../../components/DoubleClickToEdit";
 import { commands } from "../../state/Commands";
-import { DocumentHierarchyEntry } from "../../models/Project";
+import { PageHierarchyEntry } from "../../models/Project";
 import { showContextMenu } from "../ContextMenu";
 
-interface DocumentTreeViewItem extends TreeViewItem {
-  entry: DocumentHierarchyEntry;
+interface PageTreeViewItem extends TreeViewItem {
+  entry: PageHierarchyEntry;
 }
 
 function buildTreeViewItem(
-  entry: DocumentHierarchyEntry,
-  parent?: DocumentTreeViewItem
-): DocumentTreeViewItem {
-  const treeViewItem: DocumentTreeViewItem = {
+  entry: PageHierarchyEntry,
+  parent?: PageTreeViewItem
+): PageTreeViewItem {
+  const treeViewItem: PageTreeViewItem = {
     key: entry.path,
     parent,
     entry,
@@ -44,7 +44,7 @@ function buildTreeViewItem(
   return treeViewItem;
 }
 
-const DocumentRow = observer(
+const PageRow = observer(
   ({
     depth,
     indentation,
@@ -52,16 +52,16 @@ const DocumentRow = observer(
   }: {
     depth: number;
     indentation: number;
-    item: DocumentTreeViewItem;
+    item: PageTreeViewItem;
   }) => {
     const { entry } = item;
 
-    const selected = projectState.document.filePath === entry.path;
+    const selected = entry.type === "file" && entry.page === projectState.page;
     const collapsed = projectState.collapsedPaths.has(entry.path);
 
     const onClick = action(() => {
       if (entry.type === "file") {
-        projectState.openDocument(entry.path);
+        projectState.openPage(entry.page);
       }
     });
     const onCollapsedChange = action((value: boolean) => {
@@ -115,7 +115,7 @@ const DocumentRow = observer(
             value={entry.name}
             onChange={action((name: string) => {
               const newPath = path.join(path.dirname(entry.path), name);
-              projectState.renameDocumentOrFolder(entry.path, newPath);
+              projectState.renamePageOrPageFolder(entry.path, newPath);
             })}
           />
         </div>
@@ -124,10 +124,8 @@ const DocumentRow = observer(
   }
 );
 
-export const DocumentTreeView = observer(() => {
-  const rootItem = buildTreeViewItem(
-    projectState.project.documents.toHierarchy()
-  );
+export const PageTreeView = observer(() => {
+  const rootItem = buildTreeViewItem(projectState.project.pages.toHierarchy());
 
   return (
     <TreeView
@@ -148,7 +146,7 @@ export const DocumentTreeView = observer(() => {
       }
       dropBetweenIndicator={DropBetweenIndicator}
       dropOverIndicator={DropOverIndicator}
-      renderRow={(props) => <DocumentRow {...props} />}
+      renderRow={(props) => <PageRow {...props} />}
       handleDragStart={() => {
         return true;
       }}
@@ -163,7 +161,7 @@ export const DocumentTreeView = observer(() => {
             const oldName = draggedItem.entry.name;
             const newPath = path.join(newDir, oldName);
 
-            projectState.renameDocumentOrFolder(entry.path, newPath);
+            projectState.renamePageOrPageFolder(entry.path, newPath);
           }
         });
       }}
@@ -172,4 +170,4 @@ export const DocumentTreeView = observer(() => {
   );
 });
 
-DocumentTreeView.displayName = "DocumentTreeView";
+PageTreeView.displayName = "DocumentTreeView";

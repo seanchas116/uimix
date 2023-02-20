@@ -8,7 +8,7 @@ import {
 import { ScrollArea } from "../../components/ScrollArea";
 import { NodeTreeView } from "./NodeTreeView";
 import { Icon } from "@iconify/react";
-import { DocumentTreeView } from "./DocumentTreeView";
+import { PageTreeView } from "./DocumentTreeView";
 
 export const OutlineSideBar: React.FC = observer(() => {
   return (
@@ -46,7 +46,7 @@ export const OutlineSideBar: React.FC = observer(() => {
         className="flex-1 relative outline-none"
       >
         <ScrollArea className="absolute left-0 top-0 w-full h-full">
-          <DocumentTreeView />
+          <PageTreeView />
         </ScrollArea>
       </SideBarTabsContent>
     </SideBarTabsRoot>

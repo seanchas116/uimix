@@ -1,78 +1,114 @@
-import { computed, makeObservable, observable } from "mobx";
 import { ObservableYMap } from "../utils/ObservableYMap";
-import { Document } from "./Document";
 import * as Y from "yjs";
-import { generateID } from "../utils/ID";
-import { getOrCreate } from "../state/Collection";
+import { ObservableRBTree } from "../utils/ObservableRBTree";
 import { NodeJSON, NodeType, VariantCondition } from "@uimix/node-data";
+import { getOrCreate } from "../state/Collection";
+import { generateID } from "../utils/ID";
+import { computed, makeObservable } from "mobx";
+import { Project } from "./Project";
+import { Selectable } from "./Selectable";
+
+interface NodeKey {
+  index: number;
+  id: string;
+}
+
+function compareNodeKey(a: NodeKey, b: NodeKey) {
+  if (a.index === b.index) {
+    return a.id.localeCompare(b.id);
+  }
+  return a.index - b.index;
+}
 
 export const abstractNodeTypes: NodeType[] = ["component"];
 
 export class Node {
-  constructor(document: Document, parent: Node | undefined, data: Y.Map<any>) {
-    this.document = document;
+  // Do not use this constructor directly
+  constructor(project: Project, id: string, data: Y.Map<any>) {
+    this.project = project;
+    this.nodeMap = project.nodes;
+    this.id = id;
     this.data = ObservableYMap.get(data);
-    this.id = getOrCreate(data, "id", () => generateID());
-    this.type = getOrCreate(data, "type", () => "frame");
-    this.childrenData = getOrCreate(data, "children", () => new Y.Array<any>());
-    this.parent = parent;
+    this.lastParentID = this.data.get("parent");
+    this.lastIndex = this.data.get("index");
 
-    const project = document.project;
+    data.observe(() => {
+      const parentID = this.data.get("parent");
+      const index = this.data.get("index");
 
-    const onChildrenChange = () => {
-      const oldChildren = new Map<Y.Map<any>, Node>();
-      for (const instance of this.children) {
-        oldChildren.set(instance.data.y, instance);
-      }
-      const removedChildren = new Set<Node>(this.children);
-      const newChildren: Node[] = [];
-      const addedChildren: Node[] = [];
-
-      for (const [i, nodeData] of [...this.childrenData].entries()) {
-        let node = oldChildren.get(nodeData);
-        if (node) {
-          removedChildren.delete(node);
-        } else {
-          node = new Node(document, this, nodeData);
-          addedChildren.push(node);
+      if (parentID !== this.lastParentID || index !== this.lastIndex) {
+        if (this.lastParentID) {
+          const oldParentChildrenMap = this.nodeMap.getChildrenMap(
+            this.lastParentID
+          );
+          oldParentChildrenMap.delete({
+            index: this.lastIndex,
+            id: this.id,
+          });
         }
-        node.index = i;
-        newChildren.push(node);
-        oldChildren.delete(nodeData);
+
+        if (parentID) {
+          const parentChildrenMap = this.nodeMap.getChildrenMap(parentID);
+          parentChildrenMap.set({ index, id: this.id }, true);
+        }
+
+        this.lastParentID = parentID;
+        this.lastIndex = index;
       }
+    });
 
-      for (const removed of removedChildren) {
-        project.nodes.remove(removed);
-      }
-
-      for (const added of addedChildren) {
-        project.nodes.add(added);
-      }
-
-      this.children = newChildren;
-    };
-
-    this.childrenData.observe(onChildrenChange);
-    onChildrenChange();
+    if (this.lastParentID) {
+      const parentChildrenMap = this.nodeMap.getChildrenMap(this.lastParentID);
+      parentChildrenMap.set({ index: this.lastIndex, id: this.id }, true);
+    }
 
     makeObservable(this);
   }
 
-  readonly document: Document;
-  readonly data: ObservableYMap<any>;
-  readonly childrenData: Y.Array<any>;
+  dispose() {
+    if (this.lastParentID) {
+      const parentChildrenMap = this.nodeMap.getChildrenMap(this.lastParentID);
+      parentChildrenMap.delete({
+        index: this.lastIndex,
+        id: this.id,
+      });
+    }
+  }
+
+  readonly project: Project;
+  private readonly nodeMap: NodeMap;
   readonly id: string;
-  readonly type: NodeType;
-  readonly parent: Node | undefined;
-  @observable index = 0;
-  @observable.ref children: readonly Node[] = [];
+  private readonly data: ObservableYMap<any>;
+
+  get sortKey(): NodeKey {
+    return { index: this.index, id: this.id };
+  }
+
+  get parentID(): string | undefined {
+    return this.data.get("parent");
+  }
+
+  get index(): number {
+    return this.data.get("index");
+  }
+
+  lastParentID: string | undefined;
+  lastIndex: number;
+
+  get type(): NodeType {
+    return this.data.get("type");
+  }
 
   @computed get name(): string {
     return this.data.get("name") ?? "";
   }
 
-  set name(name: string) {
-    this.data.set("name", name);
+  set name(name: string | undefined) {
+    if (name === undefined) {
+      this.data.delete("name");
+    } else {
+      this.data.set("name", name);
+    }
   }
 
   // Applicable only to variant nodes
@@ -85,8 +121,62 @@ export class Node {
     this.data.set("condition", selector);
   }
 
-  @computed get childCount(): number {
-    return this.children.length;
+  // parent / children
+
+  get parent(): Node | undefined {
+    return this.nodeMap.get(this.data.get("parent"));
+  }
+
+  get childCount(): number {
+    return this.nodeMap.getChildrenMap(this.id).size;
+  }
+
+  get children(): Node[] {
+    const childrenMap = this.nodeMap.getChildrenMap(this.id);
+    return [...childrenMap.keys()].map((key) => this.nodeMap.get(key.id)!);
+  }
+
+  includes(node: Node): boolean {
+    let current: Node | undefined = node;
+    while (current) {
+      if (current === this) {
+        return true;
+      }
+      current = current.parent;
+    }
+    return false;
+  }
+
+  @computed get firstChild(): Node | undefined {
+    const childrenMap = this.nodeMap.getChildrenMap(this.id);
+    const firstID = childrenMap.min()?.[0].id;
+    return this.nodeMap.get(firstID);
+  }
+
+  @computed get lastChild(): Node | undefined {
+    const childrenMap = this.nodeMap.getChildrenMap(this.id);
+    const lastID = childrenMap.max()?.[0].id;
+    return this.nodeMap.get(lastID);
+  }
+
+  @computed get nextSibling(): Node | undefined {
+    const { parentID } = this;
+    if (parentID === undefined) {
+      return;
+    }
+    const parentChildrenMap = this.nodeMap.getChildrenMap(parentID);
+    const nextSiblingID = parentChildrenMap.next(this.sortKey)?.[0].id;
+    return this.nodeMap.get(nextSiblingID);
+  }
+
+  @computed get previousSibling(): Node | undefined {
+    const { parentID } = this;
+    if (parentID === undefined) {
+      return;
+    }
+    const parentChildrenMap = this.nodeMap.getChildrenMap(parentID);
+    const previousSiblingID = parentChildrenMap.prev(this.sortKey)?.[0].id;
+    return this.nodeMap.get(previousSiblingID);
   }
 
   canInsert(type: NodeType): boolean {
@@ -98,7 +188,7 @@ export class Node {
       }
     }
 
-    if (this.type === "root") {
+    if (this.type === "page") {
       const allowed: NodeType[] = ["frame", "text", "component", "instance"];
       return allowed.includes(type);
     }
@@ -108,73 +198,82 @@ export class Node {
       return allowed.includes(type);
     }
 
+    if (this.type === "project") {
+      return type === "page";
+    }
+
     return false;
   }
 
-  insert(index: number, contents: Omit<NodeJSON, "id">[]): Node[] {
-    for (let i = 0; i < contents.length; i++) {
-      if (!this.canInsert(contents[i].type)) {
-        throw new Error("Cannot insert node of type " + contents[i].type);
+  insertBefore(nodes: Node[], next: Node | undefined) {
+    for (const node of nodes) {
+      if (this === node) {
+        return;
+      }
+      if (node.includes(this)) {
+        throw new Error("Cannot insert a node into one of its descendants");
+      }
+      if (!this.canInsert(node.type)) {
+        throw new Error("Cannot insert a node of this type into this node");
       }
     }
+    if (next && next.parent !== this) {
+      throw new Error("Next node is not a child of this node");
+    }
 
-    this.childrenData.insert(
-      index,
-      contents.map((content) => {
-        return Node.dataFromJSON(content);
-      })
-    );
+    const prev = next ? next.previousSibling : this.lastChild;
 
-    return this.children.slice(index, index + contents.length);
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+      const index =
+        prev && next
+          ? mix(prev.index, next.index, (i + 1) / (nodes.length + 1))
+          : prev
+          ? prev.index + i + 1
+          : next
+          ? next.index - nodes.length + i
+          : i;
+
+      // TODO: transaction
+      node.data.set("parent", this.id);
+      node.data.set("index", index);
+    }
   }
 
-  prepend(contents: Omit<NodeJSON, "id">[]): Node[] {
-    return this.insert(0, contents);
-  }
-
-  append(contents: Omit<NodeJSON, "id">[]): Node[] {
-    return this.insert(this.children.length, contents);
-  }
-
-  delete(index: number, length: number): void {
-    this.childrenData.delete(index, length);
-  }
-
-  clear(): void {
-    this.childrenData.delete(0, this.childrenData.length);
+  append(nodes: Node[]) {
+    this.insertBefore(nodes, undefined);
   }
 
   remove() {
-    this.parent?.delete(this.index, 1);
+    this.data.delete("parent");
   }
+
+  clear() {
+    for (const child of this.children) {
+      child.remove();
+    }
+  }
+
+  /// JSON
 
   toJSON(): NodeJSON {
     return {
-      id: this.id,
-      name: this.name,
       type: this.type,
+      name: this.name,
       condition: this.condition,
-      children: this.children.map((child) => child.toJSON()),
+      parent: this.parentID,
+      index: this.index,
     };
   }
 
-  static dataFromJSON(json: NodeJSON): Y.Map<any> {
-    const children = new Y.Array();
-    const childDatas =
-      json.children?.map((child) => Node.dataFromJSON(child)) ?? [];
-    children.insert(0, childDatas);
-
-    const map = new Y.Map();
-    map.set("id", json.id ?? generateID());
-    map.set("name", json.name ?? "");
-    map.set("type", json.type);
-    if (json.condition) {
-      map.set("condition", json.condition);
-    }
-    map.set("children", children);
-
-    return map;
+  loadJSON(json: NodeJSON) {
+    this.data.set("name", json.name);
+    this.data.set("condition", json.condition);
+    this.data.set("parent", json.parent);
+    this.data.set("index", json.index);
   }
+
+  /// Utility
 
   get isComponentRoot(): boolean {
     return this.parent?.type === "component" && this.type !== "variant";
@@ -190,4 +289,74 @@ export class Node {
     }
     return this.parent?.ownerComponent;
   }
+
+  get selectable(): Selectable {
+    return this.project.selectables.get([this.id]);
+  }
+}
+
+export class NodeMap {
+  constructor(project: Project, data: Y.Map<Y.Map<any>>) {
+    this.project = project;
+    this.data = ObservableYMap.get(data);
+    data.observe((event) => {
+      for (const [id, change] of event.keys) {
+        if (change.action === "add") {
+          this.nodeMap.set(id, new Node(this.project, id, data.get(id)!));
+        }
+        if (change.action === "delete") {
+          const node = this.nodeMap.get(id);
+          node?.dispose();
+        }
+      }
+    });
+  }
+
+  readonly project: Project;
+  private readonly data: ObservableYMap<Y.Map<any>>;
+  private readonly nodeMap = new Map<string, Node>();
+  private readonly childrenMaps = new Map<
+    string,
+    ObservableRBTree<NodeKey, true>
+  >();
+
+  get(id: string | undefined): Node | undefined {
+    return id !== undefined ? this.nodeMap.get(id) : undefined;
+  }
+
+  getOrThrow(id: string): Node {
+    const node = this.get(id);
+    if (!node) {
+      throw new Error(`Node not found: ${id}`);
+    }
+    return node;
+  }
+
+  create(type: NodeType, id: string = generateID()): Node {
+    const data = new Y.Map<any>();
+    data.set("type", type);
+    data.set("index", 0);
+    this.data.set(id, data);
+    return this.nodeMap.get(id)!;
+  }
+
+  getOrCreate(type: NodeType, id: string): Node {
+    let node = this.get(id);
+    if (!node) {
+      node = this.create(type, id);
+    }
+    return node;
+  }
+
+  getChildrenMap(parentID: string): ObservableRBTree<NodeKey, true> {
+    return getOrCreate(
+      this.childrenMaps,
+      parentID,
+      () => new ObservableRBTree(compareNodeKey)
+    );
+  }
+}
+
+function mix(a: number, b: number, t: number): number {
+  return a * (1 - t) + b * t;
 }

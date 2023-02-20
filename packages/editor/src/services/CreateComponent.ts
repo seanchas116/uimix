@@ -9,14 +9,8 @@ export function createComponent(selectable: Selectable) {
     return;
   }
 
-  const [component] = projectState.document.root.append([
-    {
-      type: "component",
-      name: selectable.node.name,
-    },
-  ]);
-
-  const json = selectable.node.toJSON();
-  selectable.node.remove();
-  component.append([json]);
+  const component = projectState.project.nodes.create("component");
+  component.name = selectable.node.name;
+  component.append([selectable.node]);
+  projectState.page.append([component]);
 }

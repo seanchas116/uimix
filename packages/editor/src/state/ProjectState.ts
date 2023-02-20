@@ -6,7 +6,6 @@ import {
   runInAction,
 } from "mobx";
 import * as Y from "yjs";
-import { Document } from "../models/Document";
 import { Project } from "../models/Project";
 import { Selectable } from "../models/Selectable";
 import { generateExampleNodes } from "../models/generateExampleNodes";
@@ -14,6 +13,7 @@ import { getIncrementalUniqueName } from "../utils/Name";
 import { trpc } from "./trpc";
 import { debounce } from "lodash-es";
 import { ProjectJSON } from "@uimix/node-data";
+import { Node } from "../models/Node";
 
 export class ProjectState {
   constructor() {
@@ -28,9 +28,11 @@ export class ProjectState {
     });
 
     this.project = new Project(projectData);
-    this.document = this.project.documents.getOrCreate("Page 1");
+    this.page = this.project.nodes.create("page");
+    this.page.name = "Page 1";
+    this.project.node.append([this.page]);
     this.undoManager = new Y.UndoManager(projectData);
-    generateExampleNodes(this.document);
+    generateExampleNodes(this.page);
     makeObservable(this);
 
     void this.load();
@@ -42,16 +44,7 @@ export class ProjectState {
 
   private async save() {
     console.log("save");
-
-    const projectJSON: ProjectJSON = {
-      documents: {},
-    };
-
-    for (const document of this.project.documents.all) {
-      projectJSON.documents[document.filePath] = document.toJSON();
-    }
-
-    await trpc.save.mutate({ project: projectJSON });
+    await trpc.save.mutate({ project: this.project.toJSON() });
   }
 
   @observable private _loading = true;
@@ -65,16 +58,14 @@ export class ProjectState {
     console.log(project);
 
     runInAction(() => {
-      if (Object.keys(project.documents).length !== 0) {
-        this.loadProjectJSON(project);
-      }
+      this.loadJSON(project);
       this._loading = false;
     });
 
     trpc.onChange.subscribe(undefined, {
       onData: action((projectJSON: ProjectJSON) => {
         console.log("received", projectJSON);
-        this.loadProjectJSON(projectJSON);
+        this.loadJSON(projectJSON);
       }),
       onError: (err) => {
         console.error("error", err);
@@ -82,95 +73,85 @@ export class ProjectState {
     });
   }
 
-  private loadProjectJSON(projectJSON: ProjectJSON) {
+  loadJSON(projectJSON: ProjectJSON) {
     try {
       this._loading = true;
 
-      const selectedName = this.document.filePath;
-
-      const removedPaths = new Set(
-        this.project.documents.all.map((d) => d.filePath)
-      );
-      for (const filePath of Object.keys(projectJSON.documents)) {
-        removedPaths.delete(filePath);
+      if (Object.keys(projectJSON.nodes).length) {
+        this.project.loadJSON(projectJSON);
+      } else {
+        this.project.node.clear();
+        this.page = this.project.nodes.create("page");
+        this.page.name = "Page 1";
+        this.project.node.append([this.page]);
       }
-
-      for (const [path, data] of Object.entries(projectJSON.documents)) {
-        const doc = this.project.documents.getOrCreate(path);
-        doc.loadJSON(data);
-      }
-      for (const removed of removedPaths) {
-        this.project.documents.deleteDocumentOrFolder(removed);
-      }
-
-      const documents = this.project.documents.all;
-      const document =
-        documents.find((d) => d.filePath === selectedName) || documents[0];
-
-      this.document = document;
+      // TODO: preserve current page
+      this.page = this.project.pages.all[0];
     } finally {
       this._loading = false;
     }
   }
 
   readonly project: Project;
-  @observable document: Document;
+  @observable page: Node;
 
   readonly undoManager: Y.UndoManager;
 
   @computed get rootSelectable(): Selectable {
-    return this.document.rootSelectable;
+    return this.page.selectable;
   }
 
   @computed get selectedSelectables(): Selectable[] {
     return this.rootSelectable.children.flatMap((s) => s.selectedDescendants);
   }
 
+  @computed get selectedNodes(): Node[] {
+    const nodes: Node[] = [];
+    for (const s of this.selectedSelectables) {
+      if (s.idPath.length === 1) {
+        nodes.push(s.originalNode);
+      }
+    }
+    return nodes;
+  }
+
   readonly collapsedPaths = observable.set<string>();
 
-  openDocument(path: string) {
-    this.document = this.project.documents.getOrCreate(path);
+  openPage(page: Node) {
+    this.page = page;
   }
 
-  createDocument(path: string) {
+  createPage(name: string) {
     const existingFilePaths = new Set(
-      this.project.documents.all.map((d) => d.filePath)
+      this.project.pages.all.map((d) => d.name)
     );
-    const newPath = getIncrementalUniqueName(existingFilePaths, path);
-    this.project.documents.getOrCreate(newPath);
+    const newPath = getIncrementalUniqueName(existingFilePaths, name);
+
+    const page = this.project.nodes.create("page");
+    page.name = newPath;
+    this.project.node.append([page]);
+
     this.undoManager.stopCapturing();
   }
 
-  deleteDocumentOrFolder(path: string) {
-    const affectedDocuments =
-      this.project.documents.affectedDocumentsForPath(path);
-    const deletingCurrent = affectedDocuments.includes(this.document);
+  deletePageOrPageFolder(path: string) {
+    const affectedPages = this.project.pages.affectedPagesForPath(path);
+    const deletingCurrent = affectedPages.includes(this.page);
 
-    if (this.project.documents.count === affectedDocuments.length) {
+    if (this.project.pages.count === affectedPages.length) {
       return;
     }
-    this.project.documents.deleteDocumentOrFolder(path);
+    this.project.pages.deletePageOrPageFolder(path);
 
     if (deletingCurrent) {
-      this.document = this.project.documents.all[0];
+      this.page = this.project.pages.all[0];
     }
 
     this.undoManager.stopCapturing();
   }
 
-  renameDocumentOrFolder(path: string, newPath: string) {
-    const affectedDocuments =
-      this.project.documents.affectedDocumentsForPath(path);
-    const renamingCurrent = affectedDocuments.includes(this.document);
-    let newCurrentPath: string | undefined;
-    if (renamingCurrent) {
-      newCurrentPath = newPath + this.document.filePath.slice(path.length);
-    }
-
-    this.project.documents.renameDocumentOrFolder(path, newPath);
-    if (newCurrentPath) {
-      this.document = this.project.documents.getOrCreate(newCurrentPath);
-    }
+  renamePageOrPageFolder(path: string, newPath: string) {
+    this.project.pages.renamePageOrPageFolder(path, newPath);
     this.undoManager.stopCapturing();
   }
 }

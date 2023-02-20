@@ -1,14 +1,13 @@
-import { Document } from "./Document";
 import { Color } from "../utils/Color";
 import colors from "tailwindcss/colors.js";
+import { Node } from "./Node";
 
-export function generateExampleNodes(document: Document) {
-  const project = document.project;
+export function generateExampleNodes(page: Node) {
+  const project = page.project;
 
   for (let i = 0; i < 10; ++i) {
-    const [frameSelectable] = document.rootSelectable.append([
-      { type: "frame", name: `Frame ${i}` },
-    ]);
+    const frameSelectable = page.selectable.append("frame");
+    frameSelectable.originalNode.name = `Frame ${i}`;
     const style = frameSelectable.style;
     style.position = {
       x: { type: "start", start: i * 100 + 50 },
@@ -20,9 +19,8 @@ export function generateExampleNodes(document: Document) {
   }
 
   {
-    const [stackSelectable] = document.rootSelectable.append([
-      { type: "frame", name: "Stack" },
-    ]);
+    const stackSelectable = page.selectable.append("frame");
+    stackSelectable.originalNode.name = "Stack";
     const stackStyle = stackSelectable.style;
 
     stackStyle.position = {
@@ -39,34 +37,32 @@ export function generateExampleNodes(document: Document) {
     stackStyle.paddingBottom = 30;
     stackStyle.paddingLeft = 40;
 
-    const [stackItem0] = stackSelectable.append([
-      { type: "frame", name: "Item 0" },
-    ]);
+    const stackItem0 = stackSelectable.append("frame");
+    stackItem0.originalNode.name = "Item 0";
     const stackItem0Style = stackItem0.style;
 
     stackItem0Style.width = { type: "fixed", value: 50 };
     stackItem0Style.height = { type: "fixed", value: 50 };
     stackItem0Style.fill = Color.from(colors.red[500])!.toHex();
 
-    const [stackItem1] = stackSelectable.append([
-      { type: "frame", name: "Item 1" },
-    ]);
+    const stackItem1 = stackSelectable.append("frame");
+    stackItem1.originalNode.name = "Item 1";
     const stackItem1Style = stackItem1.style;
 
     stackItem1Style.width = { type: "fixed", value: 40 };
     stackItem1Style.height = { type: "fixed", value: 80 };
     stackItem1Style.fill = Color.from(colors.green[500])!.toHex();
 
-    const [stackItem2] = stackSelectable.append([
-      { type: "frame", name: "Item 2" },
-    ]);
+    const stackItem2 = stackSelectable.append("frame");
+    stackItem2.originalNode.name = "Item 2";
     const stackItem2Style = stackItem2.style;
 
     stackItem2Style.width = { type: "fixed", value: 80 };
     stackItem2Style.height = { type: "fixed", value: 40 };
     stackItem2Style.fill = Color.from(colors.blue[500])!.toHex();
 
-    const [text] = stackSelectable.prepend([{ type: "text", name: "Text" }]);
+    const text = stackSelectable.append("text");
+    text.originalNode.name = "Text";
     const textStyle = text.style;
     textStyle.textContent = "Hello, world!";
     textStyle.width = { type: "hugContents" };
@@ -76,9 +72,9 @@ export function generateExampleNodes(document: Document) {
   }
 
   {
-    const [componentNode] = document.rootSelectable.append([
-      { type: "component", name: "Button" },
-    ]);
+    const componentNode = project.nodes.create("component");
+    componentNode.name = "Button";
+    page.append([componentNode]);
 
     // componentNode.props.replace([
     //   { name: "width", type: "number" },
@@ -87,33 +83,30 @@ export function generateExampleNodes(document: Document) {
     //   { name: "selected", type: "boolean" },
     // ]);
 
-    const [rootNode] = componentNode.append([{ type: "frame" }]);
+    const rootNode = project.nodes.create("frame");
+    componentNode.append([rootNode]);
 
-    const [textNode] = rootNode.append([{ type: "text", name: "Text" }]);
-    const textNodeProps = textNode.style;
+    const textNode = project.nodes.create("text");
+    textNode.name = "Text";
+    rootNode.append([textNode]);
+    const textNodeProps = textNode.selectable.style;
     textNodeProps.textContent = "Button";
 
-    const [hoverVariant] = componentNode.append([
-      { type: "variant", name: "Hover" },
-    ]);
-    hoverVariant.node.condition = {
-      type: "hover",
-    };
+    const hoverVariant = project.nodes.create("variant");
+    hoverVariant.condition = { type: "hover" };
+    componentNode.append([hoverVariant]);
+
     // TODO: condition
     // hoverVariant.condition = {
     //   type: "interaction",
     //   value: "hover",
     // };
 
-    const [mobileVariant] = componentNode.append([
-      { type: "variant", name: "Mobile" },
-    ]);
-    mobileVariant.node.condition = {
-      type: "maxWidth",
-      value: 767,
-    };
+    const mobileVariant = project.nodes.create("variant");
+    mobileVariant.condition = { type: "maxWidth", value: 767 };
+    componentNode.append([mobileVariant]);
 
-    const rootNodeStyle = rootNode.style;
+    const rootNodeStyle = rootNode.selectable.style;
     rootNodeStyle.position = {
       x: { type: "start", start: 50 },
       y: { type: "start", start: 400 },
@@ -127,35 +120,35 @@ export function generateExampleNodes(document: Document) {
     rootNodeStyle.paddingTop = 4;
     rootNodeStyle.paddingBottom = 4;
 
-    const textNodeStyle = textNode.style;
+    const textNodeStyle = textNode.selectable.style;
     textNodeStyle.width = { type: "hugContents" };
     textNodeStyle.height = { type: "hugContents" };
     textNodeStyle.fill = Color.from(colors.gray[900])!.toHex();
 
-    const hoverVariantStyle = hoverVariant.style;
+    const hoverVariantStyle = hoverVariant.selectable.style;
     hoverVariantStyle.position = {
       x: { type: "start", start: 200 },
       y: { type: "start", start: 400 },
     };
     hoverVariantStyle.fill = Color.from(colors.blue[500])!.toHex();
 
-    const mobileVariantStyle = mobileVariant.style;
+    const mobileVariantStyle = mobileVariant.selectable.style;
     mobileVariantStyle.position = {
       x: { type: "start", start: 350 },
       y: { type: "start", start: 400 },
     };
 
     const hoverTextNodeStyle = project.selectables.get([
-      hoverVariant.node.id,
-      textNode.node.id,
+      hoverVariant.id,
+      textNode.id,
     ]).style;
     hoverTextNodeStyle.fill = Color.from(colors.white)!.toHex();
 
-    const [instanceNode] = document.rootSelectable.append([
-      { type: "instance", name: "Instance" },
-    ]);
+    const instanceNode = project.nodes.create("instance");
+    instanceNode.name = "Instance";
+    page.append([instanceNode]);
 
-    const instanceNodeStyle = instanceNode.style;
+    const instanceNodeStyle = instanceNode.selectable.style;
     instanceNodeStyle.position = {
       x: { type: "start", start: 50 },
       y: { type: "start", start: 500 },

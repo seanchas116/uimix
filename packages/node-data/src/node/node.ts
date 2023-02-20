@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 export const NodeType = z.enum([
-  "root",
+  "project",
+  "page",
   "frame",
   "text",
   "component",
@@ -26,17 +27,12 @@ export const VariantCondition = z.union([
 
 export type VariantCondition = z.infer<typeof VariantCondition>;
 
-const NodeJSONWithoutChildren = z.object({
-  id: z.string().optional(),
+export const NodeJSON = z.object({
   type: NodeType,
   name: z.string().optional(),
   condition: VariantCondition.optional(),
+  parent: z.string().optional(),
+  index: z.number(),
 });
 
-export type NodeJSON = z.infer<typeof NodeJSONWithoutChildren> & {
-  children?: NodeJSON[];
-};
-
-export const NodeJSON: z.ZodType<NodeJSON> = NodeJSONWithoutChildren.extend({
-  children: z.lazy(() => z.array(NodeJSON).optional()),
-});
+export type NodeJSON = z.infer<typeof NodeJSON>;

@@ -1,5 +1,5 @@
 import { runInAction } from "mobx";
-import { DocumentJSON } from "@uimix/node-data";
+import { ProjectJSON } from "@uimix/node-data";
 import { formatJSON } from "../utils/Format";
 import { projectState } from "./ProjectState";
 
@@ -16,18 +16,18 @@ const filePickerOptions = {
 
 export async function exportToJSON() {
   const fileHandle = await showSaveFilePicker(filePickerOptions);
-  const documentJSON = projectState.document.toJSON();
+  const projectJSON = projectState.project.toJSON();
   const writable = await fileHandle.createWritable();
-  await writable.write(formatJSON(JSON.stringify(documentJSON)));
+  await writable.write(formatJSON(JSON.stringify(projectJSON)));
   await writable.close();
 }
 
 export async function importJSON() {
   const [fileHandle] = await showOpenFilePicker(filePickerOptions);
   const data = await (await fileHandle.getFile()).text();
-  const projectJSON = DocumentJSON.parse(JSON.parse(data));
+  const projectJSON = ProjectJSON.parse(JSON.parse(data));
 
   runInAction(() => {
-    projectState.document.loadJSON(projectJSON);
+    projectState.loadJSON(projectJSON);
   });
 }

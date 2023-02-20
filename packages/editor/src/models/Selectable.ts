@@ -6,7 +6,7 @@ import { getOrCreate } from "../state/Collection";
 import { computed, makeObservable, observable } from "mobx";
 import { Rect } from "paintvec";
 import { resizeWithBoundingBox } from "../services/Resize";
-import { NodeJSON } from "@uimix/node-data";
+import { NodeType } from "@uimix/node-data";
 import { Project } from "./Project";
 
 export interface IComputedRectProvider {
@@ -293,18 +293,28 @@ export class Selectable {
     return false;
   }
 
-  insert(index: number, contents: Omit<NodeJSON, "id">[]): Selectable[] {
-    this.node.insert(index, contents);
-    return this.children.slice(index, index + contents.length);
+  createBefore(type: NodeType, next: Selectable | undefined): Selectable {
+    const node = this.project.nodes.create(type);
+    this.originalNode.insertBefore([node], next?.originalNode);
+    return this.project.selectables.get([node.id]);
   }
 
-  prepend(contents: Omit<NodeJSON, "id">[]): Selectable[] {
-    return this.insert(0, contents);
+  append(type: NodeType): Selectable {
+    return this.createBefore(type, undefined);
   }
 
-  append(contents: Omit<NodeJSON, "id">[]): Selectable[] {
-    return this.insert(this.children.length, contents);
-  }
+  // insert(index: number, contents: Omit<NodeJSON, "id">[]): Selectable[] {
+  //   this.node.insert(index, contents);
+  //   return this.children.slice(index, index + contents.length);
+  // }
+
+  // prepend(contents: Omit<NodeJSON, "id">[]): Selectable[] {
+  //   return this.insert(0, contents);
+  // }
+
+  // append(contents: Omit<NodeJSON, "id">[]): Selectable[] {
+  //   return this.insert(this.children.length, contents);
+  // }
 
   includes(other: Selectable): boolean {
     return other.ancestors.includes(this);
@@ -312,7 +322,7 @@ export class Selectable {
 
   get canInsertChild(): boolean {
     const { originalNode } = this;
-    return originalNode.type === "root" || originalNode.type === "frame";
+    return originalNode.type === "page" || originalNode.type === "frame";
   }
 
   @computed.struct get usedFontFamilies(): Set<string> {
@@ -354,31 +364,12 @@ export function moveSelectables(
     return;
   }
 
-  const dstParentChildren = dstParent.children;
-  let index = 0;
-  for (const child of dstParentChildren) {
-    if (dstNextSibling === child) {
-      break;
-    }
-    if (selectables.includes(child)) {
-      continue;
-    }
-    ++index;
-  }
-
-  const jsons = selectables.map((s) => s.originalNode.toJSON());
-  const styles = selectables.map((s) => s.selfStyle.toJSON());
+  dstParent.node.insertBefore(
+    selectables.map((s) => s.originalNode),
+    dstNextSibling?.originalNode
+  );
 
   for (const selectable of selectables) {
-    selectable.originalNode.remove();
-  }
-
-  const newSelectables = dstParent.insert(index, jsons);
-  for (let i = 0; i < newSelectables.length; ++i) {
-    newSelectables[i].selfStyle.loadJSON(styles[i]);
-  }
-
-  for (const selectable of newSelectables) {
     const absolute =
       dstParent.style.layout === "none" || selectable.style.absolute;
 
@@ -391,5 +382,33 @@ export function moveSelectables(
         dstParent.computedRect.topLeft
       );
     }
+  }
+}
+
+export class SelectableMap {
+  constructor(project: Project, data: Y.Map<Y.Map<any>>) {
+    this.project = project;
+    this.selectablesData = data;
+  }
+
+  private readonly project: Project;
+  private readonly selectablesData: Y.Map<Y.Map<any>>;
+  private readonly selectablesCache = new WeakMap<Y.Map<any>, Selectable>();
+
+  private getSelectableData(idPath: string[]): Y.Map<any> {
+    const key = idPath.join(":");
+    let data = this.selectablesData.get(key);
+    if (data === undefined) {
+      data = new Y.Map();
+      this.selectablesData.set(key, data);
+    }
+    return data;
+  }
+
+  get(idPath: string[]): Selectable {
+    const data = this.getSelectableData(idPath);
+    return getOrCreate(this.selectablesCache, data, () => {
+      return new Selectable(this.project, idPath, data);
+    });
   }
 }
