@@ -21,7 +21,7 @@ import {
 import { showContextMenu } from "../ContextMenu";
 import { viewportState } from "../../state/ViewportState";
 import { twMerge } from "tailwind-merge";
-import { getIconAndTextForCondition } from "../inspector/style/ComponentPane";
+import { getIconAndTextForCondition } from "../viewport/VariantLabels";
 
 interface NodeTreeViewItem extends TreeViewItem {
   selectable: Selectable;
