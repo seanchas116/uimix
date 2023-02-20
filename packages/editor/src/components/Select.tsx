@@ -34,7 +34,7 @@ export function Select<T extends string>({
       trigger={
         <RadixSelect.Trigger
           className={twMerge(
-            "relative outline-0 h-6 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-macaron-base placeholder:text-macaron-disabledText flex items-center justify-between",
+            "relative outline-0 h-6 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-macaron-base text-macaron-text placeholder:text-macaron-disabledText flex items-center justify-between",
             className
           )}
         >
