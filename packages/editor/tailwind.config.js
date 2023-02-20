@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontSize: {
-        "macaron-base": ["11px", "16px"],
+        "macaron-base": ["12px", "16px"],
       },
       colors: {
         macaron: colors,
