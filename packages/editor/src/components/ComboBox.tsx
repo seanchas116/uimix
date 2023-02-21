@@ -24,7 +24,9 @@ export function ComboBox({
   const datalistId = useId();
 
   const optionsNode = options.map((o) => (
-    <option value={o.value}>{o.text}</option>
+    <option key={o.value} value={o.value}>
+      {o.text}
+    </option>
   ));
 
   // TODO: use Radix Select (currently native select is much faster when there are many options)
