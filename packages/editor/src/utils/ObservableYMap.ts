@@ -1,4 +1,4 @@
-import { createAtom } from "mobx";
+import { createAtom, IAtom } from "mobx";
 import * as Y from "yjs";
 
 const instances = new WeakMap<Y.Map<any>, ObservableYMap<any>>();
@@ -14,17 +14,24 @@ export class ObservableYMap<V> {
   }
 
   readonly y: Y.Map<V>;
-  readonly _atom = createAtom("ObservableYMap");
+  readonly wholeAtom = createAtom("ObservableYMap");
+  readonly valueAtoms = new Map<string, IAtom>();
 
   private constructor(y: Y.Map<V>) {
     this.y = y;
-    this.y.observe(() => {
-      this._atom.reportChanged();
+    this.y.observe((event) => {
+      for (const [key, detail] of event.keys) {
+        if (detail.action === "add") {
+          this.valueAtoms.set(key, createAtom("ObservableYMapValue"));
+        }
+        this.valueAtoms.get(key)?.reportChanged();
+      }
+      this.wholeAtom.reportChanged();
     });
   }
 
   get size(): number {
-    this._atom.reportObserved();
+    this.wholeAtom.reportObserved();
     return this.y.size;
   }
 
@@ -37,44 +44,42 @@ export class ObservableYMap<V> {
   }
 
   get(key: string): V | undefined {
-    this._atom.reportObserved();
+    const valueAtom = this.valueAtoms.get(key);
+    if (valueAtom) {
+      valueAtom.reportObserved();
+    } else {
+      this.wholeAtom.reportObserved();
+    }
     return this.y.get(key);
   }
 
-  getOrCreate(key: string, create: () => V): V {
-    this._atom.reportObserved();
-    if (!this.y.has(key)) {
-      this.y.set(key, create());
-    }
-    return this.y.get(key)!;
-  }
-
   has(key: string): boolean {
-    this._atom.reportObserved();
+    this.wholeAtom.reportObserved();
     return this.y.has(key);
   }
 
   clear() {
     this.y.clear();
+    this.wholeAtom.reportChanged();
   }
 
   keys(): IterableIterator<string> {
-    this._atom.reportObserved();
+    this.wholeAtom.reportObserved();
     return this.y.keys();
   }
 
   values(): IterableIterator<V> {
-    this._atom.reportObserved();
+    this.wholeAtom.reportObserved();
     return this.y.values();
   }
 
   [Symbol.iterator](): IterableIterator<[string, V]> {
-    this._atom.reportObserved();
+    this.wholeAtom.reportObserved();
     return this.y[Symbol.iterator]();
   }
 
   toJSON(): Record<string, V> {
-    this._atom.reportObserved();
+    this.wholeAtom.reportObserved();
     return this.y.toJSON();
   }
 }
