@@ -1,8 +1,10 @@
 import { createTRPCProxyClient, createWSClient, wsLink } from "@trpc/client";
 import type { AppRouter } from "../../../devserver/src/api/router";
 
+const wsProtocol = location.protocol === "https:" ? "wss" : "ws";
+
 const wsClient = createWSClient({
-  url: `ws://${location.host}/trpc`,
+  url: `${wsProtocol}://${location.host}/trpc`,
 });
 
 export const trpc = createTRPCProxyClient<AppRouter>({
