@@ -7,6 +7,7 @@ import { buildNodeCSS } from "./buildNodeCSS";
 import { ComputedRectProvider } from "./ComputedRectProvider";
 
 export const selectableForDOM = new WeakMap<HTMLElement, Selectable>();
+export const domForSelectable = new WeakMap<Selectable, HTMLElement>();
 
 class ComputedRectUpdater {
   private dirtyTopLevels = new Set<Selectable>();
@@ -57,6 +58,7 @@ export const NodeRenderer: React.FC<{
   useEffect(() => {
     if (ref.current) {
       selectableForDOM.set(ref.current, selectable);
+      domForSelectable.set(selectable, ref.current);
     }
 
     computedRectUpdater.flush();
@@ -132,3 +134,43 @@ export const NodeRenderer: React.FC<{
     </div>
   );
 });
+
+export const NodeRendererForThumbnail: React.FC<{
+  selectable: Selectable;
+  parentStackDirection?: StackDirection;
+  style?: React.CSSProperties;
+}> = observer(
+  ({ selectable, parentStackDirection, style: additionalCSSStyle }) => {
+    const style = selectable.style;
+    const type = selectable.node.type;
+
+    const cssStyle = {
+      ...buildNodeCSS(type, style, parentStackDirection),
+      ...(selectable === viewportState.focusedSelectable
+        ? {
+            opacity: 0,
+          }
+        : undefined),
+      ...additionalCSSStyle,
+    };
+
+    const stackDirection =
+      type === "frame" && style.layout === "stack"
+        ? style.stackDirection
+        : undefined;
+
+    return (
+      <div style={cssStyle}>
+        {type === "text"
+          ? String(style.textContent) // support prop ref
+          : selectable.children.map((child) => (
+              <NodeRendererForThumbnail
+                key={child.id}
+                selectable={child}
+                parentStackDirection={stackDirection}
+              />
+            ))}
+      </div>
+    );
+  }
+);

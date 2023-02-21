@@ -15,5 +15,11 @@ function getGoogleFontLink(fontFamilies: string[]): string {
 export const FontLoadLink: React.FC<{
   fonts: string[];
 }> = function FontLoadLink({ fonts }) {
-  return <link href={getGoogleFontLink(fonts)} rel="stylesheet" />;
+  return (
+    <link
+      href={getGoogleFontLink(fonts)}
+      rel="stylesheet"
+      crossOrigin="anonymous"
+    />
+  );
 };

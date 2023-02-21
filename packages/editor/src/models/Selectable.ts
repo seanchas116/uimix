@@ -8,6 +8,7 @@ import { Rect } from "paintvec";
 import { resizeWithBoundingBox } from "../services/Resize";
 import { NodeType } from "@uimix/node-data";
 import { Project } from "./Project";
+import { Component } from "./Component";
 
 export interface IComputedRectProvider {
   value: Rect | undefined;
@@ -165,7 +166,7 @@ export class Selectable {
     return new CascadedStyle(this.selfStyle, superStyle);
   }
 
-  @computed get mainComponent(): MainComponent | undefined {
+  @computed get mainComponent(): Component | undefined {
     const originalNode = this.originalNode;
     if (originalNode.type === "instance") {
       const { mainComponentID } = this.originalStyle;
@@ -176,24 +177,14 @@ export class Selectable {
 
         const mainComponentNode = this.project.nodes.get(mainComponentID);
         if (mainComponentNode && !ownerComponents.includes(mainComponentNode)) {
-          const componentRoot = mainComponentNode.children[0];
-          return {
-            componentNode: mainComponentNode,
-            rootNode: componentRoot,
-          };
+          return Component.from(mainComponentNode);
         }
       }
     }
     if (originalNode.type === "variant") {
       const componentNode = originalNode.parent;
       if (componentNode?.type === "component") {
-        const rootNode = componentNode.children[0];
-        if (rootNode) {
-          return {
-            componentNode,
-            rootNode,
-          };
-        }
+        return Component.from(componentNode);
       }
     }
   }
@@ -339,11 +330,6 @@ export class Selectable {
     }
     return result;
   }
-}
-
-interface MainComponent {
-  componentNode: Node;
-  rootNode: Node;
 }
 
 export function moveSelectables(
