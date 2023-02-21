@@ -238,7 +238,7 @@ export class Selectable {
   @observable computedRectProvider: IComputedRectProvider | undefined =
     undefined;
 
-  @computed get computedRect(): Rect {
+  @computed.struct get computedRect(): Rect {
     return this.computedRectProvider?.value ?? new Rect();
   }
 
