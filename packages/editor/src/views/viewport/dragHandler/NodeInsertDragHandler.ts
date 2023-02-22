@@ -11,6 +11,7 @@ import { NodePickResult } from "../renderer/NodePicker";
 import { DragHandler } from "./DragHandler";
 import { resizeWithBoundingBox } from "../../../services/Resize";
 import { action } from "mobx";
+import { assertNonNull } from "../../../utils/Assert";
 
 export class NodeInsertDragHandler implements DragHandler {
   constructor(mode: InsertMode, pickResult: NodePickResult) {
@@ -24,7 +25,15 @@ export class NodeInsertDragHandler implements DragHandler {
       scrollState.documentPosForEvent(pickResult.event)
     );
 
-    const parent = pickResult.default ?? projectState.rootSelectable;
+    if (!projectState.page) {
+      const page = projectState.project.nodes.create("page");
+      page.name = "Page 1";
+      projectState.project.node.append([page]);
+      projectState.pageID = page.id;
+    }
+
+    const parent =
+      pickResult.default ?? assertNonNull(projectState.page).selectable;
 
     if (mode.type === "text") {
       const selectable = parent.append("text");
@@ -63,7 +72,7 @@ export class NodeInsertDragHandler implements DragHandler {
       { x: true, y: true }
     );
 
-    projectState.rootSelectable.deselect();
+    projectState.page?.selectable.deselect();
     this.instance.select();
   }
 

@@ -26,7 +26,9 @@ export class Snapper {
     siblings?: boolean;
     children?: boolean;
   }): Set<Selectable> {
-    const topLevels = new Set(projectState.rootSelectable.offsetChildren);
+    const topLevels = new Set(
+      projectState.page?.selectable.offsetChildren ?? []
+    );
 
     const selection = new Set(projectState.selectedSelectables);
     if (!selection.size) {

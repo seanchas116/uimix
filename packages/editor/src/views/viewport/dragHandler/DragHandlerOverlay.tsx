@@ -59,7 +59,7 @@ export const DragHandlerOverlay: React.FC = observer(
           return clickMove;
         }
 
-        projectState.rootSelectable.deselect();
+        projectState.page?.selectable.deselect();
       }),
       onMove: action((e: React.PointerEvent, { initData: dragHandler }) => {
         if (dragHandler) {
@@ -88,21 +88,24 @@ export const DragHandlerOverlay: React.FC = observer(
       e.preventDefault();
       e.stopPropagation();
 
+      const page = projectState.page;
+      if (!page) {
+        return;
+      }
+
       const override = nodePicker.pick(e.nativeEvent).default;
       if (override) {
         if (!override.selected) {
-          projectState.rootSelectable.deselect();
+          page.selectable.deselect();
           override.select();
         }
       } else {
-        projectState.rootSelectable.deselect();
+        page.selectable.deselect();
       }
 
       showContextMenu(
         e,
-        commands.contextMenuForSelectable(
-          override ?? projectState.rootSelectable
-        )
+        commands.contextMenuForSelectable(override ?? page.selectable)
       );
     });
 

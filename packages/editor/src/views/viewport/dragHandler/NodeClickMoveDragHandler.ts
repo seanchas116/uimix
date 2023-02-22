@@ -29,7 +29,7 @@ export class NodeClickMoveDragHandler implements DragHandler {
 
     if (pickResult.all.every((o) => !o.ancestorSelected)) {
       if (!this.additive) {
-        projectState.rootSelectable.deselect();
+        projectState.page?.selectable.deselect();
       }
       this.override.select();
     }
@@ -73,7 +73,7 @@ export class NodeClickMoveDragHandler implements DragHandler {
     if (!this.handler) {
       // do click
       if (!this.additive) {
-        projectState.rootSelectable.deselect();
+        projectState.page?.selectable.deselect();
       }
       this.override.select();
     }

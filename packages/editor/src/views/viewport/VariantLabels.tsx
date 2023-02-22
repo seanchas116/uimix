@@ -58,9 +58,10 @@ const ComponentSection: React.FC<{
 });
 
 export const ComponentSections: React.FC = observer(function VariantLabels() {
-  const components = projectState.rootSelectable.children.filter(
-    (s) => s.node.type === "component"
-  );
+  const components =
+    projectState.page?.selectable.children.filter(
+      (s) => s.node.type === "component"
+    ) ?? [];
 
   return (
     <>
@@ -77,7 +78,7 @@ class ComponentLabelDragHandler implements DragHandler {
     this.targets = component.children.map((c) => [c.computedRect, c]);
 
     if (!(event.shiftKey || event.metaKey)) {
-      projectState.rootSelectable.deselect();
+      projectState.page?.selectable.deselect();
     }
     component.select();
   }
@@ -289,7 +290,7 @@ const VariantLabel: React.FC<{
               };
               component.append([variant]);
 
-              projectState.page.selectable.deselect();
+              projectState.page?.selectable.deselect();
               variant.selectable.select();
               projectState.undoManager.stopCapturing();
             }),
@@ -305,7 +306,7 @@ const VariantLabel: React.FC<{
               };
               component.append([variant]);
 
-              projectState.page.selectable.deselect();
+              projectState.page?.selectable.deselect();
               variant.selectable.select();
               projectState.undoManager.stopCapturing();
             }),
@@ -317,9 +318,10 @@ const VariantLabel: React.FC<{
 });
 
 export const VariantLabels: React.FC = observer(function VariantLabels() {
-  const components = projectState.rootSelectable.children.filter(
-    (s) => s.node.type === "component"
-  );
+  const components =
+    projectState.page?.selectable.children.filter(
+      (s) => s.node.type === "component"
+    ) ?? [];
 
   return (
     <>

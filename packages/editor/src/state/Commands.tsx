@@ -1,6 +1,6 @@
 import { action, computed, runInAction } from "mobx";
 import { isTextInput } from "../utils/Focus";
-import { blobToDataURL, imageFromURL } from "../utils/Blob";
+import { blobToDataURL } from "../utils/Blob";
 import { Shortcut } from "../utils/Shortcut";
 import { Selectable } from "../models/Selectable";
 import { exportToJSON as exportJSON, importJSON } from "./JSONExport";
@@ -77,7 +77,7 @@ class Commands {
       };
 
       const insertionTarget = getInsertionTarget();
-      projectState.page.selectable.deselect();
+      projectState.page?.selectable.deselect();
 
       const nodes: Node[] = [];
       for (const [id, nodeJSON] of Object.entries(data.nodes)) {
@@ -87,7 +87,7 @@ class Commands {
       }
       const topNodes = nodes.filter((node) => !node.parentID);
 
-      insertionTarget.parent.insertBefore(topNodes, insertionTarget.next);
+      insertionTarget.parent?.insertBefore(topNodes, insertionTarget.next);
 
       for (const [id, styleJSON] of Object.entries(data.styles)) {
         const selectable = projectState.project.selectables.get(id.split(":"));
@@ -313,6 +313,9 @@ class Commands {
             text: "Generate Example Nodes",
             onClick: action(() => {
               const page = projectState.page;
+              if (!page) {
+                return;
+              }
               generateExampleNodes(page);
               projectState.undoManager.stopCapturing();
             }),
@@ -333,7 +336,7 @@ class Commands {
   }
 
   contextMenuForSelectable(selectable: Selectable): MenuItemDef[] {
-    if (selectable === projectState.rootSelectable) {
+    if (selectable.originalNode.type === "page") {
       return [this.pasteCommand];
     }
 
@@ -364,7 +367,7 @@ class Commands {
         {
           type: "command",
           text: "Delete",
-          disabled: projectState.project.pages.count === 1,
+          // disabled: projectState.project.pages.count === 1,
           onClick: action(() => {
             projectState.deletePageOrPageFolder(file.path);
           }),
@@ -375,7 +378,7 @@ class Commands {
         {
           type: "command",
           text: "Delete",
-          disabled: projectState.project.pages.count === 1,
+          // disabled: projectState.project.pages.count === 1,
           onClick: action(() => {
             projectState.deletePageOrPageFolder(file.path);
           }),

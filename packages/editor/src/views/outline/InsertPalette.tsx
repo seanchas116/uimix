@@ -89,10 +89,14 @@ const ComponentThumbnail: React.FC<{
           const pos = scrollState.documentPosForEvent(e);
 
           const project = projectState.project;
+          const page = projectState.page;
+          if (!page) {
+            return;
+          }
 
           const instanceNode = project.nodes.create("instance");
           instanceNode.name = "Instance";
-          projectState.page.append([instanceNode]);
+          page.append([instanceNode]);
 
           const instanceNodeStyle = instanceNode.selectable.style;
           instanceNodeStyle.position = {
@@ -101,7 +105,7 @@ const ComponentThumbnail: React.FC<{
           };
           instanceNodeStyle.mainComponentID = component.node.id;
 
-          projectState.rootSelectable.deselect();
+          page.selectable.deselect();
           instanceNode.selectable.select();
 
           status.current.creating = true;

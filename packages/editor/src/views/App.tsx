@@ -59,7 +59,9 @@ function useRectUpdateOnFontReload() {
 
 const FontLoader = observer(function FontLoader() {
   return (
-    <FontLoadLink fonts={[...projectState.rootSelectable.usedFontFamilies]} />
+    <FontLoadLink
+      fonts={[...projectState.project.node.selectable.usedFontFamilies]}
+    />
   );
 });
 

@@ -41,8 +41,6 @@ export const Viewport: React.FC = observer(function Viewport() {
     };
   }, []);
 
-  const canvasSelectable = projectState.rootSelectable;
-
   const onWheel = action((e: React.WheelEvent) => {
     if (e.ctrlKey || e.metaKey) {
       const factor = Math.pow(2, -e.deltaY / 100);
@@ -51,12 +49,12 @@ export const Viewport: React.FC = observer(function Viewport() {
       );
       scrollState.zoomAround(pos, scrollState.scale * factor);
 
-      if (!projectState.page.childCount) {
+      if (!projectState.page?.childCount) {
         // No layers in page
         scrollState.translation = new Vec2(0);
       }
     } else {
-      if (!projectState.page.childCount) {
+      if (!projectState.page?.childCount) {
         // No layers in page
         return;
       }
@@ -83,7 +81,7 @@ export const Viewport: React.FC = observer(function Viewport() {
           [viewportRootMarker]: true,
         }}
       >
-        {canvasSelectable.children.map((child) => (
+        {projectState.page?.selectable.children.map((child) => (
           <NodeRenderer key={child.id} selectable={child} />
         ))}
       </div>

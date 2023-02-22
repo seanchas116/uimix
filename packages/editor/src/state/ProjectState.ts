@@ -28,11 +28,12 @@ export class ProjectState {
     });
 
     this.project = new Project(projectData);
-    this.page = this.project.nodes.create("page");
-    this.page.name = "Page 1";
-    this.project.node.append([this.page]);
+    const page = this.project.nodes.create("page");
+    page.name = "Page 1";
+    this.project.node.append([page]);
+    this.pageID = page.id;
     this.undoManager = new Y.UndoManager(projectData);
-    generateExampleNodes(this.page);
+    generateExampleNodes(page);
     makeObservable(this);
 
     void this.load();
@@ -85,28 +86,29 @@ export class ProjectState {
         this.project.loadJSON(projectJSON);
       } else {
         this.project.node.clear();
-        this.page = this.project.nodes.create("page");
-        this.page.name = "Page 1";
-        this.project.node.append([this.page]);
+        const page = this.project.nodes.create("page");
+        page.name = "Page 1";
+        this.project.node.append([page]);
+        this.pageID = page.id;
       }
-      // TODO: preserve current page
-      this.page = this.project.pages.all[0];
     } finally {
       this._loading = false;
     }
   }
 
   readonly project: Project;
-  @observable page: Node;
+  @observable pageID: string | undefined;
+  @computed get page(): Node | undefined {
+    return this.pageID ? this.project.nodes.get(this.pageID) : undefined;
+  }
 
   readonly undoManager: Y.UndoManager;
 
-  @computed get rootSelectable(): Selectable {
-    return this.page.selectable;
-  }
-
   @computed get selectedSelectables(): Selectable[] {
-    return this.rootSelectable.children.flatMap((s) => s.selectedDescendants);
+    return (
+      this.page?.selectable?.children.flatMap((s) => s.selectedDescendants) ??
+      []
+    );
   }
 
   @computed get selectedNodes(): Node[] {
@@ -122,7 +124,7 @@ export class ProjectState {
   readonly collapsedPaths = observable.set<string>();
 
   openPage(page: Node) {
-    this.page = page;
+    this.pageID = page.id;
   }
 
   createPage(name: string) {
@@ -140,15 +142,17 @@ export class ProjectState {
 
   deletePageOrPageFolder(path: string) {
     const affectedPages = this.project.pages.affectedPagesForPath(path);
-    const deletingCurrent = affectedPages.includes(this.page);
+    const deletingCurrent = this.page
+      ? affectedPages.includes(this.page)
+      : false;
 
-    if (this.project.pages.count === affectedPages.length) {
-      return;
-    }
+    // if (this.project.pages.count === affectedPages.length) {
+    //   return;
+    // }
     this.project.pages.deletePageOrPageFolder(path);
 
     if (deletingCurrent) {
-      this.page = this.project.pages.all[0];
+      this.pageID = this.project.pages.all[0]?.id;
     }
 
     this.undoManager.stopCapturing();

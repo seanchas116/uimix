@@ -20,7 +20,7 @@ function clickableAncestor(
       }
     }
   }
-  for (const selectable of projectState.rootSelectable.children) {
+  for (const selectable of projectState.page?.selectable.children ?? []) {
     if (selectable.originalNode.type === "component") {
       for (const child of selectable.children) {
         clickables.add(child);

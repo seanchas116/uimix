@@ -63,7 +63,7 @@ export class NodeAbsoluteMoveDragHandler implements DragHandler {
         }
 
         return true;
-      }) ?? projectState.page.selectable;
+      }) ?? assertNonNull(projectState.page).selectable;
 
     for (const [instance] of this.targets) {
       if (

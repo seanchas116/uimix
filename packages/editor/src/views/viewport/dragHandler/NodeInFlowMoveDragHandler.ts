@@ -7,6 +7,7 @@ import { snapper } from "../../../state/Snapper";
 import { viewportState } from "../../../state/ViewportState";
 import { nodePicker, NodePickResult } from "../renderer/NodePicker";
 import { DragHandler } from "./DragHandler";
+import { assertNonNull } from "../../../utils/Assert";
 
 export class NodeInFlowMoveDragHandler implements DragHandler {
   constructor(overrides: Selectable[], initPos: Vec2) {
@@ -94,7 +95,7 @@ export function findDropDestination(
 
   if (!parent) {
     return {
-      parent: projectState.rootSelectable,
+      parent: assertNonNull(projectState.page).selectable,
     };
   }
 
