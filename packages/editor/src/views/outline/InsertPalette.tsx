@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Component } from "../../models/Component";
 import { projectState } from "../../state/ProjectState";
 import { SearchInput } from "./SearchInput";
-import { NodeRendererForThumbnail } from "../viewport/renderer/NodeRenderer";
+import { NodeRenderer } from "../viewport/renderer/NodeRenderer";
 import { usePointerStroke } from "../../components/hooks/usePointerStroke";
 import { scrollState } from "../../state/ScrollState";
 import { NodeAbsoluteMoveDragHandler } from "../viewport/dragHandler/NodeAbsoluteMoveDragHandler";
@@ -129,13 +129,14 @@ const ComponentThumbnail: React.FC<{
       {...dragProps}
     >
       <ThumbnailResizer>
-        <NodeRendererForThumbnail
+        <NodeRenderer
           selectable={component.rootNode.selectable}
           style={{
             position: "relative",
             left: 0,
             top: 0,
           }}
+          forThumbnail
         />
       </ThumbnailResizer>
       <div className="absolute left-0 bottom-0 right-0 text-center text-macaron-label text-xs p-1 bg-macaron-label/30 text-white opacity-0 group-hover:opacity-100 transition">

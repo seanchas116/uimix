@@ -189,12 +189,18 @@ export class Node {
     }
 
     if (this.type === "page") {
-      const allowed: NodeType[] = ["frame", "text", "component", "instance"];
+      const allowed: NodeType[] = [
+        "frame",
+        "text",
+        "image",
+        "component",
+        "instance",
+      ];
       return allowed.includes(type);
     }
 
     if (this.type === "frame") {
-      const allowed: NodeType[] = ["frame", "text", "instance"];
+      const allowed: NodeType[] = ["frame", "text", "image", "instance"];
       return allowed.includes(type);
     }
 

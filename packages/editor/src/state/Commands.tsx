@@ -136,10 +136,10 @@ class Commands {
     const [fileHandle] = await showOpenFilePicker(imageFilePickerOptions);
     const blob = await fileHandle.getFile();
     const dataURL = await blobToDataURL(blob);
-    const image = await imageFromURL(dataURL);
 
     viewportState.insertMode = {
       type: "image",
+      dataURL: dataURL,
       // TODO: image source
       // source: {
       //   dataURL: dataURL,

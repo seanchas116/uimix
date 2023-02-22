@@ -9,6 +9,7 @@ import rectIcon from "@seanchas116/design-icons/json/rect.json";
 import hStackIcon from "@seanchas116/design-icons/json/h-stack.json";
 import vStackIcon from "@seanchas116/design-icons/json/v-stack.json";
 import textIcon from "@seanchas116/design-icons/json/text.json";
+import imageIcon from "@seanchas116/design-icons/json/image.json";
 import { moveSelectables, Selectable } from "../../models/Selectable";
 import { projectState } from "../../state/ProjectState";
 import { DoubleClickToEdit } from "../../components/DoubleClickToEdit";
@@ -125,6 +126,8 @@ const TreeRow: React.FC<{
       }
       case "text":
         return textIcon;
+      case "image":
+        return imageIcon;
       case "component":
         return widgetsIcon;
       case "instance":

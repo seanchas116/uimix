@@ -44,7 +44,7 @@ export class ProjectState {
 
   private async save() {
     console.log("save");
-    await trpc.save.mutate({ project: this.project.toJSON() });
+    await trpc?.save.mutate({ project: this.project.toJSON() });
   }
 
   @observable private _loading = true;
@@ -54,6 +54,10 @@ export class ProjectState {
   }
 
   private async load() {
+    if (!trpc) {
+      return;
+    }
+
     const project = await trpc.load.query();
     console.log(project);
 

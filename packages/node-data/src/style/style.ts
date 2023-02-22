@@ -48,6 +48,10 @@ export const StyleJSON = z.object({
   textHorizontalAlign: TextHorizontalAlign,
   textVerticalAlign: TextVerticalAlign,
 
+  // image
+
+  imageHash: z.union([z.string(), z.null()]),
+
   // instance
   mainComponentID: z.union([z.string(), z.null()]),
 });

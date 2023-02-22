@@ -10,6 +10,7 @@ import { dragStartThreshold } from "../constants";
 import { NodePickResult } from "../renderer/NodePicker";
 import { DragHandler } from "./DragHandler";
 import { resizeWithBoundingBox } from "../../../services/Resize";
+import { action } from "mobx";
 
 export class NodeInsertDragHandler implements DragHandler {
   constructor(mode: InsertMode, pickResult: NodePickResult) {
@@ -35,12 +36,18 @@ export class NodeInsertDragHandler implements DragHandler {
       this.instance.style.height = { type: "hugContents" };
     } else if (mode.type === "image") {
       // TODO: support image
-      const selectable = parent.append("frame");
+      const selectable = parent.append("image");
       selectable.originalNode.name = "Image";
       this.instance = selectable;
       this.instance.style.fill = Color.from("white").toHex();
       this.instance.style.width = { type: "fixed", value: 100 };
       this.instance.style.height = { type: "fixed", value: 100 };
+      projectState.project.imageManager.insertDataURL(mode.dataURL).then(
+        action((hash) => {
+          console.log(hash);
+          this.instance.style.imageHash = hash;
+        })
+      );
     } else {
       const selectable = parent.append("frame");
       selectable.originalNode.name = "Frame";

@@ -4,6 +4,7 @@ import { Context } from "./context";
 import { observable } from "@trpc/server/observable";
 import { ProjectJSON } from "@uimix/node-data";
 import { ProjectController } from "../controller/ProjectController.js";
+import { ImageEntry } from "../types.js";
 
 export function createAppRouter(options: { projectPath: string }) {
   const t = initTRPC.context<Context>().create();
@@ -42,6 +43,22 @@ export function createAppRouter(options: { projectPath: string }) {
 
     load: t.procedure.query(async (req) => {
       return await projectController.load();
+    }),
+
+    insertImage: t.procedure
+      .input(
+        z.object({
+          entry: ImageEntry,
+        })
+      )
+      .mutation(async (req) => {
+        await projectController.insertImage(req.input.entry);
+      }),
+
+    onImageAdded: t.procedure.subscription(() => {
+      return observable<ImageEntry>((emit) =>
+        projectController.onImageAdded((entry) => emit.next(entry))
+      );
     }),
   });
 }

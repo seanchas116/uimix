@@ -61,6 +61,10 @@ export const defaultStyle: IStyle = {
   textHorizontalAlign: "start",
   textVerticalAlign: "start",
 
+  // image
+
+  imageHash: null,
+
   // instance
   mainComponentID: null,
 };

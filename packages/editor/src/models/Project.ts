@@ -8,6 +8,7 @@ import { Node, NodeMap } from "./Node";
 import { computed, makeObservable } from "mobx";
 import { ProjectJSON } from "@uimix/node-data";
 import { toProjectJSON } from "./toProjectJSON";
+import { ImageManager } from "./ImageManager";
 
 export interface PageHierarchyFolderEntry {
   type: "directory";
@@ -149,6 +150,7 @@ export class Project {
   readonly selectables: SelectableMap;
   readonly node: Node;
   readonly pages: Pages;
+  readonly imageManager = new ImageManager();
 
   toJSON(): ProjectJSON {
     return toProjectJSON(this.node.children.map((c) => c.selectable));

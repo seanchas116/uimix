@@ -1,16 +1,22 @@
 import { createTRPCProxyClient, createWSClient, wsLink } from "@trpc/client";
 import type { AppRouter } from "../../../devserver/src/api/router";
 
-const wsProtocol = location.protocol === "https:" ? "wss" : "ws";
+const isLocalhost = location.hostname === "localhost";
 
-const wsClient = createWSClient({
-  url: `${wsProtocol}://${location.host}/trpc`,
-});
+function createTrpc() {
+  const wsProtocol = location.protocol === "https:" ? "wss" : "ws";
 
-export const trpc = createTRPCProxyClient<AppRouter>({
-  links: [
-    wsLink({
-      client: wsClient,
-    }),
-  ],
-});
+  const wsClient = createWSClient({
+    url: `${wsProtocol}://${location.host}/trpc`,
+  });
+
+  return createTRPCProxyClient<AppRouter>({
+    links: [
+      wsLink({
+        client: wsClient,
+      }),
+    ],
+  });
+}
+
+export const trpc = isLocalhost ? createTrpc() : undefined;
