@@ -57,10 +57,16 @@ class NodeResizeBoxState {
     const newWholeBBox = assertNonNull(Rect.boundingRect([p0, p1])).transform(
       scrollState.viewportToDocument
     );
-    if (newWholeBBox.width !== this.initWholeBoundingBox.width) {
+    if (
+      Math.round(newWholeBBox.width) !==
+      Math.round(this.initWholeBoundingBox.width)
+    ) {
       this.widthChanged = true;
     }
-    if (newWholeBBox.height !== this.initWholeBoundingBox.height) {
+    if (
+      Math.round(newWholeBBox.height) !==
+      Math.round(this.initWholeBoundingBox.height)
+    ) {
       this.heightChanged = true;
     }
     const transform = Transform.rectToRect(
