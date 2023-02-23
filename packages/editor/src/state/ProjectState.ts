@@ -84,6 +84,10 @@ export class ProjectState {
 
       if (Object.keys(projectJSON.nodes).length) {
         this.project.loadJSON(projectJSON);
+        const allPages = this.project.pages.all;
+        if (!allPages.some((p) => p.id === this.pageID)) {
+          this.pageID = allPages[0]?.id;
+        }
       } else {
         this.project.node.clear();
         const page = this.project.nodes.create("page");
