@@ -69,8 +69,6 @@ const PropertyEdit: React.FC<{
   value: unknown;
   onValueChange: (value: unknown) => void;
 }> = ({ prop, value, onValueChange }) => {
-  console.log(prop);
-
   if (prop.type.name === "string" || prop.type.name === "string | undefined") {
     return (
       <Input
