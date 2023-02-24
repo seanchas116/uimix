@@ -11,6 +11,7 @@ import * as url from "url";
 import { createAppRouter, createContext } from "./api/index.js";
 import { createServer as createViteServer } from "vite";
 import { componentsVirtualModulePlugin } from "./docgen.js";
+import react from "@vitejs/plugin-react";
 
 interface ServerOptions {
   port: number;
@@ -43,13 +44,20 @@ export async function startServer(options: ServerOptions) {
     app.use(express.static(path.resolve(__dirname, "static")));
   }
 
+  // TODO: make Vite configurable (like Storybook's viteFinal)
   const vite = await createViteServer({
+    configFile: false,
     root: options.projectPath,
     server: { middlewareMode: true, hmr: false },
     appType: "custom",
     base: "/project/",
-    configFile: path.resolve(options.projectPath, "vite.config.uimix.ts"),
-    plugins: [componentsVirtualModulePlugin(options.projectPath)],
+    plugins: [
+      componentsVirtualModulePlugin(options.projectPath),
+      react({
+        // exclude files from fast refresh
+        exclude: "**/*",
+      }),
+    ],
   });
   app.use(vite.middlewares);
 
