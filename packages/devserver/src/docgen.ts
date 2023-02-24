@@ -61,5 +61,9 @@ export function componentsVirtualModulePlugin(rootDir: string): VitePlugin {
         return content;
       }
     },
+    handleHotUpdate({ server }) {
+      console.log("TODO: handleHotUpdate");
+      return [];
+    },
   };
 }

@@ -48,13 +48,12 @@ export async function startServer(options: ServerOptions) {
   const vite = await createViteServer({
     configFile: false,
     root: options.projectPath,
-    server: { middlewareMode: true, hmr: false },
+    server: { middlewareMode: true },
     appType: "custom",
     base: "/project/",
     plugins: [
       componentsVirtualModulePlugin(options.projectPath),
       react({
-        // exclude files from fast refresh
         exclude: "**/*",
       }),
     ],
