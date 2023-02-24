@@ -3,7 +3,10 @@ import { observer } from "mobx-react-lite";
 import { Component } from "../../models/Component";
 import { projectState } from "../../state/ProjectState";
 import { SearchInput } from "./SearchInput";
-import { NodeRenderer } from "../viewport/renderer/NodeRenderer";
+import {
+  ForeignComponentRenderer,
+  NodeRenderer,
+} from "../viewport/renderer/NodeRenderer";
 import { usePointerStroke } from "../../components/hooks/usePointerStroke";
 import { scrollState } from "../../state/ScrollState";
 import { NodeAbsoluteMoveDragHandler } from "../viewport/dragHandler/NodeAbsoluteMoveDragHandler";
@@ -12,11 +15,67 @@ import { DragHandler } from "../viewport/dragHandler/DragHandler";
 import { Vec2 } from "paintvec";
 import { useResizeObserver } from "../../components/hooks/useResizeObserver";
 import { QueryTester } from "../../utils/QueryTester";
+import {
+  ForeignComponent,
+  ForeignComponentManager,
+} from "../../models/ForeignComponentManager";
+import { IFrame } from "../../components/IFrame";
+import { action, makeObservable, observable } from "mobx";
+import colors from "../../colors";
+import { Color } from "../../utils/Color";
+import { FontLoadLink } from "../../components/FontLoadLink";
+import { FontLoader } from "../viewport/renderer/FontLoader";
+
+class InsertPaletteState {
+  constructor() {
+    makeObservable(this);
+  }
+
+  @observable searchText = "";
+}
+
+const insertPaletteState = new InsertPaletteState();
 
 export const InsertPalette: React.FC = observer(() => {
+  return (
+    <div className="flex flex-col h-full">
+      <SearchInput
+        placeholder="Search"
+        value={insertPaletteState.searchText}
+        onChangeValue={action((value) => {
+          insertPaletteState.searchText = value;
+        })}
+      />
+      <div className="flex-1 relative">
+        <IFrame
+          className="absolute inset-0 w-full h-full"
+          init={(window, iframe) => {
+            const foreignComponentManager = new ForeignComponentManager(window);
+
+            return (
+              <>
+                <FontLoader />
+                <ComponentThumbnails
+                  foreignComponentManager={foreignComponentManager}
+                  iframe={iframe}
+                />
+              </>
+            );
+          }}
+        />
+      </div>
+    </div>
+  );
+});
+
+InsertPalette.displayName = "InsertPalette";
+
+const ComponentThumbnails: React.FC<{
+  foreignComponentManager: ForeignComponentManager;
+  iframe: HTMLIFrameElement;
+}> = observer(({ foreignComponentManager, iframe }) => {
   const pages = projectState.project.pages.all;
-  const [searchText, setSearchText] = useState("");
-  const queryTester = new QueryTester(searchText);
+  const queryTester = new QueryTester(insertPaletteState.searchText);
 
   const sections = compact(
     pages.map((page) => {
@@ -30,12 +89,31 @@ export const InsertPalette: React.FC = observer(() => {
       }
 
       return (
-        <div className="flex flex-col gap-3">
-          <h2 className="text-macaron-base text-macaron-label font-semibold px-0.5">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "12px",
+              lineHeight: "16px",
+              color: colors.label,
+              fontWeight: 500,
+              padding: "0 2px",
+              margin: 0,
+            }}
+          >
             {page.name}
           </h2>
           {components.map((c) => (
-            <ComponentThumbnail component={c} />
+            <ComponentThumbnail
+              component={c}
+              foreignComponentManager={foreignComponentManager}
+              iframe={iframe}
+            />
           ))}
         </div>
       );
@@ -43,31 +121,53 @@ export const InsertPalette: React.FC = observer(() => {
   );
 
   return (
-    <div className="">
-      <SearchInput
-        placeholder="Search"
-        value={searchText}
-        onChangeValue={setSearchText}
-      />
-
-      <div className="flex flex-col p-3 gap-4">
-        {sections.length ? (
-          sections
-        ) : (
-          <div className="text-macaron-disabledText text-center">
-            No components in the project
-          </div>
-        )}
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+        padding: "12px",
+        fontFamily: `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
+        userSelect: "none",
+      }}
+    >
+      {sections}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "12px",
+        }}
+      >
+        <h2
+          style={{
+            fontSize: "12px",
+            lineHeight: "16px",
+            color: colors.label,
+            fontWeight: 500,
+            padding: "0 2px",
+            margin: 0,
+          }}
+        >
+          React Components
+        </h2>
+        {[...foreignComponentManager.components.values()].map((c) => (
+          <ComponentThumbnail
+            component={c}
+            foreignComponentManager={foreignComponentManager}
+            iframe={iframe}
+          />
+        ))}
       </div>
     </div>
   );
 });
 
-InsertPalette.displayName = "InsertPalette";
-
 const ComponentThumbnail: React.FC<{
-  component: Component;
-}> = observer(({ component }) => {
+  component: Component | ForeignComponent;
+  foreignComponentManager: ForeignComponentManager;
+  iframe: HTMLIFrameElement;
+}> = observer(({ component, foreignComponentManager, iframe }) => {
   const status = useRef<{
     dragHandler: DragHandler | undefined;
     creating: boolean;
@@ -81,12 +181,25 @@ const ComponentThumbnail: React.FC<{
       status.current.creating = false;
     },
     onMove: (e, {}) => {
+      const clientX = e.clientX + iframe.getBoundingClientRect().left;
+      const clientY = e.clientY + iframe.getBoundingClientRect().top;
+
+      const proxiedEvent = new Proxy(e.nativeEvent, {
+        get(target, property) {
+          if (property === "clientX") return clientX;
+          if (property === "clientY") return clientY;
+
+          // @ts-ignore
+          return target[property];
+        },
+      });
+
       if (!status.current.dragHandler && !status.current.creating) {
         const isInViewport = scrollState.viewportDOMClientRect.includes(
-          new Vec2(e.clientX, e.clientY)
+          new Vec2(clientX, clientY)
         );
         if (isInViewport) {
-          const pos = scrollState.documentPosForEvent(e);
+          const pos = scrollState.documentPosForEvent(proxiedEvent);
 
           const project = projectState.project;
           const page = projectState.page;
@@ -94,8 +207,9 @@ const ComponentThumbnail: React.FC<{
             return;
           }
 
-          const instanceNode = project.nodes.create("instance");
-          instanceNode.name = "Instance";
+          const instanceNode = project.nodes.create(
+            component instanceof Component ? "instance" : "foreign"
+          );
           page.append([instanceNode]);
 
           const instanceNodeStyle = instanceNode.selectable.style;
@@ -103,7 +217,27 @@ const ComponentThumbnail: React.FC<{
             x: { type: "start", start: pos.x },
             y: { type: "start", start: pos.y },
           };
-          instanceNodeStyle.mainComponentID = component.node.id;
+          // TODO: exotic component
+          if (component instanceof Component) {
+            instanceNodeStyle.mainComponentID = component.node.id;
+            instanceNode.name = component.node.name;
+          } else {
+            instanceNodeStyle.foreignComponentID = {
+              type: "react",
+              path: component.path,
+              name: component.name,
+              props: {
+                label: "Button",
+              },
+            };
+            instanceNodeStyle.width = {
+              type: "hugContents",
+            };
+            instanceNodeStyle.height = {
+              type: "hugContents",
+            };
+            instanceNode.name = component.name;
+          }
 
           page.selectable.deselect();
           instanceNode.selectable.select();
@@ -114,10 +248,10 @@ const ComponentThumbnail: React.FC<{
               [instanceNode.selectable],
               pos
             );
-          }, 0);
+          }, 100); // TODO: avoid magic number
         }
       }
-      status.current.dragHandler?.move(e.nativeEvent);
+      status.current.dragHandler?.move(proxiedEvent);
     },
     onEnd: (e) => {
       if (status.current.dragHandler) {
@@ -127,24 +261,69 @@ const ComponentThumbnail: React.FC<{
     },
   });
 
+  const [hover, setHover] = useState(false);
+
   return (
     <div
-      className="p-2 bg-macaron-uiBackground border border-macaron-separator rounded relative cursor-copy group overflow-hidden"
+      style={{
+        padding: "8px",
+        backgroundColor: colors.uiBackground,
+        border: `1px solid ${colors.separator}`,
+        borderRadius: "4px",
+        position: "relative",
+        cursor: "copy",
+        overflow: "hidden",
+      }}
       {...dragProps}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
     >
       <ThumbnailResizer>
-        <NodeRenderer
-          selectable={component.rootNode.selectable}
-          style={{
-            position: "relative",
-            left: 0,
-            top: 0,
-          }}
-          forThumbnail
-        />
+        {component instanceof Component ? (
+          <NodeRenderer
+            selectable={component.rootNode.selectable}
+            style={{
+              position: "relative",
+              left: 0,
+              top: 0,
+            }}
+            foreignComponentManager={foreignComponentManager}
+            forThumbnail
+          />
+        ) : (
+          <div
+            style={{
+              width: "max-content",
+              height: "max-content",
+            }}
+          >
+            <ForeignComponentRenderer
+              component={component}
+              manager={foreignComponentManager}
+              props={{}}
+            />
+          </div>
+        )}
       </ThumbnailResizer>
-      <div className="absolute left-0 bottom-0 right-0 text-center text-macaron-label text-xs p-1 bg-macaron-label/30 text-white opacity-0 group-hover:opacity-100 transition">
-        {component.node.name}
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          bottom: 0,
+          right: 0,
+          textAlign: "center",
+          color: colors.label,
+          fontSize: "12px",
+          lineHeight: "16px",
+          padding: "4px",
+          backgroundColor: Color.from(colors.label)?.withAlpha(0.3).toString(),
+          opacity: hover ? 1 : 0,
+          transition: "opacity 0.2s",
+        }}
+      >
+        {component instanceof Component
+          ? component.node.name
+          : `${component.path} - ${component.name}`}
       </div>
     </div>
   );
@@ -159,7 +338,13 @@ const ThumbnailResizer: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const scale = Math.min(wrapperSize[0] / contentSize[0], 1);
 
   return (
-    <div className="w-full pointer-events-none" ref={wrapperRef}>
+    <div
+      style={{
+        width: "100%",
+        pointerEvents: "none",
+      }}
+      ref={wrapperRef}
+    >
       <div
         style={{
           transform: `scale(${scale})`,
@@ -167,7 +352,14 @@ const ThumbnailResizer: React.FC<{ children?: ReactNode }> = ({ children }) => {
           height: contentSize[1] * scale + "px",
         }}
       >
-        <div className="w-fit h-fit absolute" ref={contentRef}>
+        <div
+          style={{
+            width: "fit-content",
+            height: "fit-content",
+            position: "absolute",
+          }}
+          ref={contentRef}
+        >
           {children}
         </div>
       </div>

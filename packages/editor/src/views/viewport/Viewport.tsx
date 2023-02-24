@@ -4,13 +4,12 @@ import { Rect, Vec2 } from "paintvec";
 import { createRef, useEffect } from "react";
 import { projectState } from "../../state/ProjectState";
 import { scrollState } from "../../state/ScrollState";
-import { NodeRenderer } from "./renderer/NodeRenderer";
-import { viewportRootMarker } from "./renderer/ComputedRectProvider";
 import { PanOverlay } from "./PanOverlay";
 import { DragHandlerOverlay } from "./dragHandler/DragHandlerOverlay";
 import { Indicators } from "./indicator/Indicators";
 import { TextEditor } from "./TextEditor";
 import { ComponentSections, VariantLabels } from "./VariantLabels";
+import { RenderIFrame } from "./renderer/RenderIFrame";
 
 export const Viewport: React.FC = observer(function Viewport() {
   const ref = createRef<HTMLDivElement>();
@@ -71,20 +70,7 @@ export const Viewport: React.FC = observer(function Viewport() {
       onWheel={onWheel}
     >
       <ComponentSections />
-      <div
-        style={{
-          position: "absolute",
-          transformOrigin: "left top",
-          transform: scrollState.documentToViewport.toCSSMatrixString(),
-        }}
-        {...{
-          [viewportRootMarker]: true,
-        }}
-      >
-        {projectState.page?.selectable.children.map((child) => (
-          <NodeRenderer key={child.id} selectable={child} />
-        ))}
-      </div>
+      <RenderIFrame />
       <DragHandlerOverlay />
       <VariantLabels />
       <Indicators />

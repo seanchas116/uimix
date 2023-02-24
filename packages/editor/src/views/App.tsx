@@ -8,8 +8,7 @@ import { ContextMenu } from "./ContextMenu";
 import { commands } from "../state/Commands";
 import { action } from "mobx";
 import { OutlineSideBar } from "./outline/OutlineSideBar";
-import { FontLoadLink } from "../components/FontLoadLink";
-import { projectState } from "../state/ProjectState";
+import { FontLoader } from "./viewport/renderer/FontLoader";
 
 function useKeyHandling() {
   useEffect(() => {
@@ -44,32 +43,9 @@ function useKeyHandling() {
 //   }, []);
 // }
 
-function useRectUpdateOnFontReload() {
-  useEffect(() => {
-    const onFontsLoaded = action(() => {
-      for (const selected of projectState.selectedSelectables) {
-        selected.computedRectProvider?.markDirty();
-      }
-    });
-    document.fonts.addEventListener("loadingdone", onFontsLoaded);
-    return () =>
-      document.fonts.removeEventListener("loadingdone", onFontsLoaded);
-  }, []);
-}
-
-const FontLoader = observer(function FontLoader() {
-  return (
-    <FontLoadLink
-      fonts={[...projectState.project.node.selectable.usedFontFamilies]}
-    />
-  );
-});
-
 export const App = observer(function App() {
   useKeyHandling();
   //useWindowTitle();
-
-  useRectUpdateOnFontReload();
 
   return (
     <TooltipProvider>

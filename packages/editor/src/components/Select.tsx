@@ -34,7 +34,7 @@ export function Select<T extends string>({
       trigger={
         <RadixSelect.Trigger
           className={twMerge(
-            "relative outline-0 h-6 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-macaron-base text-macaron-text placeholder:text-macaron-disabledText flex items-center justify-between",
+            "relative outline-0 h-7 bg-macaron-uiBackground rounded focus:ring-1 ring-inset ring-macaron-active text-macaron-text text-macaron-base text-macaron-text placeholder:text-macaron-disabledText flex items-center justify-between",
             className
           )}
         >
@@ -53,7 +53,7 @@ const SelectItem: React.FC<{ option: SelectOption<string> }> = React.memo(
     return (
       <RadixSelect.Item
         value={option.value}
-        className="pl-4 relative h-6 flex items-center outline-0 text-macaron-text [&[data-highlighted]]:bg-macaron-active [&[data-highlighted]]:text-macaron-activeText"
+        className="pl-4 relative h-7 flex items-center outline-0 text-macaron-text [&[data-highlighted]]:bg-macaron-active [&[data-highlighted]]:text-macaron-activeText"
       >
         <RadixSelect.ItemIndicator className="absolute left-1.5">
           <Icon icon={checkIcon} className="text-xs opacity-60" />

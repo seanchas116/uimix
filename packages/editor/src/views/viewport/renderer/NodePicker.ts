@@ -44,8 +44,18 @@ function clickableAncestor(
 }
 
 export class NodePicker {
+  document: Document | undefined;
+
   private instancesFromPoint(clientX: number, clientY: number): Selectable[] {
-    const doms = document.elementsFromPoint(clientX, clientY);
+    if (!this.document) {
+      return [];
+    }
+
+    const doms = this.document.elementsFromPoint(
+      clientX - scrollState.viewportDOMClientRect.left,
+      clientY - scrollState.viewportDOMClientRect.top
+    );
+
     return [
       ...compact(doms.map((dom) => selectableForDOM.get(dom as HTMLElement))),
     ];

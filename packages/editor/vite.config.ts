@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
                 target: "ws://localhost:4000",
                 ws: true,
               },
+              "/project": "http://localhost:4000",
             },
           }
         : {}),

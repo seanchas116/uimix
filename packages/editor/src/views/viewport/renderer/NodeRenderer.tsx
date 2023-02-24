@@ -1,11 +1,16 @@
 import { observer } from "mobx-react-lite";
 import { StackDirection } from "@uimix/node-data";
-import React, { createRef, useEffect } from "react";
+import React, { createRef, useEffect, useRef, useState } from "react";
 import { Selectable } from "../../../models/Selectable";
 import { viewportState } from "../../../state/ViewportState";
 import { buildNodeCSS } from "./buildNodeCSS";
 import { ComputedRectProvider } from "./ComputedRectProvider";
 import { projectState } from "../../../state/ProjectState";
+import {
+  ForeignComponent,
+  ForeignComponentManager,
+} from "../../../models/ForeignComponentManager";
+import { EventEmitter } from "../../../utils/EventEmitter";
 
 export const selectableForDOM = new WeakMap<HTMLElement, Selectable>();
 export const domForSelectable = new WeakMap<Selectable, HTMLElement>();
@@ -35,17 +40,22 @@ export const NodeRenderer: React.FC<{
   parentStackDirection?: StackDirection;
   forThumbnail?: boolean; // must not be changed after mount
   style?: React.CSSProperties;
+  foreignComponentManager: ForeignComponentManager;
 }> = observer(
   ({
     selectable,
     parentStackDirection,
     forThumbnail,
     style: additionalCSSStyle,
+    foreignComponentManager,
   }) => {
+    const node = selectable.node;
     const style = selectable.style;
     const type = selectable.node.type;
 
-    const cssStyle = {
+    const cssStyle: React.CSSProperties = {
+      all: "revert",
+      boxSizing: "border-box",
       ...buildNodeCSS(type, style, parentStackDirection),
       ...(selectable === viewportState.focusedSelectable
         ? {
@@ -134,7 +144,7 @@ export const NodeRenderer: React.FC<{
     //   );
     // }
 
-    if (selectable.node.type === "image") {
+    if (node.type === "image") {
       const hash = style.imageHash;
       const dataURL = hash
         ? projectState.project.imageManager.get(hash)?.dataURL
@@ -142,14 +152,36 @@ export const NodeRenderer: React.FC<{
       return (
         <img
           style={{
-            maxWidth: "unset",
-            height: "unset",
-            objectFit: "cover", // TODO: make configurable
             ...cssStyle,
+            objectFit: "cover", // TODO: make configurable
           }}
           ref={ref as React.RefObject<HTMLImageElement>}
           src={dataURL}
         />
+      );
+    }
+
+    if (node.type === "foreign") {
+      const foreignComponentID = style.foreignComponentID;
+      const foreignComponent = foreignComponentID
+        ? foreignComponentManager?.get(foreignComponentID)
+        : undefined;
+      return (
+        <div style={cssStyle} ref={ref}>
+          {foreignComponent && (
+            <ForeignComponentRenderer
+              manager={foreignComponentManager}
+              component={foreignComponent}
+              onRenderFinish={() => {
+                if (!forThumbnail) {
+                  computedRectUpdater.add(selectable);
+                  computedRectUpdater.flush();
+                }
+              }}
+              props={foreignComponentID?.props ?? {}}
+            />
+          )}
+        </div>
       );
     }
 
@@ -163,9 +195,76 @@ export const NodeRenderer: React.FC<{
                 selectable={child}
                 parentStackDirection={stackDirection}
                 forThumbnail={forThumbnail}
+                foreignComponentManager={foreignComponentManager}
               />
             ))}
       </div>
     );
   }
 );
+
+export const ForeignComponentRenderer: React.FC<{
+  component: ForeignComponent;
+  manager: ForeignComponentManager;
+  onRenderFinish?: () => void;
+  props: Record<string, unknown>;
+}> = observer(({ component, manager, onRenderFinish, props }) => {
+  // TODO: reduce DOM nesting
+
+  const ref = createRef<HTMLDivElement>();
+  const onRenderFinishRef = useRef(onRenderFinish);
+  onRenderFinishRef.current = onRenderFinish;
+
+  const [propsChanged] = useState(
+    () => new EventEmitter<Record<string, unknown>>()
+  );
+  propsChanged.emit(props);
+
+  const { React, ReactDOM } = manager;
+
+  useEffect(() => {
+    const elem = ref.current;
+    if (!elem) return;
+
+    if (!React || !ReactDOM) return;
+
+    const RootComponent = () => {
+      const [_props, _setProps] = React.useState(props);
+      React.useEffect(() => {
+        return propsChanged.event((newProps) => {
+          _setProps(newProps);
+        });
+      }, []);
+
+      return React.createElement(
+        "div",
+        {
+          style: {
+            display: "contents",
+          },
+          ref: () => {
+            onRenderFinishRef.current?.();
+          },
+        },
+        React.createElement(component.component, _props)
+      );
+    };
+
+    const reactRoot = ReactDOM.createRoot(elem);
+    reactRoot.render(React.createElement(RootComponent));
+
+    return () => {
+      onRenderFinishRef.current = undefined;
+      reactRoot.unmount();
+    };
+  }, [React, ReactDOM]);
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        display: "contents",
+      }}
+    />
+  );
+});

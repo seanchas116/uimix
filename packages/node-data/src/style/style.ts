@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ForeignComponentRef } from "./value/instance.js";
 import { PositionConstraint } from "./value/position.js";
 import { SizeConstraint } from "./value/size.js";
 import { StackAlign, StackDirection, StackJustify } from "./value/stack.js";
@@ -54,6 +55,9 @@ export const StyleJSON = z.object({
 
   // instance
   mainComponentID: z.union([z.string(), z.null()]),
+
+  // foreign
+  foreignComponentID: z.union([ForeignComponentRef, z.null()]),
 });
 
 export type StyleJSON = z.infer<typeof StyleJSON>;

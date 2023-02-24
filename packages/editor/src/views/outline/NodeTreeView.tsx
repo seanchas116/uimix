@@ -103,6 +103,7 @@ const TreeRow: React.FC<{
   const isComponent = selectable.node.type === "component";
 
   const isInstance = selectable.originalNode.type === "instance";
+  const isForeignInstance = selectable.originalNode.type === "foreign";
   const isInsideInstance = selectable.idPath.length >= 2;
 
   const icon = (() => {
@@ -132,6 +133,8 @@ const TreeRow: React.FC<{
         return widgetsIcon;
       case "instance":
         return outlineWidgetsIcon;
+      case "foreign":
+        return "material-symbols:code";
     }
   })();
 
@@ -207,6 +210,7 @@ const TreeRow: React.FC<{
                 (isComponent || isInstance) &&
                   !selected &&
                   "text-macaron-component opacity-100",
+                isForeignInstance && !selected && "text-pink-500 opacity-100",
                 selected && "opacity-100"
               )}
               icon={icon}

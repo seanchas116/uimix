@@ -195,12 +195,19 @@ export class Node {
         "image",
         "component",
         "instance",
+        "foreign",
       ];
       return allowed.includes(type);
     }
 
     if (this.type === "frame") {
-      const allowed: NodeType[] = ["frame", "text", "image", "instance"];
+      const allowed: NodeType[] = [
+        "frame",
+        "text",
+        "image",
+        "instance",
+        "foreign",
+      ];
       return allowed.includes(type);
     }
 

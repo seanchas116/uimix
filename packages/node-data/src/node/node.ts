@@ -9,6 +9,7 @@ export const NodeType = z.enum([
   "component",
   "variant",
   "instance",
+  "foreign",
 ]);
 
 export type NodeType = z.infer<typeof NodeType>;
