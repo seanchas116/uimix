@@ -215,6 +215,9 @@ const TreeRow: React.FC<{
               )}
               icon={icon}
             />
+            <span className="text-[10px] uppercase text-bold opacity-40 mr-1">
+              {selectable.style.tagName}
+            </span>
             <DoubleClickToEdit
               className={twMerge(
                 "flex-1 h-full",

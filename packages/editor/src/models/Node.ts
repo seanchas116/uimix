@@ -7,6 +7,7 @@ import { generateID } from "../utils/ID";
 import { computed, makeObservable } from "mobx";
 import { Project } from "./Project";
 import { Selectable } from "./Selectable";
+import { Component } from "./Component";
 
 interface NodeKey {
   index: number;
@@ -296,9 +297,9 @@ export class Node {
     return this.parent?.type === "component" && this.type === "variant";
   }
 
-  get ownerComponent(): Node | undefined {
+  get ownerComponent(): Component | undefined {
     if (this.type === "component") {
-      return this;
+      return Component.from(this);
     }
     return this.parent?.ownerComponent;
   }

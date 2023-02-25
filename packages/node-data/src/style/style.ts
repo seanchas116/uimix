@@ -58,6 +58,9 @@ export const StyleJSON = z.object({
 
   // foreign
   foreignComponentID: z.union([ForeignComponentRef, z.null()]),
+
+  // tag name
+  tagName: z.union([z.string(), z.null()]),
 });
 
 export type StyleJSON = z.infer<typeof StyleJSON>;

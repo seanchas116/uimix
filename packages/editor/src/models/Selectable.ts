@@ -172,7 +172,7 @@ export class Selectable {
       const { mainComponentID } = this.originalStyle;
       if (mainComponentID) {
         const ownerComponents = this.nodePath.map(
-          (node) => node.ownerComponent
+          (node) => node.ownerComponent?.node
         );
 
         const mainComponentNode = this.project.nodes.get(mainComponentID);
@@ -329,6 +329,15 @@ export class Selectable {
       }
     }
     return result;
+  }
+
+  @computed get refID(): string | undefined {
+    const ownerComponent = this.originalNode.ownerComponent;
+    if (!ownerComponent || ownerComponent.rootNode === this.originalNode) {
+      return undefined;
+    }
+
+    return ownerComponent.refIDs.get(this.originalNode.id);
   }
 }
 

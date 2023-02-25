@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { getIncrementalUniqueName, incrementAlphanumeric } from "./Name";
+import {
+  generateJSIdentifier,
+  getIncrementalUniqueName,
+  incrementAlphanumeric,
+} from "./Name";
 
 describe(incrementAlphanumeric.name, () => {
   it("add 0 if given string does not include number", () => {
@@ -24,5 +28,26 @@ describe(getIncrementalUniqueName.name, () => {
     expect(getIncrementalUniqueName(existings, "foo")).toEqual("foo1");
     expect(getIncrementalUniqueName(existings, "bar1")).toEqual("bar3");
     expect(getIncrementalUniqueName(existings, "bar2")).toEqual("bar3");
+  });
+});
+
+describe(generateJSIdentifier.name, () => {
+  it("replaces non-alphanumeric characters with underscore", () => {
+    expect(generateJSIdentifier("foo-bar")).toEqual("foo_bar");
+    expect(generateJSIdentifier("foo-bar-baz")).toEqual("foo_bar_baz");
+    expect(generateJSIdentifier("foo-あいうえお-bar-baz")).toEqual(
+      "foo_______bar_baz"
+    );
+  });
+  it("prepends underscore prefix if the first character is a number", () => {
+    expect(generateJSIdentifier("1foo")).toEqual("_1foo");
+    expect(generateJSIdentifier("1foo-bar")).toEqual("_1foo_bar");
+  });
+  it("appends underscore prefix if the name is a reserved word", () => {
+    expect(generateJSIdentifier("do")).toEqual("do_");
+    expect(generateJSIdentifier("if")).toEqual("if_");
+  });
+  it("generates a single underscore if the name is empty", () => {
+    expect(generateJSIdentifier("")).toEqual("_");
   });
 });

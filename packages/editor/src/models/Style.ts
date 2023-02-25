@@ -70,6 +70,9 @@ export const defaultStyle: IStyle = {
 
   // foreign instance
   foreignComponentID: null,
+
+  // element
+  tagName: null,
 };
 
 export class PartialStyle implements Partial<IStyle> {

@@ -34,31 +34,34 @@ export const PropertyPane: React.FC = observer(function PropertyPane() {
         text={component?.name ?? "Properties"}
       />
       <InspectorTargetContext.Provider value={selectables}>
-        {Object.entries(component?.props ?? {}).map(([key, value]) => {
-          return (
-            <div className="flex flex-col gap-1" key={key}>
-              <div>{key}</div>
-              <PropertyEdit
-                prop={value}
-                value={componentID?.props?.[key]}
-                onValueChange={action((value) => {
-                  const oldComponentID = selectable.style.foreignComponentID;
-                  if (!oldComponentID) {
-                    return;
-                  }
-                  const componentID: ForeignComponentRef = {
-                    ...oldComponentID,
-                    props: {
-                      ...oldComponentID.props,
-                      [key]: value,
-                    },
-                  };
-                  selectable.style.foreignComponentID = componentID;
-                })}
-              />
-            </div>
-          );
-        })}
+        <div className="grid grid-cols-3 gap-2 items-center">
+          {Object.entries(component?.props ?? {}).map(([key, value]) => {
+            return (
+              <>
+                <label className="text-macaron-label">{key}</label>
+                <PropertyEdit
+                  className="col-span-2"
+                  prop={value}
+                  value={componentID?.props?.[key]}
+                  onValueChange={action((value) => {
+                    const oldComponentID = selectable.style.foreignComponentID;
+                    if (!oldComponentID) {
+                      return;
+                    }
+                    const componentID: ForeignComponentRef = {
+                      ...oldComponentID,
+                      props: {
+                        ...oldComponentID.props,
+                        [key]: value,
+                      },
+                    };
+                    selectable.style.foreignComponentID = componentID;
+                  })}
+                />
+              </>
+            );
+          })}
+        </div>
       </InspectorTargetContext.Provider>
     </InspectorPane>
   );
@@ -67,11 +70,13 @@ export const PropertyPane: React.FC = observer(function PropertyPane() {
 const PropertyEdit: React.FC<{
   prop: docgen.PropItem;
   value: unknown;
+  className?: string;
   onValueChange: (value: unknown) => void;
-}> = ({ prop, value, onValueChange }) => {
+}> = ({ prop, value, className, onValueChange }) => {
   if (prop.type.name === "string" || prop.type.name === "string | undefined") {
     return (
       <Input
+        className={className}
         value={value ? String(value) : ""}
         onChange={(value) => onValueChange(value)}
       />
@@ -89,6 +94,7 @@ const PropertyEdit: React.FC<{
     // );
     return (
       <Select
+        className={className}
         options={[
           { value: "", text: "" },
           { value: "false", text: "false" },
@@ -106,6 +112,7 @@ const PropertyEdit: React.FC<{
   if (prop.type.name === "enum" || prop.type.name === "enum") {
     return (
       <Select
+        className={className}
         options={prop.type.value.map(({ value }: { value: string }) => {
           try {
             const rawValue = JSON.parse(value);
