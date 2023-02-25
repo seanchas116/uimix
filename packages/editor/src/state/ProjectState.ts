@@ -76,6 +76,17 @@ export class ProjectState {
         console.error("error", err);
       },
     });
+
+    trpc.onImageAdded.subscribe(undefined, {
+      onData: async (entry) => {
+        await this.project.imageManager.onServerImageAdded(entry);
+      },
+    });
+    this.project.imageManager.insertServerImage = async (entry) => {
+      await trpc?.insertImage.mutate({
+        entry,
+      });
+    };
   }
 
   loadJSON(projectJSON: ProjectJSON) {

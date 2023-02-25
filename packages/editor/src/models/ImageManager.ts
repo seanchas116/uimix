@@ -1,6 +1,5 @@
 import { imageFromURL } from "../utils/Blob";
 import { Buffer } from "buffer";
-import { trpc } from "../state/trpc";
 import { encode } from "url-safe-base64";
 import { observable } from "mobx";
 
@@ -10,21 +9,24 @@ interface Image {
   dataURL: string;
 }
 
+interface ServerImageEntry {
+  hash: string;
+  dataURL: string;
+}
+
 export class ImageManager {
   readonly images = observable.map<string, Image>();
 
-  constructor() {
-    trpc?.onImageAdded.subscribe(undefined, {
-      onData: async (entry) => {
-        const img = await imageFromURL(entry.dataURL);
-        this.images.set(entry.hash, {
-          width: img.width,
-          height: img.height,
-          dataURL: entry.dataURL,
-        });
-      },
+  async onServerImageAdded(entry: ServerImageEntry) {
+    const img = await imageFromURL(entry.dataURL);
+    this.images.set(entry.hash, {
+      width: img.width,
+      height: img.height,
+      dataURL: entry.dataURL,
     });
   }
+
+  insertServerImage?: (entry: ServerImageEntry) => Promise<void>;
 
   // TODO: load images from server
 
@@ -38,11 +40,9 @@ export class ImageManager {
 
     const img = await imageFromURL(dataURL);
 
-    await trpc?.insertImage.mutate({
-      entry: {
-        hash: hashBase64,
-        dataURL,
-      },
+    await this.insertServerImage?.({
+      hash: hashBase64,
+      dataURL,
     });
 
     this.images.set(hashBase64, {
