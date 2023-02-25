@@ -9,6 +9,7 @@ import { Input } from "../../../components/Input";
 import { Select } from "../../../components/Select";
 import { ForeignComponentRef } from "@uimix/node-data";
 import { action } from "mobx";
+import { Tooltip } from "../../../components/Tooltip";
 
 export const PropertyPane: React.FC = observer(function PropertyPane() {
   const selectables = projectState.selectedSelectables.filter(
@@ -38,7 +39,11 @@ export const PropertyPane: React.FC = observer(function PropertyPane() {
           {Object.entries(component?.props ?? {}).map(([key, value]) => {
             return (
               <>
-                <label className="text-macaron-label">{key}</label>
+                <Tooltip text={key}>
+                  <label className="text-macaron-label text-ellipsis overflow-hidden">
+                    {key}
+                  </label>
+                </Tooltip>
                 <PropertyEdit
                   className="col-span-2"
                   prop={value}
