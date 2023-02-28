@@ -27,7 +27,8 @@
     "build:esbuild": "node build.cjs",
     "build:tsc": "tsc",
     "dev": "nodemon --watch './src/**/*.ts' -e ts,tsx,json --exec 'ts-node-esm src/cli.ts ../sandbox'",
-    "start": "node dist/cli.js ../sandbox"
+    "start": "node dist/cli.js ../sandbox",
+    "test": "vitest"
   },
   "dependencies": {
     "@trpc/server": "^10.12.0",
@@ -57,6 +58,7 @@
     "@types/prettier": "^2.7.2",
     "@types/ws": "^8.5.4",
     "@uimix/node-data": "workspace:*",
+    "@uimix/render": "workspace:*",
     "esbuild": "^0.17.10",
     "esbuild-node-externals": "^1.6.0",
     "esbuild-register": "^3.4.2",
@@ -64,6 +66,7 @@
     "run-z": "^1.11.0",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "vitest": "^0.28.5"
   }
 }

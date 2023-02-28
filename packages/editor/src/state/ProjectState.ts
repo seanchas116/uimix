@@ -6,13 +6,13 @@ import {
   runInAction,
 } from "mobx";
 import * as Y from "yjs";
+import { debounce } from "lodash-es";
+import { ProjectJSON } from "@uimix/node-data";
+import { getIncrementalUniqueName } from "@uimix/render";
 import { Project } from "../models/Project";
 import { Selectable } from "../models/Selectable";
 import { generateExampleNodes } from "../models/generateExampleNodes";
-import { getIncrementalUniqueName } from "../utils/Name";
 import { trpc } from "./trpc";
-import { debounce } from "lodash-es";
-import { ProjectJSON } from "@uimix/node-data";
 import { Node } from "../models/Node";
 
 export class ProjectState {

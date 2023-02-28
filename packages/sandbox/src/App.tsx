@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import "./App.css";
+import { Button, Page } from "./uimix";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <div className="App">
@@ -27,8 +28,23 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <Button
+        overrides={{
+          text: {
+            children: "Hello, world!",
+          },
+        }}
+        onClick={() => setCount((count) => count + 1)}
+      />
+      <Page
+        overrides={{
+          button: {
+            onClick: () => setCount((count) => count + 1),
+          },
+        }}
+      />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

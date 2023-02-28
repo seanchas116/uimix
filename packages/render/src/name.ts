@@ -85,3 +85,39 @@ export function generateJSIdentifier(name: string): string {
   }
   return result;
 }
+
+interface NodeLike {
+  name?: string;
+  id: string;
+  children: NodeLike[];
+}
+
+/**
+ * Generates human-readable ref IDs for each node in the tree.
+ * @returns a map from node ID to ref ID
+ */
+export function generateRefIDs(rootNode: NodeLike): Map<string, string> {
+  const refIDs = new Map<string, string>();
+  const generatedRefIDs = new Set<string>();
+
+  const visit = (node: NodeLike) => {
+    const refID = getIncrementalUniqueName(
+      generatedRefIDs,
+      lowerFirst(generateJSIdentifier(node.name ?? ""))
+    );
+    generatedRefIDs.add(refID);
+    refIDs.set(node.id, refID);
+
+    node.children.forEach(visit);
+  };
+
+  for (const child of rootNode.children) {
+    visit(child);
+  }
+
+  return refIDs;
+}
+
+function lowerFirst(str: string) {
+  return str.charAt(0).toLowerCase() + str.slice(1);
+}

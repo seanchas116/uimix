@@ -15,6 +15,7 @@ importers:
       '@types/prettier': ^2.7.2
       '@types/ws': ^8.5.4
       '@uimix/node-data': workspace:*
+      '@uimix/render': workspace:*
       '@vitejs/plugin-react': ^3.1.0
       cac: ^6.7.14
       chokidar: ^3.5.3
@@ -38,6 +39,7 @@ importers:
       ts-node-dev: ^2.0.0
       typescript: ^4.9.5
       vite: ^4.1.4
+      vitest: ^0.28.5
       ws: ^8.12.1
       zod: ^3.20.6
     dependencies:
@@ -67,6 +69,7 @@ importers:
       '@types/prettier': 2.7.2
       '@types/ws': 8.5.4
       '@uimix/node-data': link:../node-data
+      '@uimix/render': link:../render
       esbuild: 0.17.10
       esbuild-node-externals: 1.6.0_esbuild@0.17.10
       esbuild-register: 3.4.2_esbuild@0.17.10
@@ -75,6 +78,7 @@ importers:
       ts-node: 10.9.1_typescript@4.9.5
       ts-node-dev: 2.0.0_typescript@4.9.5
       typescript: 4.9.5
+      vitest: 0.28.5
 
   packages/editor:
     specifiers:
@@ -115,6 +119,7 @@ importers:
       '@typescript-eslint/eslint-plugin': ^5.53.0
       '@typescript-eslint/parser': ^5.53.0
       '@uimix/node-data': workspace:*
+      '@uimix/render': workspace:*
       '@vitejs/plugin-react': ^3.1.0
       any-base: ^1.1.0
       ariakit: 2.0.0-next.43
@@ -144,6 +149,7 @@ importers:
       react-draggable-tree: ^0.7.0
       react-merge-refs: ^2.0.1
       react-sortablejs: ^6.1.4
+      run-z: ^1.11.0
       slate: ^0.91.4
       slate-react: ^0.91.5
       sortablejs: ^1.15.0
@@ -175,6 +181,7 @@ importers:
       '@thoughtbot/tailwindcss-aria-attributes': 0.2.0
       '@trpc/client': 10.12.0
       '@uimix/node-data': link:../node-data
+      '@uimix/render': link:../render
       any-base: 1.1.0
       ariakit: 2.0.0-next.43_zula6vjvt3wdocc4mwcxqa6nzi
       buffer: 6.0.3
@@ -236,6 +243,7 @@ importers:
       postcss: 8.4.21
       react-color: 2.19.3_react@18.2.0
       react-docgen-typescript: 2.2.2_typescript@4.9.5
+      run-z: 1.11.0
       tailwindcss: 3.2.7_postcss@8.4.21
       typescript: 4.9.5
       vite: 4.1.4
@@ -246,6 +254,24 @@ importers:
       zod: ^3.20.6
     dependencies:
       zod: 3.20.6
+
+  packages/render:
+    specifiers:
+      '@types/react': ^18.0.28
+      '@types/react-test-renderer': ^18.0.0
+      '@uimix/node-data': workspace:*
+      react: ^18.2.0
+      react-test-renderer: ^18.2.0
+      typescript: ^4.9.5
+      vitest: ^0.28.5
+    devDependencies:
+      '@types/react': 18.0.28
+      '@types/react-test-renderer': 18.0.0
+      '@uimix/node-data': link:../node-data
+      react: 18.2.0
+      react-test-renderer: 18.2.0_react@18.2.0
+      typescript: 4.9.5
+      vitest: 0.28.5
 
   packages/sandbox:
     specifiers:
@@ -259,11 +285,13 @@ importers:
       '@storybook/testing-library': ^0.0.13
       '@types/react': ^18.0.28
       '@types/react-dom': ^18.0.11
+      '@uimix/render': workspace:*
       '@vitejs/plugin-react': ^3.1.0
       babel-loader: ^9.1.2
       react: ^18.2.0
       react-dom: ^18.2.0
       typescript: ^4.9.5
+      uimix: workspace:*
       vite: ^4.1.4
     dependencies:
       react: 18.2.0
@@ -279,9 +307,11 @@ importers:
       '@storybook/testing-library': 0.0.13_biqbaboplfbrettd7655fr4n2y
       '@types/react': 18.0.28
       '@types/react-dom': 18.0.11
+      '@uimix/render': link:../render
       '@vitejs/plugin-react': 3.1.0_vite@4.1.4
       babel-loader: 9.1.2_@babel+core@7.21.0
       typescript: 4.9.5
+      uimix: link:../devserver
       vite: 4.1.4
 
 packages:
@@ -5481,6 +5511,12 @@ packages:
 
   /@types/react-dom/18.0.11:
     resolution: {integrity: sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw==}
+    dependencies:
+      '@types/react': 18.0.28
+    dev: true
+
+  /@types/react-test-renderer/18.0.0:
+    resolution: {integrity: sha512-C7/5FBJ3g3sqUahguGi03O79b8afNeSD6T8/GU50oQrJCU0bVCCGQHaGKUbg2Ce8VQEEqTw8/HiS6lXHHdgkdQ==}
     dependencies:
       '@types/react': 18.0.28
     dev: true
@@ -12392,6 +12428,10 @@ packages:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
     dev: true
 
+  /react-is/18.2.0:
+    resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+    dev: true
+
   /react-merge-refs/1.1.0:
     resolution: {integrity: sha512-alTKsjEL0dKH/ru1Iyn7vliS2QRcBp9zZPGoWxUOvRGWPUYgjo+V01is7p04It6KhgrzhJGnIj9GgX8W4bZoCQ==}
     dev: true
@@ -12444,6 +12484,16 @@ packages:
       use-sidecar: 1.1.2_pmekkgnqduwlme35zpnqhenc34
     dev: false
 
+  /react-shallow-renderer/16.15.0_react@18.2.0:
+    resolution: {integrity: sha512-oScf2FqQ9LFVQgA73vr86xl2NaOIX73rh+YFqcOp68CWj56tSfgtGKrEbyhCj0rSijyG9M1CYprTh39fBi5hzA==}
+    peerDependencies:
+      react: ^16.0.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      object-assign: 4.1.1
+      react: 18.2.0
+      react-is: 18.2.0
+    dev: true
+
   /react-sortablejs/6.1.4_pkvhgat2fktt3g4eqjjiisgkie:
     resolution: {integrity: sha512-fc7cBosfhnbh53Mbm6a45W+F735jwZ1UFIYSrIqcO/gRIFoDyZeMtgKlpV4DdyQfbCzdh5LoALLTDRxhMpTyXQ==}
     peerDependencies:
@@ -12476,6 +12526,17 @@ packages:
       react: 18.2.0
       tslib: 2.5.0
     dev: false
+
+  /react-test-renderer/18.2.0_react@18.2.0:
+    resolution: {integrity: sha512-JWD+aQ0lh2gvh4NM3bBM42Kx+XybOxCpgYK7F8ugAlpaTSnWsX+39Z4XkOykGZAHrjwwTZT3x3KxswVWxHPUqA==}
+    peerDependencies:
+      react: ^18.2.0
+    dependencies:
+      react: 18.2.0
+      react-is: 18.2.0
+      react-shallow-renderer: 16.15.0_react@18.2.0
+      scheduler: 0.23.0
+    dev: true
 
   /react/18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}

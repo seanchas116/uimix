@@ -1,12 +1,12 @@
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
+import { buildNodeCSS } from "@uimix/render";
+import { createEditor, Transforms, Descendant } from "slate";
+import { Slate, Editable, withReact } from "slate-react";
 import { Selectable } from "../../models/Selectable";
 import { scrollState } from "../../state/ScrollState";
 import { viewportState } from "../../state/ViewportState";
-import { buildNodeCSS } from "./renderer/buildNodeCSS";
-import { createEditor, Transforms, Descendant } from "slate";
-import { Slate, Editable, withReact } from "slate-react";
 
 export const TextEditorBody: React.FC<{
   selectable: Selectable;

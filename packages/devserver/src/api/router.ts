@@ -6,12 +6,12 @@ import { ProjectJSON } from "@uimix/node-data";
 import { ProjectController } from "../controller/ProjectController.js";
 import { ImageEntry } from "../types.js";
 
-export function createAppRouter(options: { projectPath: string }) {
+export function createAppRouter({
+  projectController,
+}: {
+  projectController: ProjectController;
+}) {
   const t = initTRPC.context<Context>().create();
-
-  const projectController = new ProjectController({
-    projectPath: options.projectPath,
-  });
 
   return t.router({
     hello: t.procedure

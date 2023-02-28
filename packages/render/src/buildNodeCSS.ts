@@ -1,10 +1,8 @@
-import { StackDirection } from "@uimix/node-data";
-import { Node } from "../../../models/Node";
-import { IStyle } from "../../../models/Style";
+import { NodeType, StackDirection, StyleJSON } from "@uimix/node-data";
 
 export function buildNodeCSS(
-  nodeType: Node["type"],
-  style: IStyle,
+  nodeType: NodeType,
+  style: StyleJSON,
   parentStackDirection?: StackDirection
 ): React.CSSProperties {
   if (nodeType === "component") {

@@ -12,6 +12,7 @@ import { createAppRouter, createContext } from "./api/index.js";
 import { createServer as createViteServer } from "vite";
 import { componentsVirtualModulePlugin } from "./docgen.js";
 import react from "@vitejs/plugin-react";
+import { ProjectController } from "./controller/ProjectController.js";
 
 interface ServerOptions {
   port: number;
@@ -19,7 +20,13 @@ interface ServerOptions {
 }
 
 export async function startServer(options: ServerOptions) {
-  const appRouter = createAppRouter(options);
+  const projectController = new ProjectController({
+    projectPath: options.projectPath,
+  });
+
+  projectController.generateCode();
+
+  const appRouter = createAppRouter({ projectController });
 
   const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 

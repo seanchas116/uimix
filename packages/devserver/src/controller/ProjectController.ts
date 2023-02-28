@@ -1,5 +1,3 @@
-import prettier from "prettier/standalone.js";
-import parserBabel from "prettier/parser-babel.js";
 import * as fs from "fs";
 import { TypedEmitter } from "tiny-typed-emitter";
 import chokidar from "chokidar";
@@ -9,20 +7,16 @@ import { mkdirp } from "mkdirp";
 import { ProjectJSON } from "@uimix/node-data";
 import dataUriToBuffer from "data-uri-to-buffer";
 import { ImageEntry } from "../types.js";
-
-function formatJSON(text: string): string {
-  return prettier.format(text, {
-    parser: "json",
-    plugins: [parserBabel],
-  });
-}
+import { formatJSON } from "../format.js";
+import { generateCode } from "../compiler/generateCode.js";
 
 const ee = new TypedEmitter<{
   change: (data: ProjectJSON) => void;
   imageAdded: (entry: ImageEntry) => void;
 }>();
 
-const jsonPath = "uimix/data.json";
+const uimixPath = "src/uimix";
+const jsonPath = path.join(uimixPath, "data.json");
 
 export class ProjectController {
   constructor(options: { projectPath: string }) {
@@ -39,7 +33,7 @@ export class ProjectController {
       }
     });
 
-    const imageWatcher = chokidar.watch(`uimix/images/*`, {
+    const imageWatcher = chokidar.watch(`${uimixPath}/images/*`, {
       cwd: this.cwd,
     });
     imageWatcher.on("add", (filePath) => {
@@ -85,12 +79,25 @@ export class ProjectController {
 
   save(data: ProjectJSON) {
     this.lastSavedData = data;
-    mkdirp.sync(path.resolve(this.cwd, "uimix"));
+    mkdirp.sync(path.resolve(this.cwd, uimixPath));
 
     fs.writeFileSync(
       path.resolve(this.cwd, jsonPath),
       formatJSON(JSON.stringify(data))
     );
+
+    this.generateCode();
+  }
+
+  generateCode(): void {
+    const json = this.load();
+    const imageFiles = fs.readdirSync(
+      path.resolve(this.cwd, uimixPath, "images")
+    );
+    const code = generateCode(json, imageFiles);
+    for (const [name, content] of Object.entries(code)) {
+      fs.writeFileSync(path.resolve(this.cwd, uimixPath, name), content);
+    }
   }
 
   load(): ProjectJSON {
@@ -141,9 +148,9 @@ export class ProjectController {
         throw new Error(`Unsupported image type: ${buffer.type}`);
     }
 
-    mkdirp.sync(path.resolve(this.cwd, "uimix/images"));
+    mkdirp.sync(path.resolve(this.cwd, uimixPath, "images"));
     fs.writeFileSync(
-      path.resolve(this.cwd, `uimix/images/${entry.hash}.${extension}`),
+      path.resolve(this.cwd, `${uimixPath}/images/${entry.hash}.${extension}`),
       buffer
     );
   }

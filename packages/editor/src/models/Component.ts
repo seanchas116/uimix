@@ -1,5 +1,4 @@
-import { computed } from "mobx";
-import { generateJSIdentifier, getIncrementalUniqueName } from "../utils/Name";
+import { generateRefIDs } from "@uimix/render";
 import { Node } from "./Node";
 
 export class Component {
@@ -31,27 +30,7 @@ export class Component {
   }
 
   get refIDs(): Map<string, string> {
-    const refIDs = new Map<string, string>();
-    const generatedRefIDs = new Set<string>();
-
-    const visit = (node: Node) => {
-      const refID = getIncrementalUniqueName(
-        generatedRefIDs,
-        generateJSIdentifier(node.name)
-      );
-      generatedRefIDs.add(refID);
-      refIDs.set(node.id, refID);
-
-      for (const child of node.children) {
-        visit(child);
-      }
-    };
-
-    for (const child of this.rootNode.children) {
-      visit(child);
-    }
-
-    return refIDs;
+    return generateRefIDs(this.rootNode);
   } // <node ID, ref ID>
 
   readonly node: Node;
