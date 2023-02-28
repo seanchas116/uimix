@@ -4,10 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:devserver": "cd packages/devserver && npm run dev",
+    "dev:editor": "cd packages/editor && npm run dev",
+    "dev:render": "cd packages/render && npm run dev",
+    "dev": "run-z dev:devserver,dev:editor,dev:render"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "run-z": "^1.11.0"
+  }
 }

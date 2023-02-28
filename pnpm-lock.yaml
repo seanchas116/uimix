@@ -3,7 +3,10 @@ lockfileVersion: 5.4
 importers:
 
   .:
-    specifiers: {}
+    specifiers:
+      run-z: ^1.11.0
+    devDependencies:
+      run-z: 1.11.0
 
   packages/devserver:
     specifiers:
