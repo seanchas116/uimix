@@ -1,5 +1,5 @@
 import * as path from "path";
-import glob from "glob";
+import { globSync } from "glob";
 import docgen from "react-docgen-typescript";
 import { Plugin as VitePlugin } from "vite";
 
@@ -17,7 +17,7 @@ export function generateDocs(rootDir: string): docgen.ComponentDoc[] {
   //const ignoreFilePath = "src/**/*.stories.tsx";
 
   //const ignoreFilePaths = glob.sync(ignoreFilePath);
-  const filePaths = glob.sync(filePath, {
+  const filePaths = globSync(filePath, {
     cwd: rootDir,
     //ignore: ignoreFilePaths,
   });
