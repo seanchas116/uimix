@@ -380,11 +380,21 @@ export class Selectable {
 
   remove() {
     if (this.idPath.length >= 2) {
+      // TODO: hide?
       throw new Error(
         "TODO: removing items inside an instance is not supported yet"
       );
     }
-    this.originalNode.remove();
+
+    const { originalNode } = this;
+    const { parent } = originalNode;
+    if (originalNode.type !== "variant" && parent?.type === "component") {
+      // removing component root node -> remove component
+      parent.remove();
+      return;
+    }
+
+    originalNode.remove();
   }
 
   insertBefore(
