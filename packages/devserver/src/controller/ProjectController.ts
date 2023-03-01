@@ -77,9 +77,18 @@ export class ProjectController {
     ee.emit("change", data);
   }
 
+  setupDirectory() {
+    mkdirp.sync(path.resolve(this.cwd, uimixPath, "images"));
+    if (!fs.existsSync(path.resolve(this.cwd, jsonPath))) {
+      this.save({
+        nodes: {},
+        styles: {},
+      });
+    }
+  }
+
   save(data: ProjectJSON) {
     this.lastSavedData = data;
-    mkdirp.sync(path.resolve(this.cwd, uimixPath));
 
     fs.writeFileSync(
       path.resolve(this.cwd, jsonPath),
@@ -156,7 +165,6 @@ export class ProjectController {
         throw new Error(`Unsupported image type: ${buffer.type}`);
     }
 
-    mkdirp.sync(path.resolve(this.cwd, uimixPath, "images"));
     fs.writeFileSync(
       path.resolve(this.cwd, `${uimixPath}/images/${entry.hash}.${extension}`),
       buffer

@@ -24,6 +24,7 @@ export async function startServer(options: ServerOptions) {
     projectPath: options.projectPath,
   });
 
+  projectController.setupDirectory();
   projectController.generateCode();
 
   const appRouter = createAppRouter({ projectController });
