@@ -195,7 +195,7 @@ export function cssRuleToString(project: Project, rule: CSSRule): string {
       if (rule.idPath.length === 1 && rule.idPath[0] === rootNodeId) {
         selector = `.uimix-${rootNodeId}${pseudoClass}`;
       } else {
-        selector = `.uimix-${rootNodeId}${pseudoClass}` + selector;
+        selector = `.uimix-${rootNodeId}${pseudoClass} ` + selector;
       }
     }
   }

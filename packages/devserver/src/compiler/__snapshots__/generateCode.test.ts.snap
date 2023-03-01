@@ -96,7 +96,7 @@ exports[`generateCode > generates code 1`] = `
   text-align: start;
   justify-content: flex-start;
 }
-.uimix-1Bvi2z3UPfi6W3L8nDt5VA:hover.uimix-1Bvi2z3UGTM64JtRT7Qc1S {
+.uimix-1Bvi2z3UPfi6W3L8nDt5VA:hover .uimix-1Bvi2z3UGTM64JtRT7Qc1S {
   color: #ffffff;
   line-height: undefined;
 }
