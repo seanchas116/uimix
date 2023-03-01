@@ -73,9 +73,17 @@ class ComponentRenderer {
 
     const tagName = style.tagName ?? "div";
 
+    const classNames: string[] = [];
+    for (let i = 0; i < idPath.length; ++i) {
+      classNames.push("uimix-" + idPath.slice(i).join("-"));
+    }
+    if (isInstanceRoot) {
+      classNames.push("uimix-" + node.id);
+    }
+
     const overrideProps = this.getPropOverridesForNode(node);
     const commonProps: ComponentProps = {
-      className: "uimix-" + idPath.join("-"),
+      className: classNames.join(" "),
       ...overrideProps,
     };
     delete commonProps.overrides;

@@ -1,9 +1,9 @@
-import { NodeType, StackDirection, StyleJSON } from "@uimix/node-data";
+import { NodeType, StyleJSON } from "@uimix/node-data";
 
-export function buildNodeCSS(
+export function buildPartialNodeCSS(
   nodeType: NodeType,
-  style: StyleJSON,
-  parentStackDirection?: StackDirection
+  style: Partial<StyleJSON>,
+  parentHasLayout?: boolean
 ): React.CSSProperties {
   if (nodeType === "component") {
     return {};
@@ -11,111 +11,182 @@ export function buildNodeCSS(
 
   const cssStyle: React.CSSProperties = {};
 
-  const position = parentStackDirection ? "relative" : "absolute";
-  cssStyle.position = position;
+  const position = parentHasLayout ? "relative" : "absolute";
   if (position === "absolute") {
-    if (style.position.x.type === "start") {
-      cssStyle.left = style.position.x.start + "px";
-    } else if (style.position.x.type === "end") {
-      cssStyle.right = style.position.x.end + "px";
-    }
-    if (style.position.y.type === "start") {
-      cssStyle.top = style.position.y.start + "px";
-    } else if (style.position.y.type === "end") {
-      cssStyle.bottom = style.position.y.end + "px";
+    if (style.position !== undefined) {
+      if (style.position.x.type === "start") {
+        cssStyle.left = style.position.x.start + "px";
+      } else if (style.position.x.type === "end") {
+        cssStyle.right = style.position.x.end + "px";
+      }
+      if (style.position.y.type === "start") {
+        cssStyle.top = style.position.y.start + "px";
+      } else if (style.position.y.type === "end") {
+        cssStyle.bottom = style.position.y.end + "px";
+      }
     }
   }
 
-  if (style.width.type === "fixed") {
-    cssStyle.width = style.width.value + "px";
-  } else if (style.width.type === "hugContents") {
-    cssStyle.width = "max-content";
-  } else {
-    if (parentStackDirection === "x") {
-      cssStyle.flex = 1;
-    } else if (parentStackDirection === "y") {
-      cssStyle.alignSelf = "stretch";
+  if (style.width !== undefined) {
+    if (style.width.type === "fixed") {
+      cssStyle.minWidth = cssStyle.width = style.width.value + "px";
+    } else if (style.width.type === "hugContents") {
+      cssStyle.minWidth = cssStyle.width = "max-content";
     } else {
+      // TODO: max width/height
+      cssStyle.minWidth = "0";
       cssStyle.width = "100%";
     }
   }
 
-  if (style.height.type === "fixed") {
-    cssStyle.height = style.height.value + "px";
-  } else if (style.height.type === "hugContents") {
-    cssStyle.height = "max-content";
-  } else {
-    if (parentStackDirection === "y") {
-      cssStyle.flex = 1;
-    } else if (parentStackDirection === "x") {
-      cssStyle.alignSelf = "stretch";
+  if (style.height !== undefined) {
+    if (style.height.type === "fixed") {
+      cssStyle.minHeight = cssStyle.height = style.height.value + "px";
+    } else if (style.height.type === "hugContents") {
+      cssStyle.minHeight = cssStyle.height = "max-content";
     } else {
+      cssStyle.minHeight = "0";
       cssStyle.height = "100%";
     }
   }
 
   if (nodeType === "frame") {
-    cssStyle.display = "flex";
-    cssStyle.flexDirection = style.stackDirection === "x" ? "row" : "column";
-    cssStyle.alignItems = (() => {
-      switch (style.stackAlign) {
-        case "start":
-          return "flex-start";
-        case "center":
-          return "center";
-        case "end":
-          return "flex-end";
-      }
-    })();
-    cssStyle.justifyContent = (() => {
-      switch (style.stackJustify) {
-        case "start":
-          return "flex-start";
-        case "center":
-          return "center";
-        case "end":
-          return "flex-end";
-        case "spaceBetween":
-          return "space-between";
-      }
-    })();
-    cssStyle.gap = style.gap + "px";
-    cssStyle.paddingLeft = style.paddingLeft + "px";
-    cssStyle.paddingRight = style.paddingRight + "px";
-    cssStyle.paddingTop = style.paddingTop + "px";
-    cssStyle.paddingBottom = style.paddingBottom + "px";
+    if (style.stackDirection !== undefined) {
+      cssStyle.flexDirection = style.stackDirection === "x" ? "row" : "column";
+    }
 
-    cssStyle.background = style.fill ?? "transparent";
+    if (style.stackAlign !== undefined) {
+      cssStyle.alignItems = (() => {
+        switch (style.stackAlign) {
+          case "start":
+            return "flex-start";
+          case "center":
+            return "center";
+          case "end":
+            return "flex-end";
+        }
+      })();
+    }
+
+    if (style.stackJustify !== undefined) {
+      cssStyle.justifyContent = (() => {
+        switch (style.stackJustify) {
+          case "start":
+            return "flex-start";
+          case "center":
+            return "center";
+          case "end":
+            return "flex-end";
+          case "spaceBetween":
+            return "space-between";
+        }
+      })();
+    }
+
+    if (style.gap !== undefined) {
+      cssStyle.gap = style.gap + "px";
+    }
+
+    if (style.paddingLeft !== undefined) {
+      cssStyle.paddingLeft = style.paddingLeft + "px";
+    }
+    if (style.paddingRight !== undefined) {
+      cssStyle.paddingRight = style.paddingRight + "px";
+    }
+    if (style.paddingTop !== undefined) {
+      cssStyle.paddingTop = style.paddingTop + "px";
+    }
+    if (style.paddingBottom !== undefined) {
+      cssStyle.paddingBottom = style.paddingBottom + "px";
+    }
+
+    if (style.fill !== undefined) {
+      cssStyle.background = style.fill ?? "transparent";
+    }
+    if (style.border !== undefined) {
+      cssStyle.borderColor = style.border ?? "transparent";
+    }
+    if (style.borderTopWidth !== undefined) {
+      cssStyle.borderTopWidth = style.borderTopWidth + "px";
+    }
+    if (style.borderRightWidth !== undefined) {
+      cssStyle.borderRightWidth = style.borderRightWidth + "px";
+    }
+    if (style.borderBottomWidth !== undefined) {
+      cssStyle.borderBottomWidth = style.borderBottomWidth + "px";
+    }
+    if (style.borderLeftWidth !== undefined) {
+      cssStyle.borderLeftWidth = style.borderLeftWidth + "px";
+    }
+  }
+
+  if (nodeType === "text") {
+    if (style.fill !== undefined) {
+      cssStyle.color = style.fill ?? "black";
+    }
+    if (style.fontFamily !== undefined) {
+      cssStyle.fontFamily = style.fontFamily;
+    }
+    if (style.fontSize !== undefined) {
+      cssStyle.fontSize = style.fontSize + "px";
+    }
+    if (style.fontWeight !== undefined) {
+      cssStyle.fontWeight = style.fontWeight;
+    }
+    if (cssStyle.lineHeight === undefined) {
+      cssStyle.lineHeight = style.lineHeight;
+    }
+    if (style.letterSpacing !== undefined) {
+      cssStyle.letterSpacing = style.letterSpacing + "em";
+    }
+    if (style.textHorizontalAlign !== undefined) {
+      cssStyle.textAlign = style.textHorizontalAlign;
+    }
+    if (style.textVerticalAlign !== undefined) {
+      cssStyle.justifyContent = (() => {
+        switch (style.textVerticalAlign) {
+          case "start":
+            return "flex-start";
+          case "center":
+            return "center";
+          case "end":
+            return "flex-end";
+        }
+      })();
+    }
+  }
+
+  return cssStyle;
+}
+
+export function buildBaseNodeCSS(
+  nodeType: NodeType,
+  parentHasLayout?: boolean
+): React.CSSProperties {
+  const cssStyle: React.CSSProperties = {};
+
+  cssStyle.position = parentHasLayout ? "relative" : "absolute";
+
+  if (nodeType === "frame") {
+    cssStyle.display = "flex";
     cssStyle.borderStyle = "solid";
-    cssStyle.borderColor = style.border ?? "transparent";
-    cssStyle.borderTopWidth = style.borderTopWidth + "px";
-    cssStyle.borderRightWidth = style.borderRightWidth + "px";
-    cssStyle.borderBottomWidth = style.borderBottomWidth + "px";
-    cssStyle.borderLeftWidth = style.borderLeftWidth + "px";
   }
 
   if (nodeType === "text") {
     cssStyle.whiteSpace = "break-spaces";
     cssStyle.display = "flex";
     cssStyle.flexDirection = "column";
-    cssStyle.color = style.fill ?? "black";
-    cssStyle.fontFamily = style.fontFamily;
-    cssStyle.fontSize = style.fontSize + "px";
-    cssStyle.fontWeight = style.fontWeight;
-    cssStyle.lineHeight = style.lineHeight;
-    cssStyle.letterSpacing = style.letterSpacing + "em";
-    cssStyle.textAlign = style.textHorizontalAlign;
-    cssStyle.justifyContent = (() => {
-      switch (style.textVerticalAlign) {
-        case "start":
-          return "flex-start";
-        case "center":
-          return "center";
-        case "end":
-          return "flex-end";
-      }
-    })();
   }
 
   return cssStyle;
+}
+
+export function buildNodeCSS(
+  nodeType: NodeType,
+  style: StyleJSON,
+  parentHasLayout?: boolean
+): React.CSSProperties {
+  const baseStyle = buildBaseNodeCSS(nodeType, parentHasLayout);
+  const partialStyle = buildPartialNodeCSS(nodeType, style, parentHasLayout);
+  return { ...baseStyle, ...partialStyle };
 }

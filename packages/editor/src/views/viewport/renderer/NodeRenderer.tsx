@@ -1,6 +1,5 @@
 import React, { createRef, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { StackDirection } from "@uimix/node-data";
 import { buildNodeCSS } from "@uimix/render";
 import { Selectable } from "../../../models/Selectable";
 import { viewportState } from "../../../state/ViewportState";
@@ -37,14 +36,14 @@ const computedRectUpdater = new ComputedRectUpdater();
 
 export const NodeRenderer: React.FC<{
   selectable: Selectable;
-  parentStackDirection?: StackDirection;
+  parentHasLayout?: boolean;
   forThumbnail?: boolean; // must not be changed after mount
   style?: React.CSSProperties;
   foreignComponentManager: ForeignComponentManager;
 }> = observer(
   ({
     selectable,
-    parentStackDirection,
+    parentHasLayout,
     forThumbnail,
     style: additionalCSSStyle,
     foreignComponentManager,
@@ -56,7 +55,7 @@ export const NodeRenderer: React.FC<{
     const cssStyle: React.CSSProperties = {
       all: "revert",
       boxSizing: "border-box",
-      ...buildNodeCSS(type, style, parentStackDirection),
+      ...buildNodeCSS(type, style, parentHasLayout),
       ...(selectable === viewportState.focusedSelectable
         ? {
             opacity: 0,
@@ -88,10 +87,7 @@ export const NodeRenderer: React.FC<{
       });
     }
 
-    const stackDirection =
-      type === "frame" && style.layout === "stack"
-        ? style.stackDirection
-        : undefined;
+    const hasLayout = type === "frame" && style.layout === "stack";
 
     // if (selectable.node.type === "instance") {
     //   return (
@@ -193,7 +189,7 @@ export const NodeRenderer: React.FC<{
               <NodeRenderer
                 key={child.id}
                 selectable={child}
-                parentStackDirection={stackDirection}
+                parentHasLayout={hasLayout}
                 forThumbnail={forThumbnail}
                 foreignComponentManager={foreignComponentManager}
               />

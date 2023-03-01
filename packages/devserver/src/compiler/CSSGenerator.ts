@@ -1,5 +1,12 @@
-import { StackDirection } from "@uimix/node-data";
-import { Component, Node, Project, buildNodeCSS } from "@uimix/render";
+import { StackDirection, VariantCondition } from "@uimix/node-data";
+import {
+  Component,
+  Node,
+  Project,
+  buildNodeCSS,
+  buildPartialNodeCSS,
+} from "@uimix/render";
+import { cond, kebabCase } from "lodash-es";
 
 export class CSSGenerator {
   constructor(project: Project, imageURLs: Map<string, string>) {
@@ -17,9 +24,22 @@ export class CSSGenerator {
         ...new ComponentCSSGenerator(
           componentRenderer,
           this.images
-        ).generateCSS([])
+        ).generateRootCSS()
       );
     }
+
+    const componentRootIDs = new Set(
+      [...this.project.components.values()].map((c) => c.rootNode.id)
+    );
+    const sortValue = (rule: CSSRule) => {
+      if (rule.idPath.length === 1 && componentRootIDs.has(rule.idPath[0])) {
+        return -1;
+      }
+      return rule.idPath.length;
+    };
+
+    rules.sort((a, b) => sortValue(a) - sortValue(b));
+
     return rules;
   }
 }
@@ -35,21 +55,32 @@ class ComponentCSSGenerator {
   component: Component;
   imageURLs: Map<string, string>;
 
+  generateRootCSS(): CSSRule[] {
+    return this.generateCSS(
+      this.component.variants.map((v) => v.id),
+      [],
+      false
+    );
+  }
+
   generateCSS(
+    variants: string[],
     instancePath: string[],
-    parentStackDirection?: StackDirection
+    parentHasLayout?: boolean
   ): CSSRule[] {
     return this.generateNodeCSS(
+      variants,
       this.component.rootNode,
       instancePath,
-      parentStackDirection
+      parentHasLayout
     );
   }
 
   generateNodeCSS(
+    variants: string[],
     node: Node,
     instancePath: string[],
-    parentStackDirection?: StackDirection
+    parentHasLayout?: boolean
   ): CSSRule[] {
     const isRoot = node === this.component.rootNode;
 
@@ -59,10 +90,7 @@ class ComponentCSSGenerator {
     const idPath = isInstanceRoot ? instancePath : [...instancePath, node.id];
     const style = this.project.getStyle(idPath);
 
-    const stackDirection =
-      node.type === "frame" && style.layout === "stack"
-        ? style.stackDirection
-        : undefined;
+    const hasLayout = node.type === "frame" && style.layout === "stack";
 
     if (node.type === "instance") {
       const mainComponentID = style.mainComponentID;
@@ -75,21 +103,24 @@ class ComponentCSSGenerator {
         return [];
       }
       return new ComponentCSSGenerator(component, this.imageURLs).generateCSS(
+        variants,
         [...instancePath, node.id],
-        parentStackDirection
+        parentHasLayout
       );
     }
 
     const children = node.children.flatMap((child) =>
-      this.generateNodeCSS(child, instancePath, stackDirection)
+      this.generateNodeCSS(variants, child, instancePath, hasLayout)
     );
 
     // TODO: variant styles
-    const cssStyle = buildNodeCSS(node.type, style, parentStackDirection);
+    const cssStyle = buildNodeCSS(node.type, style, parentHasLayout);
     if (isComponentRoot) {
       cssStyle.position = "relative";
-      cssStyle.left = 0;
-      cssStyle.top = 0;
+      delete cssStyle.left;
+      delete cssStyle.right;
+      delete cssStyle.top;
+      delete cssStyle.bottom;
     }
 
     const rule: CSSRule = {
@@ -97,11 +128,77 @@ class ComponentCSSGenerator {
       style: cssStyle,
     };
 
-    return [rule, ...children];
+    const variantRules: CSSRule[] = [];
+    for (const variant of variants) {
+      const variantIDPath = isComponentRoot ? [variant] : [variant, ...idPath];
+      const variantStyle =
+        this.project.styleMap.get(variantIDPath.join(":")) ?? {};
+      const variantCSSStyle = buildPartialNodeCSS(
+        node.type,
+        variantStyle,
+        parentHasLayout
+      );
+      if (isComponentRoot) {
+        delete variantCSSStyle.left;
+        delete variantCSSStyle.right;
+        delete variantCSSStyle.top;
+        delete variantCSSStyle.bottom;
+      }
+
+      variantRules.push({
+        idPath,
+        style: variantCSSStyle,
+        variant,
+      });
+    }
+
+    return [rule, ...variantRules, ...children];
   }
 }
 
 interface CSSRule {
   idPath: string[];
   style: React.CSSProperties;
+  variant?: string;
+}
+
+export function cssRuleToString(project: Project, rule: CSSRule): string {
+  let selector = ".uimix-" + rule.idPath.join("-");
+
+  const declarations = Object.entries(rule.style).map(
+    ([key, value]) => `${kebabCase(key)}: ${value};`
+  );
+  const body = declarations.join("\n");
+
+  if (rule.variant) {
+    const variantNode = project.getNode(rule.variant);
+    const component = project.getComponentForID(variantNode?.parent);
+    const rootNodeId = component?.rootNode.id;
+    if (rootNodeId) {
+      const condition = variantNode?.condition;
+
+      if (condition?.type === "maxWidth") {
+        return `@media (max-width: ${condition.value}px) { ${selector} { ${body} } }`;
+      }
+
+      const pseudoClass = (() => {
+        if (condition?.type === "hover") {
+          return ":hover";
+        }
+        if (condition?.type === "active") {
+          return ":active";
+        }
+        throw new Error("Unknown variant condition");
+      })();
+
+      // TODO: other than hover
+      if (rule.idPath.length === 1 && rule.idPath[0] === rootNodeId) {
+        selector = `.uimix-${rootNodeId}${pseudoClass}`;
+      } else {
+        selector = `.uimix-${rootNodeId}${pseudoClass}` + selector;
+      }
+    }
+  }
+
+  return `${selector} { ${body} }`;
 }

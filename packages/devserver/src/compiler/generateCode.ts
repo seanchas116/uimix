@@ -4,7 +4,7 @@ import { camelCase, kebabCase } from "lodash-es";
 import { formatCSS, formatTypeScript } from "../format.js";
 import * as fs from "fs";
 import * as path from "path";
-import { CSSGenerator } from "./CSSGenerator.js";
+import { CSSGenerator, cssRuleToString } from "./CSSGenerator.js";
 
 export function generateCode(
   projectJSON: ProjectJSON,
@@ -105,17 +105,10 @@ export function generateCode(
     `);
 
   const cssRules = new CSSGenerator(project, new Map(images)).generateCSS();
+  console.log(cssRules);
 
   const cssContent = formatCSS(
-    cssRules
-      .map((rule) => {
-        const selector = ".uimix-" + rule.idPath.join("-");
-        const declarations = Object.entries(rule.style).map(
-          ([key, value]) => `${kebabCase(key)}: ${value};`
-        );
-        return `${selector} { ${declarations.join("\n")} }`;
-      })
-      .join("\n")
+    cssRules.map((rule) => cssRuleToString(project, rule)).join("\n")
   );
 
   return {

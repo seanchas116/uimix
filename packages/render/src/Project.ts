@@ -60,7 +60,7 @@ export class Project {
   }
 
   getComponentForID(id: string | null | undefined) {
-    return id && this.components.get(id);
+    return id ? this.components.get(id) : undefined;
   }
 
   getStyle(idPath: string[]): StyleJSON {
@@ -122,4 +122,10 @@ export class Component {
   readonly componentNode: Node;
   readonly rootNode: Node;
   readonly refIDs: Map<string, string>;
+
+  get variants(): Node[] {
+    return this.componentNode.children.filter(
+      (node) => node.type === "variant"
+    );
+  }
 }
