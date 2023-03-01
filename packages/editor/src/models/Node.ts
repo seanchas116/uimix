@@ -181,6 +181,10 @@ export class Node {
   }
 
   canInsert(type: NodeType): boolean {
+    if (this.type === "project") {
+      return type === "page";
+    }
+
     if (this.type === "component") {
       if (this.children.length === 0) {
         return type !== "variant";
@@ -189,31 +193,20 @@ export class Node {
       }
     }
 
+    const normalNodeTypes: NodeType[] = [
+      "frame",
+      "text",
+      "image",
+      "instance",
+      "foreign",
+    ];
+
     if (this.type === "page") {
-      const allowed: NodeType[] = [
-        "frame",
-        "text",
-        "image",
-        "component",
-        "instance",
-        "foreign",
-      ];
-      return allowed.includes(type);
+      return type === "component" || normalNodeTypes.includes(type);
     }
 
     if (this.type === "frame") {
-      const allowed: NodeType[] = [
-        "frame",
-        "text",
-        "image",
-        "instance",
-        "foreign",
-      ];
-      return allowed.includes(type);
-    }
-
-    if (this.type === "project") {
-      return type === "page";
+      return normalNodeTypes.includes(type);
     }
 
     return false;
