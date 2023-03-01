@@ -1,29 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { useEffect, useRef } from "react";
 
 export const IFrame: React.FC<{
   init: (window: Window, iframe: HTMLIFrameElement) => React.ReactNode;
   className?: string;
 }> = ({ init, className }) => {
-  const ref = useRef<HTMLIFrameElement>(null);
-
-  useEffect(() => {
-    const iframe = ref.current;
-    if (!iframe) {
-      return;
-    }
-
+  const onLoad = (event: React.SyntheticEvent<HTMLIFrameElement>) => {
+    const iframe = event.currentTarget;
     const window = iframe.contentWindow;
     if (!window) {
       return;
     }
 
-    window.document.open();
-    window.document.write(
-      "<!DOCTYPE html><html><head><style>body { margin: 0; }</style></head><body><div id='root'></div></body></html>"
-    );
-    window.document.close();
+    console.log("load");
 
     const reactRoot = ReactDOM.createRoot(
       window.document.getElementById("root") as HTMLElement
@@ -32,13 +21,9 @@ export const IFrame: React.FC<{
     reactRoot.render(
       <React.StrictMode>{init(window, iframe)}</React.StrictMode>
     );
+  };
 
-    return () => {
-      reactRoot.unmount();
-    };
-  }, []);
-
-  return <iframe ref={ref} className={className} />;
+  return <iframe onLoad={onLoad} src="/iframe.html" className={className} />;
 };
 
 IFrame.displayName = "IFrame";

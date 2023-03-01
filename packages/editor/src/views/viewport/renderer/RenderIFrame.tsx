@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { IFrame } from "../../../components/IFrame";
 import { ForeignComponentManager } from "../../../models/ForeignComponentManager";
+import { Selectable } from "../../../models/Selectable";
 import { projectState } from "../../../state/ProjectState";
 import { scrollState } from "../../../state/ScrollState";
 import { viewportRootMarker } from "./ComputedRectProvider";
@@ -41,6 +42,19 @@ export const RenderIFrame: React.FC = () => {
         ForeignComponentManager.init(window);
 
         nodePicker.document = window.document;
+
+        const onFontsLoaded = () => {
+          console.log("fonts loaded");
+
+          const markDirtyRecursive = (selectable: Selectable) => {
+            selectable.computedRectProvider?.markDirty();
+            for (const child of selectable.children) {
+              markDirtyRecursive(child);
+            }
+          };
+          projectState.page?.selectable.children.forEach(markDirtyRecursive);
+        };
+        window.document.fonts.addEventListener("loadingdone", onFontsLoaded);
 
         return (
           <>
