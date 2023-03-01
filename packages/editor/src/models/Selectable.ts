@@ -218,7 +218,7 @@ export class Selectable {
   }
 
   @computed private get _selected(): boolean {
-    return getOrCreate(this.data, "selected", () => false);
+    return this.data.get("selected") ?? false;
   }
 
   private set _selected(value: boolean) {

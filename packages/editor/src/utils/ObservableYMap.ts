@@ -1,5 +1,6 @@
 import { createAtom, IAtom } from "mobx";
 import * as Y from "yjs";
+import { getOrCreate } from "../state/Collection";
 
 const instances = new WeakMap<Y.Map<any>, ObservableYMap<any>>();
 
@@ -17,14 +18,18 @@ export class ObservableYMap<V> {
   readonly wholeAtom = createAtom("ObservableYMap");
   readonly valueAtoms = new Map<string, IAtom>();
 
+  private getValueAtom(key: string): IAtom {
+    return getOrCreate(this.valueAtoms, key, () =>
+      createAtom("ObservableYMapValue")
+    );
+  }
+
   private constructor(y: Y.Map<V>) {
     this.y = y;
     this.y.observe((event) => {
       for (const [key, detail] of event.keys) {
-        if (detail.action === "add") {
-          this.valueAtoms.set(key, createAtom("ObservableYMapValue"));
-        }
-        this.valueAtoms.get(key)?.reportChanged();
+        // TODO: removed key atoms?
+        this.getValueAtom(key).reportChanged();
       }
       this.wholeAtom.reportChanged();
     });
@@ -44,17 +49,12 @@ export class ObservableYMap<V> {
   }
 
   get(key: string): V | undefined {
-    const valueAtom = this.valueAtoms.get(key);
-    if (valueAtom) {
-      valueAtom.reportObserved();
-    } else {
-      this.wholeAtom.reportObserved();
-    }
+    this.getValueAtom(key).reportObserved();
     return this.y.get(key);
   }
 
   has(key: string): boolean {
-    this.wholeAtom.reportObserved();
+    this.getValueAtom(key).reportObserved();
     return this.y.has(key);
   }
 
