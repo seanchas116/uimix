@@ -11,8 +11,16 @@ import { Project } from "./Project";
 import { Component } from "./Component";
 
 export interface IComputedRectProvider {
-  value: Rect | undefined;
+  readonly value: Rect | undefined;
   markDirty(): void;
+}
+
+export class StubComputedRectProvider implements IComputedRectProvider {
+  constructor(rect: Rect) {
+    this.value = rect;
+  }
+  readonly value: Rect;
+  markDirty() {}
 }
 
 // a node or a inner node of an instance
@@ -109,6 +117,26 @@ export class Selectable {
       current = current.parent;
     }
     return result;
+  }
+
+  @computed get nextSibling(): Selectable | undefined {
+    const nextNode = this.originalNode.nextSibling;
+    if (nextNode) {
+      return this.project.selectables.get([
+        ...this.idPath.slice(0, -1),
+        nextNode.id,
+      ]);
+    }
+  }
+
+  @computed get previousSibling(): Selectable | undefined {
+    const previousNode = this.originalNode.previousSibling;
+    if (previousNode) {
+      return this.project.selectables.get([
+        ...this.idPath.slice(0, -1),
+        previousNode.id,
+      ]);
+    }
   }
 
   @computed get selfStyle(): PartialStyle {
@@ -339,43 +367,62 @@ export class Selectable {
 
     return ownerComponent.refIDs.get(this.originalNode.id);
   }
-}
 
-export function moveSelectables(
-  dstParent: Selectable,
-  dstNextSibling: Selectable | undefined,
-  selectables: Selectable[]
-) {
-  selectables = selectables.filter((s) => !s.includes(dstParent));
-  if (selectables.length === 0) {
-    return;
-  }
+  /// mutations
 
-  if (
-    dstParent.idPath.length > 1 ||
-    selectables.some((selectable) => selectable.idPath.length > 1)
-  ) {
-    console.log('TODO: moving items inside an instance is not supported yet"');
-    return;
-  }
-
-  dstParent.node.insertBefore(
-    selectables.map((s) => s.originalNode),
-    dstNextSibling?.originalNode
-  );
-
-  for (const selectable of selectables) {
-    const absolute =
-      dstParent.style.layout === "none" || selectable.style.absolute;
-
-    if (absolute) {
-      const bbox = selectable.computedRect;
-      resizeWithBoundingBox(
-        selectable,
-        bbox,
-        { x: true, y: true },
-        dstParent.computedRect.topLeft
+  remove() {
+    if (this.idPath.length >= 2) {
+      throw new Error(
+        "TODO: removing items inside an instance is not supported yet"
       );
+    }
+    this.originalNode.remove();
+  }
+
+  insertBefore(
+    dstNextSibling: Selectable | undefined,
+    selectables: readonly Selectable[],
+    {
+      fixPosition = true,
+    }: {
+      fixPosition?: boolean;
+    } = {}
+  ) {
+    selectables = selectables.filter((s) => !s.includes(this));
+    if (selectables.length === 0) {
+      return;
+    }
+
+    if (
+      this.idPath.length > 1 ||
+      selectables.some((selectable) => selectable.idPath.length > 1)
+    ) {
+      console.log(
+        'TODO: moving items inside an instance is not supported yet"'
+      );
+      return;
+    }
+
+    this.node.insertBefore(
+      selectables.map((s) => s.originalNode),
+      dstNextSibling?.originalNode
+    );
+
+    if (fixPosition) {
+      for (const selectable of selectables) {
+        const absolute =
+          this.style.layout === "none" || selectable.style.absolute;
+
+        if (absolute) {
+          const bbox = selectable.computedRect;
+          resizeWithBoundingBox(
+            selectable,
+            bbox,
+            { x: true, y: true },
+            this.computedRect.topLeft
+          );
+        }
+      }
     }
   }
 }

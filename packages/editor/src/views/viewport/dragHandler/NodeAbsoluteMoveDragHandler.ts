@@ -1,5 +1,5 @@
 import { Rect, Vec2 } from "paintvec";
-import { moveSelectables, Selectable } from "../../../models/Selectable";
+import { Selectable } from "../../../models/Selectable";
 import { resizeWithBoundingBox } from "../../../services/Resize";
 import { projectState } from "../../../state/ProjectState";
 import { scrollState } from "../../../state/ScrollState";
@@ -70,7 +70,7 @@ export class NodeAbsoluteMoveDragHandler implements DragHandler {
         instance.parent?.node.type !== "component" &&
         instance.parent !== parent
       ) {
-        moveSelectables(parent, undefined, [instance]);
+        parent.insertBefore(undefined, [instance]);
       }
     }
     projectState.undoManager.stopCapturing();

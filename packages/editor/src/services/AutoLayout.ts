@@ -1,7 +1,7 @@
 import { sum } from "lodash-es";
 import { StackAlign } from "@uimix/node-data";
 import { Rect } from "paintvec";
-import { Selectable } from "../models/Selectable";
+import { Selectable, StubComputedRectProvider } from "../models/Selectable";
 import { assertNonNull } from "../utils/Assert";
 
 export function removeLayout(selectable: Selectable): void {
@@ -41,6 +41,37 @@ export function removeLayout(selectable: Selectable): void {
   selectable.style.layout = "none";
 }
 
+export function ungroup(selectable: Selectable): void {
+  if (selectable.node.type !== "frame") {
+    return;
+  }
+
+  const parent = selectable.parent;
+  if (!parent) {
+    return;
+  }
+  const next = selectable.nextSibling;
+  const children = selectable.children;
+
+  parent.insertBefore(next, children);
+  selectable.remove();
+
+  for (const child of children) {
+    const pos = child.computedRect.topLeft.sub(parent.computedRect.topLeft);
+
+    child.style.position = {
+      x: {
+        type: "start",
+        start: pos.x,
+      },
+      y: {
+        type: "start",
+        start: pos.y,
+      },
+    };
+  }
+}
+
 export function autoLayout(selectable: Selectable): void {
   if (selectable.node.type !== "frame") {
     return;
@@ -67,6 +98,56 @@ export function autoLayout(selectable: Selectable): void {
   selectable.originalNode.append(flex.elements.map((e) => e.originalNode));
 
   selectable.style.layout = "stack";
+}
+
+export function groupAndAutoLayout(
+  selectables: readonly Selectable[]
+): Selectable | undefined {
+  if (!selectables.length) {
+    return;
+  }
+
+  const parent = selectables[selectables.length - 1].parent;
+  if (!parent) {
+    return;
+  }
+  const next = selectables.at(-1)?.nextSibling;
+
+  const flex = detectFlex(selectables);
+  const offsetBBox = flex.bbox.translate(parent.computedRect.topLeft.neg);
+
+  const frame = parent.project.nodes.create("frame").selectable;
+  frame.node.name = "Frame";
+  frame.style.position = {
+    x: {
+      type: "start",
+      start: offsetBBox.left,
+    },
+    y: {
+      type: "start",
+      start: offsetBBox.top,
+    },
+  };
+  frame.style.width = {
+    type: "fixed",
+    value: offsetBBox.width,
+  };
+  frame.style.height = {
+    type: "fixed",
+    value: offsetBBox.height,
+  };
+
+  frame.style.layout = "stack";
+  frame.style.stackDirection = flex.direction;
+  frame.style.stackAlign = flex.align;
+  frame.style.gap = flex.gap;
+
+  frame.computedRectProvider = new StubComputedRectProvider(flex.bbox);
+
+  frame.insertBefore(undefined, flex.elements);
+  parent.insertBefore(next, [frame]);
+
+  return frame;
 }
 
 export function detectFlex(elements: readonly Selectable[]): {

@@ -8,7 +8,12 @@ import { viewportState } from "./ViewportState";
 import { projectState } from "./ProjectState";
 import { handleShortcut, MenuCommandDef, MenuItemDef } from "./MenuItemDef";
 import { Clipboard } from "./Clipboard";
-import { autoLayout, removeLayout } from "../services/AutoLayout";
+import {
+  autoLayout,
+  groupAndAutoLayout,
+  removeLayout,
+  ungroup,
+} from "../services/AutoLayout";
 import { createComponent } from "../services/CreateComponent";
 import { PageHierarchyEntry } from "../models/Project";
 import { posix as path } from "path-browserify";
@@ -150,10 +155,17 @@ class Commands {
   }
 
   autoLayout() {
-    for (const selectable of projectState.selectedSelectables) {
-      autoLayout(selectable);
+    const selectables = projectState.selectedSelectables;
+
+    if (selectables.length > 1) {
+      this.group();
+      return;
     }
-    projectState.undoManager.stopCapturing();
+
+    if (selectables.length === 1) {
+      autoLayout(selectables[0]);
+      projectState.undoManager.stopCapturing();
+    }
   }
 
   removeLayout() {
@@ -166,6 +178,35 @@ class Commands {
   createComponent() {
     for (const selectable of projectState.selectedSelectables) {
       createComponent(selectable);
+    }
+    projectState.undoManager.stopCapturing();
+  }
+
+  group() {
+    const selectables = projectState.selectedSelectables;
+    if (selectables.length < 2) {
+      return;
+    }
+    const group = groupAndAutoLayout(selectables);
+    if (group) {
+      projectState.deselectAll();
+      group.select();
+    }
+
+    projectState.undoManager.stopCapturing();
+  }
+
+  ungroup() {
+    const selectables = projectState.selectedSelectables;
+
+    projectState.deselectAll();
+
+    for (const selectable of selectables) {
+      const children = selectable.children;
+      for (const child of children) {
+        child.select();
+      }
+      ungroup(selectable);
     }
     projectState.undoManager.stopCapturing();
   }
@@ -268,6 +309,7 @@ class Commands {
   readonly autoLayoutCommand: MenuCommandDef = {
     type: "command",
     text: "Auto Layout",
+    shortcut: new Shortcut(["Shift"], "KeyA"),
     onClick: action(() => {
       this.autoLayout();
     }),
@@ -277,6 +319,22 @@ class Commands {
     text: "Remove Layout",
     onClick: action(() => {
       this.removeLayout();
+    }),
+  };
+  readonly groupCommand: MenuCommandDef = {
+    type: "command",
+    text: "Group",
+    shortcut: new Shortcut(["Mod"], "KeyG"),
+    onClick: action(() => {
+      this.group();
+    }),
+  };
+  readonly ungroupCommand: MenuCommandDef = {
+    type: "command",
+    text: "Ungroup",
+    shortcut: new Shortcut(["Shift", "Mod"], "KeyG"),
+    onClick: action(() => {
+      this.ungroup();
     }),
   };
 
@@ -328,6 +386,9 @@ class Commands {
         children: [
           this.createComponentCommand,
           { type: "separator" },
+          this.groupCommand,
+          this.ungroupCommand,
+          { type: "separator" },
           this.autoLayoutCommand,
           this.removeLayoutCommand,
         ],
@@ -347,6 +408,9 @@ class Commands {
       this.deleteCommand,
       { type: "separator" },
       this.createComponentCommand,
+      { type: "separator" },
+      this.groupCommand,
+      this.ungroupCommand,
       { type: "separator" },
       this.autoLayoutCommand,
       this.removeLayoutCommand,

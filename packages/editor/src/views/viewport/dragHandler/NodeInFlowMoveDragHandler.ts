@@ -1,5 +1,5 @@
 import { Rect, Vec2 } from "paintvec";
-import { moveSelectables, Selectable } from "../../../models/Selectable";
+import { Selectable } from "../../../models/Selectable";
 import { projectState } from "../../../state/ProjectState";
 import { DropDestination } from "../../../state/DropDestination";
 import { scrollState } from "../../../state/ScrollState";
@@ -46,7 +46,7 @@ export class NodeInFlowMoveDragHandler implements DragHandler {
       return;
     }
 
-    moveSelectables(dst.parent, dst.ref, [...this.targets.keys()]);
+    dst.parent.insertBefore(dst.ref, [...this.targets.keys()]);
     projectState.undoManager.stopCapturing();
   }
 

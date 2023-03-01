@@ -10,7 +10,7 @@ import hStackIcon from "@seanchas116/design-icons/json/h-stack.json";
 import vStackIcon from "@seanchas116/design-icons/json/v-stack.json";
 import textIcon from "@seanchas116/design-icons/json/text.json";
 import imageIcon from "@seanchas116/design-icons/json/image.json";
-import { moveSelectables, Selectable } from "../../models/Selectable";
+import { Selectable } from "../../models/Selectable";
 import { projectState } from "../../state/ProjectState";
 import { DoubleClickToEdit } from "../../components/DoubleClickToEdit";
 import { commands } from "../../state/Commands";
@@ -296,8 +296,7 @@ export const NodeTreeView: React.FC = observer(() => {
         runInAction(() => {
           if (draggedItem) {
             // TODO: prevent inserting variant as a first child of a component
-            moveSelectables(
-              item.selectable,
+            item.selectable.insertBefore(
               before?.selectable,
               projectState.selectedSelectables
             );

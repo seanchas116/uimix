@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import * as Y from "yjs";
-import { moveSelectables } from "./Selectable";
 import { Color } from "../utils/Color";
 import { Project } from "./Project";
 import { Node } from "./Node";
@@ -75,8 +74,7 @@ describe(Node.name, () => {
       frames.push(frame);
     }
 
-    moveSelectables(
-      page.selectable,
+    page.selectable.insertBefore(
       frames[0].selectable,
       frames.map((f) => f.selectable).slice(5)
     );
@@ -94,9 +92,7 @@ describe(Node.name, () => {
       "Frame 4",
     ]);
 
-    moveSelectables(page.selectable, frames[7].selectable, [
-      frames[5].selectable,
-    ]);
+    page.selectable.insertBefore(frames[7].selectable, [frames[5].selectable]);
     expect(page.selectable.children.map((c) => c.originalNode.name)).toEqual([
       "Frame 6",
       "Frame 5",

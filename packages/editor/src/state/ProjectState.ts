@@ -177,6 +177,10 @@ export class ProjectState {
     this.project.pages.renamePageOrPageFolder(path, newPath);
     this.undoManager.stopCapturing();
   }
+
+  deselectAll() {
+    this.page?.selectable.deselect();
+  }
 }
 
 export const projectState = new ProjectState();
