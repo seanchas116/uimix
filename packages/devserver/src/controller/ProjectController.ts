@@ -102,7 +102,15 @@ export class ProjectController {
 
   load(): ProjectJSON {
     try {
-      const data = fs.readFileSync(path.resolve(this.cwd, jsonPath), "utf8");
+      let data;
+      try {
+        data = fs.readFileSync(path.resolve(this.cwd, jsonPath), "utf8");
+      } catch {
+        return {
+          nodes: {},
+          styles: {},
+        };
+      }
       return ProjectJSON.parse(JSON.parse(data));
     } catch (e) {
       console.error(e);
