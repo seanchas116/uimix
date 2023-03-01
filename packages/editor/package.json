@@ -53,6 +53,7 @@
     "react-draggable-tree": "^0.7.0",
     "react-merge-refs": "^2.0.1",
     "react-sortablejs": "^6.1.4",
+    "scroll-into-view-if-needed": "^3.0.6",
     "slate": "^0.91.4",
     "slate-react": "^0.91.7",
     "sortablejs": "^1.15.0",

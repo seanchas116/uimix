@@ -301,6 +301,14 @@ export class Selectable {
 
   @observable collapsed = false;
 
+  expandAncestors() {
+    const { parent } = this;
+    if (parent) {
+      parent.expandAncestors();
+      parent.collapsed = false;
+    }
+  }
+
   @computed get inFlowChildren(): Selectable[] {
     return this.children.filter((child) => child.inFlow);
   }

@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
-import { action, runInAction } from "mobx";
+import { action, reaction, runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { TreeView, TreeViewItem, TreeViewItemRow } from "react-draggable-tree";
 import widgetsIcon from "@iconify-icons/ic/widgets";
 import outlineWidgetsIcon from "@iconify-icons/ic/outline-widgets";
@@ -23,6 +23,7 @@ import { showContextMenu } from "../ContextMenu";
 import { viewportState } from "../../state/ViewportState";
 import { twMerge } from "tailwind-merge";
 import { getIconAndTextForCondition } from "../viewport/VariantLabels";
+import scrollIntoView from "scroll-into-view-if-needed";
 
 interface NodeTreeViewItem extends TreeViewItem {
   selectable: Selectable;
@@ -45,6 +46,8 @@ function selectableToTreeViewItem(
   }
   return item;
 }
+
+const elementForSelectable = new WeakMap<Selectable, HTMLElement>();
 
 const TreeRow: React.FC<{
   rows: readonly TreeViewItemRow<NodeTreeViewItem>[];
@@ -149,8 +152,17 @@ const TreeRow: React.FC<{
     showContextMenu(e, commands.contextMenuForSelectable(selectable));
   });
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      elementForSelectable.set(selectable, ref.current);
+    }
+  }, []);
+
   return (
     <div
+      ref={ref}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -237,12 +249,39 @@ const TreeRow: React.FC<{
   );
 });
 
+function useRevealSelectedRow() {
+  useEffect(
+    () =>
+      reaction(
+        () => projectState.selectedSelectables,
+        async (selectables) => {
+          for (const selectable of selectables) {
+            selectable.expandAncestors();
+          }
+
+          // wait for render
+          await new Promise((resolve) => setTimeout(resolve, 0));
+
+          for (const selectable of selectables) {
+            const element = elementForSelectable.get(selectable);
+            if (element) {
+              scrollIntoView(element, { scrollMode: "if-needed" });
+            }
+          }
+        }
+      ),
+    []
+  );
+}
+
 export const NodeTreeView: React.FC = observer(() => {
   const page = projectState.page;
   if (!page) {
     return null;
   }
   const rootItem = selectableToTreeViewItem(page.selectable);
+
+  useRevealSelectedRow();
 
   return (
     <TreeView
