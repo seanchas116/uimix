@@ -105,7 +105,6 @@ export function generateCode(
     `);
 
   const cssRules = new CSSGenerator(project, new Map(images)).generateCSS();
-  console.log(cssRules);
 
   const cssContent = formatCSS(
     cssRules.map((rule) => cssRuleToString(project, rule)).join("\n")

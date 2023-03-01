@@ -21,14 +21,12 @@ export function generateDocs(rootDir: string): docgen.ComponentDoc[] {
     cwd: rootDir,
     //ignore: ignoreFilePaths,
   });
-  console.log(filePaths);
 
   // Parse a file for docgen info
   const docs = docgen
     .withCustomConfig(path.resolve(rootDir, "tsconfig.json"), options)
     .parse(filePaths.map((filePath) => path.resolve(rootDir, filePath)));
 
-  console.log(docs);
   return docs.map((doc) => ({
     ...doc,
     filePath: path.relative(rootDir, doc.filePath),
@@ -51,7 +49,6 @@ export function componentsVirtualModulePlugin(rootDir: string): VitePlugin {
   return {
     name: "uimix:react-components",
     resolveId(id) {
-      console.log(id);
       if (id === virtualModuleId) {
         return resolvedVirtualModuleId;
       }
