@@ -18,7 +18,16 @@ class ComputedRectUpdater {
   private dirtyTopLevels = new Set<Selectable>();
 
   add(selectable: Selectable) {
-    this.dirtyTopLevels.add(selectable.ancestors[1]);
+    let topLevel = selectable;
+    while (true) {
+      const parent = topLevel.parent;
+      if (!parent || parent.node.type === "page") break;
+      topLevel = parent;
+    }
+
+    if (topLevel) {
+      this.dirtyTopLevels.add(topLevel);
+    }
   }
 
   flush() {
